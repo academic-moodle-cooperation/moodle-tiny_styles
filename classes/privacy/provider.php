@@ -1,3 +1,4 @@
+<?php
 // This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -13,26 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+namespace tiny_styles\privacy;
+
 /**
- * Common values helper for the Moodle tiny_styles plugin.
+ * Privacy API implementation for the Font case plugin.
  *
- * @module      tiny_styles/common
+ * @package     tiny_styles
+ * @category    privacy
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class provider implements \core_privacy\local\metadata\null_provider {
 
-const component = 'tiny_styles';
-
-// export const pluginName = `${component}/plugin`;
-
-export default {
-    pluginName : `${component}/plugin`,
-    styleMenuItemName : `${component}_styles`,
-    boxesButtonName : `${component}_boxes`,
-    labelsButtonName : `${component}_labels`,
-    boxesSubmenuName : `${component}_boxes_submenu`,
-    labelsSubmenuName : `${component}_labels_submenu`,
-    menuIconName : `${component}_menuicon`,
-    boxIconName : `${component}_boxicon`,
-    labelIconName : `${component}_labelicon`,
-};
+    /**
+     * Returns a text explaining that this plugin stores no personal data.
+     *
+     * @return string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}

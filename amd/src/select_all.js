@@ -14,25 +14,29 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Common values helper for the Moodle tiny_styles plugin.
+ * Helper method for elements.php 
  *
- * @module      tiny_styles/common
+ * @package     tiny_styles
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-const component = 'tiny_styles';
 
-// export const pluginName = `${component}/plugin`;
+/**
+ * Helper method to select all items on page 'elements.php'
+ */
+define(['jquery'], function($) {
+    return {
+        init: function() {
+            $(document).ready(function() {
+                var selectAllCheckbox = $('#select-all');
+                var checkboxes = $('input[name="selected_elements[]"]');
 
-export default {
-    pluginName : `${component}/plugin`,
-    styleMenuItemName : `${component}_styles`,
-    boxesButtonName : `${component}_boxes`,
-    labelsButtonName : `${component}_labels`,
-    boxesSubmenuName : `${component}_boxes_submenu`,
-    labelsSubmenuName : `${component}_labels_submenu`,
-    menuIconName : `${component}_menuicon`,
-    boxIconName : `${component}_boxicon`,
-    labelIconName : `${component}_labelicon`,
-};
+                selectAllCheckbox.on('change', function() {
+                    var isChecked = $(this).prop('checked');
+                    checkboxes.prop('checked', isChecked);
+                });
+            });
+        }
+    };
+});

@@ -26,27 +26,29 @@ import {getPluginMetadata} from 'editor_tiny/utils';
 
 import {component, pluginName} from './common';
 import {register as registerOptions} from './options';
+import {getSetup as getCommandSetup} from './commands';
+import * as Configuration from './configuration';
 
-// Setup the tiny_styles Plugin.
-export default new Promise(async(resolve) => {
-    // Note: The PluginManager.add function does not support asynchronous configuration.
-    // Perform any asynchronous configuration here, and then call the PluginManager.add function.
+// eslint-disable-next-line no-async-promise-executor
+export default new Promise(async (resolve) => {
     const [
         tinyMCE,
         pluginMetadata,
+        setupCommands,
     ] = await Promise.all([
         getTinyMCE(),
         getPluginMetadata(component, pluginName),
+        getCommandSetup(),
     ]);
 
-    // Reminder: Any asynchronous code must be run before this point.
+    // Register the plugin with TinyMCE.
     tinyMCE.PluginManager.add(pluginName, (editor) => {
-        // Register any options that your plugin has
         registerOptions(editor);
 
-        // Return the pluginMetadata object. This is used by TinyMCE to display a help link for your plugin.
+        setupCommands(editor);
+
         return pluginMetadata;
     });
 
-    resolve(pluginName);
+    resolve([pluginName, Configuration]);
 });

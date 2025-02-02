@@ -1,0 +1,194 @@
+<?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Plugin administration: category editing and creation
+ *
+ * @package     tiny_styles
+ * @category    admin
+ * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once(__DIR__ . '/../../../../../config.php');
+require_login();
+
+// context for the page
+$context = context_system::instance();
+$PAGE->set_context($context);
+$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php'));
+
+// parameters for enabling the same form usage for editing existing entries
+$action = optional_param('action', 'create', PARAM_ALPHA);
+$id = optional_param('id', 0, PARAM_INT);
+
+$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php',[
+    'action' => $action,
+    'id' => $id
+]));
+
+// dynamic naming
+if ($action === 'edit') {
+    $formtype = get_string('editcategory', 'tiny_styles');
+} else {
+    $formtype = get_string('createcategory', 'tiny_styles');
+}
+$PAGE->set_title($formtype);
+$heading = $formtype;
+
+
+require_once($CFG->libdir . '/formslib.php');
+
+/**
+ * Form for creating/editing category
+ */
+class category_form extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+
+        $mform->addElement('header', 'generalsettings', get_string('generalsettings', 'admin'));
+
+        // name
+        $mform->addElement('text', 'name', get_string('name'));
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
+
+        // description
+        $mform->addElement('textarea', 'description', get_string('description'));
+        $mform->setType('description', PARAM_TEXT);
+
+        // description displaying -> field stored in DB as "showdesc" 
+        $descdisplayoptions = [
+            'never'    => 'Never',
+            'helptext' => 'Help text',
+            'tooltip'  => 'Tooltip'
+        ];
+        $mform->addElement('select', 'showdesc', 'Description display', $descdisplayoptions);
+
+        $mform->addElement('header', 'presentationhdr', 'Presentation of the Category');
+
+        // FA-symbol
+        // todo: symbol selection dropdown
+        $mform->addElement('text', 'symbol', 'Symbol');
+        $mform->setType('symbol', PARAM_TEXT);
+
+        // presentation type
+        $presentationoptions = [
+            'submenu' => 'Submenu',
+            'inline'  => 'Inline',
+            'divider' => 'Divider'
+        ];
+        $mform->addElement('select', 'presentation', 'Presentation type', $presentationoptions);
+
+        // hidden $id field for edit form
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+
+        // hidden $action field -> create or edit
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_ALPHA);
+
+        $this->add_action_buttons(true, get_string('savechanges'));
+    }
+
+    /**
+     * TODO: validation
+     * eg. name must be at least 3 chars
+     */
+    public function validation($data, $files) {
+        $errors = [];
+        if (strlen(trim($data['name'])) < 3) {
+            $errors['name'] = 'Name must be at least 3 characters.';
+        }
+        return $errors;
+    }
+}
+
+$mform = new category_form(null, []);
+
+if ($mform->is_cancelled()) {
+    redirect(new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']));
+    exit;
+}
+
+// handle create/update
+if ($data = $mform->get_data()) {
+    global $DB;
+
+    $record = new stdClass();
+    $record->name         = $data->name;
+    $record->description  = $data->description;
+    $record->showdesc     = $data->showdesc;
+    $record->symbol       = $data->symbol;
+    $record->presentation = $data->presentation;
+    $record->timemodified = time();
+
+    
+    //  UPDATE of existing category 
+    if ($data->action === 'edit' && !empty($data->id)) {
+        if ($old = $DB->get_record('tiny_styles_categories', ['id' => $data->id], '*', MUST_EXIST)) {
+            $record->id          = $old->id;
+            $record->enabled     = $old->enabled;
+            $record->sortorder   = $old->sortorder;
+            $record->timecreated = $old->timecreated;
+
+            $DB->update_record('tiny_styles_categories', $record);
+            redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']), 'Category updated!', 2);
+        }
+        // todo: edit
+        print_error('Invalid category ID');
+    } else {
+        // CREATE new category 
+        // todo: sort order logic
+        $record->enabled     = 1;
+        $record->sortorder   = 0;
+        $record->timecreated = time();
+        $newid = $DB->insert_record('tiny_styles_categories', $record);
+        redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']), 'Category created!', 2);
+    }
+    exit;
+}
+
+// get the category from db and set row to form data
+if ($action === 'edit' && $id > 0) {
+    global $DB;
+    if ($category = $DB->get_record('tiny_styles_categories', ['id'=>$id], '*', MUST_EXIST)) {
+        $formdata = new stdClass();
+        $formdata->id          = $category->id;
+        $formdata->action      = 'edit';
+        $formdata->name        = $category->name;
+        $formdata->description = $category->description;
+        $formdata->showdesc    = $category->showdesc;
+        $formdata->symbol      = $category->symbol;
+        $formdata->presentation= $category->presentation;
+
+        $mform->set_data($formdata);
+    } else {
+        // TODO: edit
+        print_error('Invalid category ID');
+    }
+} else {
+    // ensures hidden fields are set
+    $formdata = new stdClass();
+    $formdata->id = 0;
+    $formdata->action = 'create';
+    $mform->set_data($formdata);
+}
+
+echo $OUTPUT->header();
+echo $OUTPUT->heading($formtype);
+$mform->display();
+echo $OUTPUT->footer();

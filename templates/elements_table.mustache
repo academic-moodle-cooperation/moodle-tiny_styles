@@ -1,0 +1,65 @@
+<div class="tiny-elements">
+    <h3>{{heading}}</h3>
+
+    <form method="post" action="{{submiturl}}">
+        <div class="actions mb-3">
+            <div class="mb-2">
+                <!-- "Back to Overview" -> acts as the Save button -->
+                <button type="submit" class="btn btn-secondary">
+                    {{navigateback}}
+                </button>
+            </div>
+            <div>
+                <a href="{{createelementurl}}" class="btn btn-primary">
+                    {{createbuttonlabel}}
+                </a>
+            </div>
+        </div>
+
+        <table class="table generaltable">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="select-all">
+                    </th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Bootstrap Class / CSS Style</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#elements}}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="selected_elements[]" value="{{id}}">
+                    </td>
+                    <td>{{name}}</td>
+                    <td>{{type}}</td>
+                    <td>{{bootstrapclass}}</td>
+                    <td>
+                        <a href="{{viewurl}}" title="View">
+                            <i class="icon fa fa-eye fa-fw"></i>
+                        </a>
+                        <a href="{{viewdetailsurl}}" title="Details">
+                            <i class="icon fa fa-search fa-fw"></i>
+                        </a>
+                        <a href="{{moveupurl}}" title="Move Up">
+                            <i class="icon fa fa-arrow-up fa-fw"></i>
+                        </a>
+                        <a href="{{movedownurl}}" title="Move Down">
+                            <i class="icon fa fa-arrow-down fa-fw"></i>
+                        </a>
+                        <a href="{{editurl}}" title="Edit">
+                            <i class="icon fa fa-cog fa-fw"></i>
+                        </a>
+                        <a href="{{deleteurl}}" title="Delete">
+                            <i class="icon fa fa-trash fa-fw"></i>
+                        </a>
+                    </td>
+                </tr>
+                {{/elements}}
+            </tbody>
+        </table>
+    </form>
+</div>
