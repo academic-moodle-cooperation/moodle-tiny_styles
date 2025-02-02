@@ -1,8 +1,46 @@
 # TinyMCE-Gestaltungsvorlagen #
 
-TODO Describe the plugin shortly here.
+Tiny styles plugin to enable css bootstrap styling for the TinyMCE text editor.
 
-TODO Provide more detailed description here.
+
+## Current version ##
+
+
+### Database ###
+
+
+**Three tables**
+
+Categories, Elements, and a bridging table for category elements
+
+For a detailed structure see: 
+[Database details](Documentation/database.md)
+
+-----
+
+### Admin pages ###
+
+**Fully implemented:**
+
+- none
+
+**Functional, but still missing features:**
+
+- Settings page
+- Create category 
+- View category elements
+- Edit category
+
+**Still to be implemented:**
+
+- Create element
+- Edit element
+
+------
+### Editor ###
+
+
+Currently hardcoded, missing icons and needs the formatting to be fixed.
 
 ## Installing via uploaded ZIP file ##
 
