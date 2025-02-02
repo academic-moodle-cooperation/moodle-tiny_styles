@@ -39,10 +39,18 @@ For a detailed structure see:
 ------
 ### Editor ###
 
+Functional, but requires changes:
+ 
+- currently hardcoded and not yet connected to the database
+- missing icons
+- formatting needs to be fixed
 
-Currently hardcoded, missing icons and needs the formatting to be fixed.
 
-## Installing via uploaded ZIP file ##
+
+-----
+
+
+#### Installing via uploaded ZIP file ####
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
    Plugins > Install plugins_.
