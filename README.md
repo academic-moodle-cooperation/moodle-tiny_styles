@@ -1,6 +1,6 @@
 # TinyMCE-Gestaltungsvorlagen #
 
-Tiny styles plugin to enable css bootstrap styling for the TinyMCE text editor.
+#### Tiny styles plugin to enable css bootstrap styling for the TinyMCE text editor.####
 
 
 ## Current version ##
