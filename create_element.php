@@ -32,6 +32,7 @@ $PAGE->set_context($context);
 
 $action = optional_param('action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
+$catid = optional_param('catid', 0, PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/element.php', [
     'action' => $action,
@@ -55,7 +56,6 @@ require_once($CFG->libdir . '/formslib.php');
 class element_form extends moodleform {
     public function definition() {
         global $DB;
-
         $mform = $this->_form;
 
         // Header
@@ -66,18 +66,21 @@ class element_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        // (Optional) Category selection? If you want to assign an element to one category at creation time:
-        // We fetch categories from the DB to populate a select.
+        // todo: remove the divider more efficiently by a conditional query
         $categories = $DB->get_records_menu('tiny_styles_categories', null, 'sortorder ASC', 'id,name');
-        // If no categories found, you might handle that scenario or ensure there's at least one
-        // For the sake of example, let's allow user to pick "none" or so:
-        $catoptions = [0 => get_string('none', 'tiny_styles')] + $categories;
 
-        $mform->addElement('select', 'categoryid', get_string('category', 'tiny_styles'), $catoptions);
+        foreach ($categories as $id => $name) {
+            $presentation = $DB->get_field('tiny_styles_categories', 'presentation', ['id' => $id]);
+            if ($presentation === 'divider') {
+                unset($categories[$id]);
+            }
+        }
+
+        $mform->addElement('select', 'categoryid', 'Category', $categories);
         $mform->setType('categoryid', PARAM_INT);
+        $mform->addRule('categoryid', null, 'required', null, 'client');
 
-        // Type (inline, block, etc.)
-        // Possibly from DB in real usage, or a fixed set of choices:
+        // todo: more options?
         $typeoptions = [
             'inline' => 'Inline',
             'block'  => 'Block',
@@ -91,15 +94,13 @@ class element_form extends moodleform {
         $mform->setType('cssclasses', PARAM_TEXT);
         $mform->addRule('cssclasses', null, 'required', null, 'client');
 
-        // Hidden fields: 'id' for the record ID, 'action' for create/edit
+        // Hidden fields id, edit/create
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
         $mform->addElement('hidden', 'action');
         $mform->setType('action', PARAM_ALPHA);
 
-        // Buttons: Save, or "Preview" if you want, etc. 
-        // The 2nd param in add_action_buttons can be an alternative label for "Save changes."
         $this->add_action_buttons(true, get_string('savechanges'));
     }
 
@@ -109,15 +110,18 @@ class element_form extends moodleform {
         if (strlen(trim($data['name'])) < 3) {
             $errors['name'] = get_string('error_nametooshort', 'tiny_styles');
         }
-        // Additional checks for cssclasses or type can go here
         return $errors;
     }
 }
 
-// 4) Instantiate the form
+// Instantiate form
 $mform = new element_form(null, []);
 
-// If Cancel button pressed
+if($catid) {
+    $mform->set_data(['categoryid' => $catid]);
+}
+
+// Cancel button pressed
 if ($mform->is_cancelled()) {
     redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']));
     exit;

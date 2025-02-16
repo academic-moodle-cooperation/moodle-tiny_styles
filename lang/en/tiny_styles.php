@@ -75,6 +75,8 @@ $string['bootstrapclass'] = 'Bootstrap Class / CSS Style';
 $string['edit'] = 'Edit';
 $string['delete'] = 'Delete';
 $string['noelements'] = 'No elements found.';
+$string['no_selection'] = 'No selection';
+$string['category'] = 'Category';
 
 $string['submit'] = 'Submit';
 $string['type'] = 'Type';
@@ -85,6 +87,5 @@ $string['details'] = 'View details';
 $string['elementsettings'] = 'Element settings';
 $string['back_overview'] = 'Back to overview';
 $string['editelement'] = 'Edit element';
-
 
 $string['error_nametooshort'] = 'Name is too short';
