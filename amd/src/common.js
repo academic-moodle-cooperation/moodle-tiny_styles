@@ -34,5 +34,5 @@ export default {
     labelsSubmenuName : `${component}_labels_submenu`,
     menuIconName : `${component}_menuicon`,
     boxIconName : `${component}_boxicon`,
-    labelIconName : `${component}_labelicon`,
+    icon: component,
 };

@@ -82,4 +82,9 @@ $string['create_element'] = 'Create Element';
 $string['selectall'] = 'Select all';
 $string['details'] = 'View details';
 
+$string['elementsettings'] = 'Element settings';
 $string['back_overview'] = 'Back to overview';
+$string['editelement'] = 'Edit element';
+
+
+$string['error_nametooshort'] = 'Name is too short';

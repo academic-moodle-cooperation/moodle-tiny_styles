@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin administration
+ * Plugin administration elements 
  *
  * @package     tiny_styles
  * @category    admin
@@ -26,6 +26,7 @@
 require_once(__DIR__ . '/../../../../../config.php');
 require_login();
 
+//todo: admin instance
 $context = context_system::instance();
 $PAGE->set_context($context);
 
@@ -66,7 +67,11 @@ foreach ($records as $r) {
         'viewdetailsurl' => '#',
         'moveupurl'      => '#',
         'movedownurl'    => '#',
-        'editurl'        => '#',
+        'editurl'        => new moodle_url('/lib/editor/tiny/plugins/styles/element.php', [
+            'action' => 'edit',
+            'id'     => $r->id
+        ]),
+
         'deleteurl'      => '#',
     ];
 }

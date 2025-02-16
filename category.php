@@ -26,7 +26,7 @@
 require_once(__DIR__ . '/../../../../../config.php');
 require_login();
 
-// context for the page
+// todo: admin instance = context for the page?
 $context = context_system::instance();
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php'));
@@ -85,7 +85,7 @@ class category_form extends moodleform {
         $mform->addElement('text', 'symbol', 'Symbol');
         $mform->setType('symbol', PARAM_TEXT);
 
-        // presentation type
+        // todo: langstrings for presentation type
         $presentationoptions = [
             'submenu' => 'Submenu',
             'inline'  => 'Inline',
@@ -148,11 +148,11 @@ if ($data = $mform->get_data()) {
             $DB->update_record('tiny_styles_categories', $record);
             redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']), 'Category updated!', 2);
         }
-        // todo: edit
+        // todo: edit this
         print_error('Invalid category ID');
     } else {
         // CREATE new category 
-        // todo: sort order logic
+        // todo: sort order logic -> needed?
         $record->enabled     = 1;
         $record->sortorder   = 0;
         $record->timecreated = time();
@@ -177,7 +177,7 @@ if ($action === 'edit' && $id > 0) {
 
         $mform->set_data($formdata);
     } else {
-        // TODO: edit
+        // TODO: edit this
         print_error('Invalid category ID');
     }
 } else {
