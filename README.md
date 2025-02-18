@@ -43,6 +43,7 @@ For a detailed structure see:
 - Icon selection (category)
 - View style preview
 - Visible / Hidden
+- Selected elements options dropdown and actions
 
 - *all admin pages need to be changed to admin settings context*
 
