@@ -1,6 +1,6 @@
 # TinyMCE-Gestaltungsvorlagen #
 
-#### Tiny styles plugin to enable css bootstrap styling for the TinyMCE text editor.####
+#### Tiny styles plugin to enable css bootstrap styling for the TinyMCE text editor.
 
 
 ## Current version ##
@@ -16,6 +16,8 @@ Categories, Elements, and a bridging table for category elements
 For a detailed structure see: 
 [Database details](Documentation/database.md)
 
+**Next:** A new table for svg icons for user to select from and the tinyMCE editor to use. 
+
 -----
 
 ### Admin pages ###
@@ -24,28 +26,35 @@ For a detailed structure see:
 
 - none
 
-**Functional, but still missing features:**
+**Functional, but missing features:**
 
 - Settings page
 - Create category 
 - View category elements
 - Edit category
-
-**Still to be implemented:**
-
 - Create element
 - Edit element
+
+**Missing features from admin**
+
+- Up/Down buttons
+- Delete button
+- Icon selection (category)
+- Styles dropdown menu
+- View details
+
+~~**To be implemented:**~~
 
 ------
 ### Editor ###
 
-Functional, but requires changes:
+Functional, requires changes:
  
-- currently hardcoded and not yet connected to the database
 - missing icons
-- formatting needs to be fixed
 
+***Note:*** currently user has to clear formatting before applying a new style due to the text selection logic of TinyMCE
 
+***Fix suggestion (for later):*** manually take steps up in the text selection to expand 'view area' for selected text, then remove styling
 
 -----
 
