@@ -39,9 +39,12 @@ For a detailed structure see:
 
 - Up/Down buttons
 - Delete button
-- Icon selection (category)
 - Styles dropdown menu
-- View details
+- Icon selection (category)
+- View style preview
+- Visible / Hidden
+
+- *all admin pages need to be changed to admin settings context*
 
 ~~**To be implemented:**~~
 
