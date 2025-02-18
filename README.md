@@ -2,6 +2,9 @@
 
 #### Tiny styles plugin to enable css bootstrap styling for the TinyMCE text editor.
 
+User can select a bootstrap style for their selected text from the format tab menu, or from the toolbar menu.
+
+Admin sites enable new category and element creation for new style options. 
 
 ## Current version ##
 
