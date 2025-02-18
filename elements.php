@@ -76,7 +76,7 @@ foreach ($records as $r) {
     ];
 }
 
-// mustace context
+// mustache context
 $templatecontext = [
     'heading'           => get_string('elementsheading', 'tiny_styles'),
     'navigateback'      => get_string('back_overview', 'tiny_styles'),

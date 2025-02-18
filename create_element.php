@@ -83,7 +83,7 @@ class element_form extends moodleform {
         // todo: more options?
         $typeoptions = [
             'inline' => 'Inline',
-            'block'  => 'Block',
+            'submenu'  => 'Submenu',
             'other'  => 'Other'
         ];
         $mform->addElement('select', 'type', get_string('type', 'tiny_styles'), $typeoptions);
@@ -94,7 +94,7 @@ class element_form extends moodleform {
         $mform->setType('cssclasses', PARAM_TEXT);
         $mform->addRule('cssclasses', null, 'required', null, 'client');
 
-        // Hidden fields id, edit/create
+        // Hidden fields
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
@@ -114,36 +114,29 @@ class element_form extends moodleform {
     }
 }
 
-// Instantiate form
 $mform = new element_form(null, []);
 
 if($catid) {
     $mform->set_data(['categoryid' => $catid]);
 }
 
-// Cancel button pressed
 if ($mform->is_cancelled()) {
     redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']));
     exit;
 }
 
-// If data was submitted
 if ($data = $mform->get_data()) {
     global $DB;
 
-    // Build record to insert or update
     $record = new stdClass();
     $record->name       = $data->name;
     $record->type       = $data->type;
     $record->cssclasses = $data->cssclasses;
     $record->timemodified = time();
 
-    // We do not have bridging logic directly here. If you want to do bridging right away:
-    // $data->categoryid => used for tiny_styles_cat_elements bridging. 
-    // For example, you might do that after the element is created.
-    
+    // todo: bridge => $data->categoryid => used for tiny_styles_cat_elements bridging.
+
     if ($data->action === 'edit' && !empty($data->id)) {
-        // Update existing element
         if ($old = $DB->get_record('tiny_styles_elements', ['id' => $data->id], '*', MUST_EXIST)) {
             $record->id          = $old->id;
             $record->enabled     = $old->enabled;
@@ -152,10 +145,8 @@ if ($data = $mform->get_data()) {
 
             $DB->update_record('tiny_styles_elements', $record);
 
-            // Optionally handle bridging if user selected a category
             if (!empty($data->categoryid)) {
-                // e.g. check tiny_styles_cat_elements, insert or update the bridging row
-                // up to you
+                // todo:
             }
 
             redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']),
@@ -164,15 +155,14 @@ if ($data = $mform->get_data()) {
         print_error('Invalidelementid', 'tiny_styles');
 
     } else {
-        // CREATE new element
+        // new element
         $record->enabled     = 1; // default
         $record->sortorder   = 0; // or some logic
         $record->timecreated = time();
         $elemid = $DB->insert_record('tiny_styles_elements', $record);
 
-        // If bridging to category is desired:
+        // bridging table
         if (!empty($data->categoryid)) {
-            // Insert into tiny_styles_cat_elements bridging table
             $link = new stdClass();
             $link->categoryid   = $data->categoryid;
             $link->elementid    = $elemid;
@@ -189,7 +179,7 @@ if ($data = $mform->get_data()) {
     exit;
 }
 
-// 5) If GET request => load data if "edit" + id
+// load data if editing an element
 if ($action === 'edit' && $id > 0) {
     if ($element = $DB->get_record('tiny_styles_elements', ['id'=>$id], '*', MUST_EXIST)) {
         $formdata = new stdClass();
@@ -199,8 +189,6 @@ if ($action === 'edit' && $id > 0) {
         $formdata->type        = $element->type;
         $formdata->cssclasses  = $element->cssclasses;
 
-        // If you want to auto‐detect bridging, find the first category bridging row and set categoryid
-        // e.g.
         $catlink = $DB->get_record('tiny_styles_cat_elements', ['elementid' => $element->id], '*', IGNORE_MULTIPLE);
         if ($catlink) {
             $formdata->categoryid = $catlink->categoryid;
@@ -213,7 +201,7 @@ if ($action === 'edit' && $id > 0) {
         print_error('Invalidelementid', 'tiny_styles');
     }
 } else {
-    // "create" scenario
+    // create new style
     $formdata = new stdClass();
     $formdata->id = 0;
     $formdata->action = 'create';
@@ -221,7 +209,6 @@ if ($action === 'edit' && $id > 0) {
     $mform->set_data($formdata);
 }
 
-// 6) Output
 echo $OUTPUT->header();
 echo $OUTPUT->heading($formtitle);
 $mform->display();

@@ -32,6 +32,7 @@ $string['privacy:metadata'] = 'Font case does not store any personal data';
 // to be edited strings
 // Main menu item
 $string['menuitem_styles'] = 'Styles';
+$string['tiny_styles_button'] = 'Styles';
 
 // Toolbar button tooltips or text
 $string['boxes'] = 'Boxes';
@@ -88,4 +89,5 @@ $string['elementsettings'] = 'Element settings';
 $string['back_overview'] = 'Back to overview';
 $string['editelement'] = 'Edit element';
 
+$string['elementcreated'] = 'Element created';
 $string['error_nametooshort'] = 'Name is too short';

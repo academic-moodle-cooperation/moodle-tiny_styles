@@ -21,18 +21,14 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {
-    boxesButtonName,
-    labelsButtonName,
-    styleMenuItemName,
-} from './common';
+import {styleMenuItemName} from './common';
 import {
     addToolbarButtons,
     addMenubarItem,
 } from 'editor_tiny/utils';
 
 /**
- * Add two buttons to toolbar
+ * Add a button to toolbar
  *
  * @param {Object} instanceConfig TinyMCE config object
  * @return {String|Array} updated toolbar setting
@@ -41,10 +37,7 @@ const getToolbarConfiguration = (instanceConfig) => {
     let toolbar = instanceConfig.toolbar;
 
     // todo: fix buttons to show icons
-    toolbar = addToolbarButtons(toolbar, 'content', [
-        boxesButtonName,
-        labelsButtonName,
-    ]);
+    toolbar = addToolbarButtons(toolbar, 'content', ['tiny_styles_button']);
     return toolbar;
 };
 
@@ -57,7 +50,7 @@ const getToolbarConfiguration = (instanceConfig) => {
 const getMenuConfiguration = (instanceConfig) => {
     let menu = instanceConfig.menu;
 
-    menu = addMenubarItem(menu, 'format', [ styleMenuItemName ]);
+    menu = addMenubarItem(menu, 'format', ['tiny_styles_nestedmenu']);
     return menu;
 };
 

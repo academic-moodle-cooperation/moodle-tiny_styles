@@ -23,32 +23,38 @@
 
 import {getTinyMCE} from 'editor_tiny/loader';
 import {getPluginMetadata} from 'editor_tiny/utils';
-
-import {component, pluginName} from './common';
+import {pluginName} from './common';
 import {register as registerOptions} from './options';
 import {getSetup as getCommandSetup} from './commands';
 import * as Configuration from './configuration';
 
 // eslint-disable-next-line no-async-promise-executor
 export default new Promise(async (resolve) => {
-    const [
-        tinyMCE,
-        pluginMetadata,
-        setupCommands,
-    ] = await Promise.all([
-        getTinyMCE(),
-        getPluginMetadata(component, pluginName),
-        getCommandSetup(),
-    ]);
+    try {
+        const [
+            tinyMCE,
+            pluginMetadata,
+            setupCommands] = await Promise.all([
+            getTinyMCE(),
+            getPluginMetadata(pluginName, pluginName),
+            getCommandSetup(),
+        ]);
 
-    // Register the plugin with TinyMCE.
-    tinyMCE.PluginManager.add(pluginName, (editor) => {
-        registerOptions(editor);
+//        if (!tinyMCE || !tinyMCE.PluginManager) {
+//            console.error('TinyMCE or its PluginManager is not available.');
+//            return;
+//        }
 
-        setupCommands(editor);
+        // Register the plugin
+        tinyMCE.PluginManager.add(pluginName, (editor) => {
+            registerOptions(editor);
+            setupCommands(editor);
+            return pluginMetadata;
+        });
 
-        return pluginMetadata;
-    });
+        resolve([pluginName, Configuration]);
 
-    resolve([pluginName, Configuration]);
+    } catch (error) {
+        console.error('Error initializing TinyMCE plugin:', error);
+    }
 });

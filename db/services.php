@@ -15,17 +15,21 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * database fetching for editor
  *
- * @package     tiny_styles
+ * @category    database
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$functions = [
+  'tiny_styles_fetch_categories' => [
+      'classname' => 'tiny_styles\external\fetch_categories',
+      'methodname' => 'execute',
+      'classpath' => '',
+      'description' => 'Fetch categories and styles for the editor',
+      'type' => 'read',
+      'ajax' => true,
+  ],
+];
 
-$plugin->component = 'tiny_styles';
-$plugin->release = 'v4.5.0-r1';
-$plugin->version = 2025021803;
-$plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_BETA;

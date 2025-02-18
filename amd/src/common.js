@@ -23,16 +23,12 @@
 
 const component = 'tiny_styles';
 
-// export const pluginName = `${component}/plugin`;
-
-export default {
-    pluginName : `${component}/plugin`,
-    styleMenuItemName : `${component}_styles`,
-    boxesButtonName : `${component}_boxes`,
-    labelsButtonName : `${component}_labels`,
-    boxesSubmenuName : `${component}_boxes_submenu`,
-    labelsSubmenuName : `${component}_labels_submenu`,
-    menuIconName : `${component}_menuicon`,
-    boxIconName : `${component}_boxicon`,
-    icon: component,
-};
+export const pluginName = `${component}`;
+export const styleMenuItemName = `${component}_styles`;
+export const boxesButtonName = `${component}_boxes`;
+export const labelsButtonName = `${component}_labels`;
+export const boxesSubmenuName = `${component}_boxes_submenu`;
+export const labelsSubmenuName = `${component}_labels_submenu`;
+export const menuIconName = `${component}_menuicon`;
+export const boxIconName = `${component}_boxicon`;
+export const icon = component;

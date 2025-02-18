@@ -14,135 +14,216 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Commands for the Moodle tiny_styles plugin.
- *
- * Now dynamically connected to DB categories/elements via
- * editor.options.get('tiny_styles_categories'), which is set in lib.php.
+ * Commands for the editor
  *
  * @module      tiny_styles/commands
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import {getButtonImage} from 'editor_tiny/utils';
+import Ajax from 'core/ajax';
 import { get_string as getString } from 'core/str';
+import { styleMenuItemName, icon } from "./common";
 
 /**
- * TODO:refine the "unwrapping" logic
- *
- * Applies a style to the selected text,
- *
- * @param {TinyMCE.editor} editor - current TinyMCE editor instance
- * @param {Object} styleDef - e.g. { className: 'alert alert-info', block: true }
+ * Debugging
  */
-function applyBootstrapClass(editor, styleDef) {
+function debugLog(...args) {
+    console.log('[tiny_styles DEBUG]', ...args);
+}
+
+/**
+ * Fetches categories dynamically using AJAX.
+ * @returns {Promise<Array>} List of categories.
+ */
+async function fetchCategories() {
+    debugLog('fetchCategories() - calling webservice tiny_styles_fetch_categories...');
+    const requests = [{
+        methodname: 'tiny_styles_fetch_categories',
+        args: {},
+    }];
+    try {
+        const [data] = await Ajax.call(requests);
+        debugLog('fetchCategories - got data:', data);
+        return data;
+    } catch (err) {
+        debugLog('fetchCategories - error:', err);
+        return [];
+    }
+}
+
+/**
+ * Builds the category-based menu structure.
+ * @param {Object} editor TinyMCE instance.
+ * @param {Array} cats List of categories.
+ * @returns {Array} Menu items.
+ */
+function buildCategoryItems(editor, cats) {
+    const items = [];
+
+    cats.forEach((cat) => {
+        if (cat.presentation === 'divider') {
+            items.push({ type: 'separator' });
+            return;
+        }
+        const subItems = [];
+        if (Array.isArray(cat.elements)) {
+            cat.elements.forEach((elem) => {
+                subItems.push({
+                    type: 'menuitem',
+                    text: elem.name,
+                    onAction: () => {
+                        debugLog(`Applying style for element ID=${elem.id}, name=${elem.name}`);
+                        applyStyle(editor, {
+                            className: elem.cssclasses,
+                            block: (elem.type === 'submenu'),
+                        });
+                    }
+                });
+            });
+        }
+        if (subItems.length > 0) {
+            items.push({
+                type: 'nestedmenuitem',
+                text: cat.name,
+                getSubmenuItems: () => subItems
+            });
+        }
+    });
+
+    return items;
+}
+
+/*
+ * helper method for stripping the selected text
+ * recursively strips everything except <a> and <img>
+ *
+ *
+ */
+function stripText(root) {
+    if (root.nodeType === Node.ELEMENT_NODE) {
+        const tag = root.tagName.toLowerCase();
+        if (tag !== 'a' && tag !== 'img') {
+            root.removeAttribute('class');
+        }
+        root.removeAttribute('style');
+        Array.from(root.childNodes).forEach(stripText);
+    }
+}
+
+/**
+ * Applying a bootstrap style to the selected text
+ *
+ * @param editor tinyMCE editor instance
+ * @param styleDef object style and bool val for the wrapping option
+ */
+function applyStyle(editor, styleDef) {
     const { className, block } = styleDef;
+
     const selectedHtml = editor.selection.getContent({ format: 'html' });
     if (!selectedHtml.trim()) {
         return;
     }
 
-    const wrapperDiv = document.createElement('div');
-    wrapperDiv.innerHTML = selectedHtml;
+    const container = document.createElement('div');
+    container.innerHTML = selectedHtml;
+    Array.from(container.childNodes).forEach(stripText);
 
-    // Iterate styling elements removing the old classes.
-    function processNode(node) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            const tag = node.tagName.toUpperCase();
-
-            if ((tag === 'DIV' || tag === 'SPAN') && node.className.match(/(alert|badge)/)) {
-                const parent = node.parentNode;
-                const children = Array.from(node.childNodes);
-
-                children.forEach((child) => parent.insertBefore(child, node));
-                parent.removeChild(node);
-                return;
-            }
-        }
-        // Recurse into children.
-        Array.from(node.childNodes).forEach(processNode);
+    const newTag = block ? 'div' : 'span';
+    const newWrapper = document.createElement(newTag);
+    newWrapper.className = className;
+    while (container.firstChild) {
+        newWrapper.appendChild(container.firstChild);
     }
 
-    let iterationNeeded = true;
-    while (iterationNeeded) {
-        iterationNeeded = false;
-        Array.from(wrapperDiv.childNodes).forEach((node) => {
-            const originalCount = node.childNodes.length;
-            processNode(node);
-            if (node.childNodes.length < originalCount) {
-                iterationNeeded = true;
-            }
+    editor.selection.setContent(newWrapper.outerHTML);
+}
+
+/**
+ * New approach using the tiny formatter
+ * @param editor
+ * @param styleDef
+ */
+function applyStyleTwo(editor, styleDef) {
+    const { className, block } = styleDef;
+
+    const selectedHtml = editor.selection.getContent({ format: 'html' });
+    if (!selectedHtml.trim()) {
+        return;
+    }
+    // this would need a safety net
+    if (block) {
+        editor.formatter.remove('blockFormat');
+    } else {
+        editor.formatter.remove('inlineFormat');
+    }
+
+    const container = document.createElement('div');
+    container.innerHTML = selectedHtml;
+
+    if (block) {
+        editor.formatter.register('blockFormat', {
+            block: 'div',
+            classes: className,
+            remove: 'none',
+        });
+    } else {
+        editor.formatter.register('inlineFormat', {
+            inline: 'span',
+            classes: className,
+            remove: 'none',
         });
     }
 
-    // cleaned content in <div> or <span> with new classes.
-    const containerTag = block ? 'div' : 'span';
-    const newContainer = document.createElement(containerTag);
-    newContainer.setAttribute('class', className);
-
-    while (wrapperDiv.firstChild) {
-        newContainer.appendChild(wrapperDiv.firstChild);
+    const newTag = block ? 'div' : 'span';
+    const newWrapper = document.createElement(newTag);
+    newWrapper.className = className;
+    while (container.firstChild) {
+        newWrapper.appendChild(container.firstChild);
     }
 
-    editor.selection.setContent(newContainer.outerHTML);
+    editor.selection.setContent(newWrapper.outerHTML);
+
 }
 
+/**
+ *
+ */
 export const getSetup = async () => {
-    // A localized string for the top-level "Styles" menu item.
-    const [menuItemStyles] = await Promise.all([
+
+    const [
+        cats,
+        buttonImage,
+        mainMenuLabel,
+    ] = await Promise.all([
+        fetchCategories(),
+        getButtonImage('icon', 'tiny_styles'),
         getString('menuitem_styles', 'tiny_styles'),
     ]);
 
+    if (!cats || cats.length === 0) {
+        debugLog('No categories returned from web service.');
+    }
+
     return (editor) => {
-        // Categories from the editor config populated by lib.php.
-        const cats = editor.options.get('tiny_styles_categories') || [];
+        debugLog('Plugin callback, editor ID=', editor.id);
 
-        // A nested menu item in the editor UI.
-        editor.ui.registry.addNestedMenuItem('tiny_styles_menuitem', {
-            text: menuItemStyles,
-            getSubmenuItems: () => {
-                const items = [];
+        editor.ui.registry.addIcon(icon, buttonImage.html);
 
-                cats.forEach(cat => {
-                    // Menu separator line.
-                    if (cat.presentation === 'divider') {
-                        items.push({ type: 'separator' });
-                    } else {
-                        // FA icon if cat.symbol is set.
-                        const catIcon = cat.symbol
-                            ? `<i class="${cat.symbol}" style="margin-right:4px;"></i>`
-                            : '';
-
-                        // Sub-items from bridging elements.
-                        let subItems = [];
-                        if (cat.elements && cat.elements.length > 0) {
-                            subItems = cat.elements.map(elem => ({
-                                type: 'menuitem',
-                                text: elem.name,
-                                onAction: () => applyBootstrapClass(editor, {
-                                    className: elem.cssclasses,
-                                    block: (elem.type === 'block')
-                                })
-                            }));
-                        }
-
-                        // A nested menu item for the cat.
-                        if (subItems.length > 0) {
-                            items.push({
-                                type: 'nestedmenuitem',
-                                text: `${catIcon}${cat.name}`,
-                                getSubmenuItems: () => subItems
-                            });
-                        } else {
-                            items.push({
-                                type: 'menuitem',
-                                text: `${catIcon}${cat.name}`,
-                                onAction: () => {}
-                            });
-                        }
-                    }
-                });
-                return items;
+        editor.ui.registry.addMenuButton('tiny_styles_button', {
+            icon: icon,
+            tooltip: mainMenuLabel,
+            fetch: (callback) => {
+                callback(buildCategoryItems(editor, cats));
             }
         });
+
+        editor.ui.registry.addNestedMenuItem('tiny_styles_nestedmenu', {
+            text: mainMenuLabel,
+            getSubmenuItems: () => buildCategoryItems(editor, cats),
+        });
+
+        debugLog('Added toolbar and menubar entries.');
     };
 };

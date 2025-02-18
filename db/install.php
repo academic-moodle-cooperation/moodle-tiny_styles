@@ -122,27 +122,27 @@ function xmldb_tiny_styles_install() {
             ],
             [
                 'name'       => 'Info Box',
-                'type'       => 'inline',
+                'type'       => 'submenu',
                 'cssclasses' => 'alert alert-info',
                 'sortorder'  => 1,
             ],[
                 'name'       => 'Warning Box',
-                'type'       => 'inline',
+                'type'       => 'submenu',
                 'cssclasses' => 'alert alert-warning',
                 'sortorder'  => 2,
             ],[
                 'name'       => 'Danger Box',
-                'type'       => 'inline',
+                'type'       => 'submenu',
                 'cssclasses' => 'alert alert-danger',
                 'sortorder'  => 3,
             ],[
                 'name'       => 'Success Box',
-                'type'       => 'inline',
+                'type'       => 'submenu',
                 'cssclasses' => 'alert alert-success',
                 'sortorder'  => 4,
             ],[
                 'name'       => 'Dark Box',
-                'type'       => 'inline',
+                'type'       => 'submenu',
                 'cssclasses' => 'alert alert-dark',
                 'sortorder'  => 5,
             ],
