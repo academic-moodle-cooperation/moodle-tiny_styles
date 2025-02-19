@@ -28,7 +28,10 @@ require_once(__DIR__ . '/../../../../../config.php');
 require_login();
 
 $context = context_system::instance();
+require_capability('moodle/site:config', $context);
+
 $PAGE->set_context($context);
+$PAGE->set_pagelayout('admin');
 
 $action = optional_param('action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
@@ -47,11 +50,10 @@ if ($action === 'edit') {
 }
 $PAGE->set_title($formtitle);
 
-// 3) Load Moodle forms library
 require_once($CFG->libdir . '/formslib.php');
 
 /**
- * Form class for creating or editing an Element (tiny_styles_elements).
+ * Form class for creating or editing an Element.
  */
 class element_form extends moodleform {
     public function definition() {
@@ -66,9 +68,9 @@ class element_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        // todo: remove the divider more efficiently by a conditional query
         $categories = $DB->get_records_menu('tiny_styles_categories', null, 'sortorder ASC', 'id,name');
 
+        // todo: remove the divider more efficiently by a conditional query
         foreach ($categories as $id => $name) {
             $presentation = $DB->get_field('tiny_styles_categories', 'presentation', ['id' => $id]);
             if ($presentation === 'divider') {
@@ -80,17 +82,21 @@ class element_form extends moodleform {
         $mform->setType('categoryid', PARAM_INT);
         $mform->addRule('categoryid', null, 'required', null, 'client');
 
-        // todo: more options?
         $typeoptions = [
             'inline' => 'Inline',
-            'submenu'  => 'Submenu',
-            'other'  => 'Other'
+            'block'  => 'Block',
         ];
         $mform->addElement('select', 'type', get_string('type', 'tiny_styles'), $typeoptions);
         $mform->setType('type', PARAM_ALPHA);
 
-        // CSS classes field
-        $mform->addElement('text', 'cssclasses', get_string('bootstrapclass', 'tiny_styles'));
+        // CSS classes
+        $elements = $DB->get_fieldset_sql("SELECT DISTINCT cssclasses FROM {tiny_styles_elements} ORDER BY sortorder ASC");
+
+        $mform->addElement(
+            'select', 'cssclasses',
+            get_string('bootstrapclass', 'tiny_styles'),
+            array_combine($elements, $elements)
+        );
         $mform->setType('cssclasses', PARAM_TEXT);
         $mform->addRule('cssclasses', null, 'required', null, 'client');
 
@@ -104,6 +110,7 @@ class element_form extends moodleform {
         $this->add_action_buttons(true, get_string('savechanges'));
     }
 
+    // todo: expand validation
     public function validation($data, $files) {
         $errors = array();
 
@@ -134,8 +141,6 @@ if ($data = $mform->get_data()) {
     $record->cssclasses = $data->cssclasses;
     $record->timemodified = time();
 
-    // todo: bridge => $data->categoryid => used for tiny_styles_cat_elements bridging.
-
     if ($data->action === 'edit' && !empty($data->id)) {
         if ($old = $DB->get_record('tiny_styles_elements', ['id' => $data->id], '*', MUST_EXIST)) {
             $record->id          = $old->id;
@@ -146,13 +151,13 @@ if ($data = $mform->get_data()) {
             $DB->update_record('tiny_styles_elements', $record);
 
             if (!empty($data->categoryid)) {
-                // todo:
+                // todo: validate
             }
 
             redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']),
                 get_string('elementupdated', 'tiny_styles'), 2);
         }
-        print_error('Invalidelementid', 'tiny_styles');
+        print_error('invalidelementid', 'tiny_styles');
 
     } else {
         // new element
@@ -179,7 +184,7 @@ if ($data = $mform->get_data()) {
     exit;
 }
 
-// load data if editing an element
+// Loading data for editing an existing element.
 if ($action === 'edit' && $id > 0) {
     if ($element = $DB->get_record('tiny_styles_elements', ['id'=>$id], '*', MUST_EXIST)) {
         $formdata = new stdClass();
@@ -198,10 +203,10 @@ if ($action === 'edit' && $id > 0) {
 
         $mform->set_data($formdata);
     } else {
-        print_error('Invalidelementid', 'tiny_styles');
+        print_error('invalidelementid', 'tiny_styles');
     }
 } else {
-    // create new style
+    // Create new style element.
     $formdata = new stdClass();
     $formdata->id = 0;
     $formdata->action = 'create';

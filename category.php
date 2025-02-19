@@ -26,12 +26,13 @@
 require_once(__DIR__ . '/../../../../../config.php');
 require_login();
 
-// todo: admin instance = context for the page?
 $context = context_system::instance();
-$PAGE->set_context($context);
-$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php'));
+require_capability('moodle/site:config', $context);
 
-// parameters for enabling the same form usage for editing existing entries
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('admin');
+
+// Parameters for editing/creating category entries.
 $action = optional_param('action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
@@ -40,7 +41,7 @@ $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php',[
     'id' => $id
 ]));
 
-// dynamic naming
+// Dynamic naming for the site.
 if ($action === 'edit') {
     $formtype = get_string('editcategory', 'tiny_styles');
 } else {
@@ -53,7 +54,7 @@ $heading = $formtype;
 require_once($CFG->libdir . '/formslib.php');
 
 /**
- * Form for creating/editing category
+ * Form for creating/editing category.
  */
 class category_form extends moodleform {
     public function definition() {
@@ -61,16 +62,14 @@ class category_form extends moodleform {
 
         $mform->addElement('header', 'generalsettings', get_string('generalsettings', 'admin'));
 
-        // name
         $mform->addElement('text', 'name', get_string('name'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        // description
         $mform->addElement('textarea', 'description', get_string('description'));
         $mform->setType('description', PARAM_TEXT);
 
-        // description displaying -> field stored in DB as "showdesc" 
+        // Description field stored in DB as "showdesc".
         $descdisplayoptions = [
             'never'    => 'Never',
             'helptext' => 'Help text',
@@ -93,11 +92,11 @@ class category_form extends moodleform {
         ];
         $mform->addElement('select', 'presentation', 'Presentation type', $presentationoptions);
 
-        // hidden $id field for edit form
+        // Hidden $id field for edit form.
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        // hidden $action field -> create or edit
+        // Hidden $action field -> create or edit.
         $mform->addElement('hidden', 'action');
         $mform->setType('action', PARAM_ALPHA);
 
@@ -124,7 +123,6 @@ if ($mform->is_cancelled()) {
     exit;
 }
 
-// handle create/update
 if ($data = $mform->get_data()) {
     global $DB;
 
@@ -151,18 +149,21 @@ if ($data = $mform->get_data()) {
         // todo: edit this
         print_error('Invalid category ID');
     } else {
-        // CREATE new category 
-        // todo: sort order logic -> needed?
+        // CREATE new category
         $record->enabled     = 1;
         $record->sortorder   = 0;
         $record->timecreated = time();
         $newid = $DB->insert_record('tiny_styles_categories', $record);
-        redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']), 'Category created!', 2);
+        redirect(new moodle_url(
+            '/admin/settings.php',
+            ['section'=>'tiny_styles_admin']),
+            get_string('category_saved', 'tiny_styles'), 2
+        );
     }
     exit;
 }
 
-// get the category from db and set row to form data
+// Get the category from db and set row to form data.
 if ($action === 'edit' && $id > 0) {
     global $DB;
     if ($category = $DB->get_record('tiny_styles_categories', ['id'=>$id], '*', MUST_EXIST)) {

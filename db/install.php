@@ -31,10 +31,10 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_tiny_styles_install() {
     global $DB;
 
-    // default categories
+    // Adding default categories.
     if (!$DB->record_exists('tiny_styles_categories', array())) {
         
-        // Label
+        // Labels.
         $cat = new stdClass();
         $cat->name         = 'Labels';
         $cat->description  = 'Design Elements directly in Text';
@@ -47,7 +47,7 @@ function xmldb_tiny_styles_install() {
         $cat->timemodified = time();
         $labelcatid = $DB->insert_record('tiny_styles_categories', $cat);
 
-        // Boxes
+        // Boxes.
         $cat = new stdClass();
         $cat->name         = 'Boxes';
         $cat->description  = 'Format paragraphs';
@@ -87,64 +87,98 @@ function xmldb_tiny_styles_install() {
         $unicatid = $DB->insert_record('tiny_styles_categories', $cat);
     }
 
-    // some default elements
+    // Default badge and alerts bootstrap elements.
     if (!$DB->record_exists('tiny_styles_elements', array())) {
         $elements = [
             [
-                'name'       => 'Gray Label',
-                'type'       => 'inline',
-                'cssclasses' => 'badge badge-secondary',
-                'sortorder'  => 1,
-            ],
-            [
                 'name'       => 'Blue Label',
                 'type'       => 'inline',
-                'cssclasses' => 'badge badge-primary',
-                'sortorder'  => 2,
+                'cssclasses' => 'badge bg-primary text-white',
+                'sortorder'  => 1,
             ],
             [
                 'name'       => 'Green Label',
                 'type'       => 'inline',
-                'cssclasses' => 'badge badge-success',
+                'cssclasses' => 'badge bg-success text-white',
+                'sortorder'  => 2,
+            ],
+            [
+                'name'       => 'Gray Label',
+                'type'       => 'inline',
+                'cssclasses' => 'badge bg-secondary text-dark',
                 'sortorder'  => 3,
             ],
             [
                 'name'       => 'Yellow Label',
                 'type'       => 'inline',
-                'cssclasses' => 'badge badge-warning',
+                'cssclasses' => 'badge bg-warning text-dark',
                 'sortorder'  => 4,
             ],
             [
                 'name'       => 'Red Label',
                 'type'       => 'inline',
-                'cssclasses' => 'badge badge-danger',
+                'cssclasses' => 'badge bg-danger text-white',
                 'sortorder'  => 5,
             ],
             [
+                'name'       => 'Info Label',
+                'type'       => 'inline',
+                'cssclasses' => 'badge bg-info text-dark',
+                'sortorder'  => 6,
+            ],[
+                'name'       => 'Dark Label',
+                'type'       => 'inline',
+                'cssclasses' => 'badge bg-dark text-white',
+                'sortorder'  => 7,
+            ],[
+                'name'       => 'Light Label',
+                'type'       => 'inline',
+                'cssclasses' => 'badge bg-light text-dark',
+                'sortorder'  => 8,
+            ],
+            [
                 'name'       => 'Info Box',
-                'type'       => 'submenu',
+                'type'       => 'block',
                 'cssclasses' => 'alert alert-info',
-                'sortorder'  => 1,
+                'sortorder'  => 9,
             ],[
-                'name'       => 'Warning Box',
-                'type'       => 'submenu',
+                'name'       => 'Yellow Box',
+                'type'       => 'block',
                 'cssclasses' => 'alert alert-warning',
-                'sortorder'  => 2,
+                'sortorder'  => 10,
             ],[
-                'name'       => 'Danger Box',
-                'type'       => 'submenu',
+                'name'       => 'Red Box',
+                'type'       => 'block',
                 'cssclasses' => 'alert alert-danger',
-                'sortorder'  => 3,
+                'sortorder'  => 11,
             ],[
-                'name'       => 'Success Box',
-                'type'       => 'submenu',
+                'name'       => 'Green Box',
+                'type'       => 'block',
                 'cssclasses' => 'alert alert-success',
-                'sortorder'  => 4,
+                'sortorder'  => 12,
             ],[
                 'name'       => 'Dark Box',
-                'type'       => 'submenu',
+                'type'       => 'block',
                 'cssclasses' => 'alert alert-dark',
-                'sortorder'  => 5,
+                'sortorder'  => 13,
+            ],
+            [
+                'name'       => 'Blue Box',
+                'type'       => 'block',
+                'cssclasses' => 'alert alert-primary',
+                'sortorder'  => 14,
+            ],
+            [
+                'name'       => 'Grey Box',
+                'type'       => 'block',
+                'cssclasses' => 'alert alert-secondary',
+                'sortorder'  => 15,
+            ],
+            [
+                'name'       => 'Light Box',
+                'type'       => 'block',
+                'cssclasses' => 'alert alert-light',
+                'sortorder'  => 16,
             ],
         ];
 
@@ -171,11 +205,17 @@ function xmldb_tiny_styles_install() {
             ['categoryid' => $labelcatid, 'elementid' => $elements[2]['id'], 'sortorder' => 3],
             ['categoryid' => $labelcatid, 'elementid' => $elements[3]['id'], 'sortorder' => 4],
             ['categoryid' => $labelcatid, 'elementid' => $elements[4]['id'], 'sortorder' => 5],
-            ['categoryid' => $boxencatid, 'elementid' => $elements[5]['id'], 'sortorder' => 1],
-            ['categoryid' => $boxencatid, 'elementid' => $elements[6]['id'], 'sortorder' => 2],
-            ['categoryid' => $boxencatid, 'elementid' => $elements[7]['id'], 'sortorder' => 3],
-            ['categoryid' => $boxencatid, 'elementid' => $elements[8]['id'], 'sortorder' => 4],
-            ['categoryid' => $boxencatid, 'elementid' => $elements[9]['id'], 'sortorder' => 5]
+            ['categoryid' => $labelcatid, 'elementid' => $elements[5]['id'], 'sortorder' => 6],
+            ['categoryid' => $labelcatid, 'elementid' => $elements[6]['id'], 'sortorder' => 7],
+            ['categoryid' => $labelcatid, 'elementid' => $elements[7]['id'], 'sortorder' => 8],
+            ['categoryid' => $boxencatid, 'elementid' => $elements[8]['id'], 'sortorder' => 1],
+            ['categoryid' => $boxencatid, 'elementid' => $elements[9]['id'], 'sortorder' => 2],
+            ['categoryid' => $boxencatid, 'elementid' => $elements[10]['id'], 'sortorder' => 3],
+            ['categoryid' => $boxencatid, 'elementid' => $elements[11]['id'], 'sortorder' => 4],
+            ['categoryid' => $boxencatid, 'elementid' => $elements[12]['id'], 'sortorder' => 5],
+            ['categoryid' => $boxencatid, 'elementid' => $elements[13]['id'], 'sortorder' => 6],
+            ['categoryid' => $boxencatid, 'elementid' => $elements[14]['id'], 'sortorder' => 7],
+            ['categoryid' => $boxencatid, 'elementid' => $elements[15]['id'], 'sortorder' => 8],
         ];
 
         foreach ($links as $data) {

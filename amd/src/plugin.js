@@ -40,11 +40,6 @@ export default new Promise(async (resolve) => {
             getCommandSetup(),
         ]);
 
-//        if (!tinyMCE || !tinyMCE.PluginManager) {
-//            console.error('TinyMCE or its PluginManager is not available.');
-//            return;
-//        }
-
         // Register the plugin
         tinyMCE.PluginManager.add(pluginName, (editor) => {
             registerOptions(editor);
@@ -55,6 +50,6 @@ export default new Promise(async (resolve) => {
         resolve([pluginName, Configuration]);
 
     } catch (error) {
-        console.error('Error initializing TinyMCE plugin:', error);
+        // console.error('Error initializing TinyMCE plugin:', error);
     }
 });

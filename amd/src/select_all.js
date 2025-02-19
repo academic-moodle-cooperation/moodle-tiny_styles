@@ -14,12 +14,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Helper method for elements.php 
+ * Helper method for elements.php
  *
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 /**
  * Helper method to select all items on page 'elements.php'

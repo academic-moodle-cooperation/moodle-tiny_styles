@@ -25,11 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// final strings
 $string['pluginname'] = 'TinyMCE-Gestaltungsvorlagen';
 $string['privacy:metadata'] = 'Font case does not store any personal data';
 
-// to be edited strings
 // Main menu item
 $string['menuitem_styles'] = 'Styles';
 $string['tiny_styles_button'] = 'Styles';
@@ -38,20 +36,12 @@ $string['tiny_styles_button'] = 'Styles';
 $string['boxes'] = 'Boxes';
 $string['labels'] = 'Labels';
 
-// styles for boxes (to be removed)
-$string['box_info'] = 'Info Box';
-$string['box_danger'] = 'Danger Box';
-$string['box_warning'] = 'Warning Box';
-
-// styles for labels (to be removed)
-$string['label_primary'] = 'Primary Label';
-$string['label_success'] = 'Success Label';
-
 // settings
 $string['tiny_styles_admin'] = 'Tiny Styles';
-$string['managecategories'] = 'Manage categories';
-$string['importdesigns'] = 'Import design templates';
-$string['exportdesigns'] = 'Export design templates';
+$string['managecategories'] = 'Manage Categories';
+$string['manageelements'] = 'Manage Elements';
+$string['createelement'] = 'Create New Element';
+$string['createcategory'] = 'Create New Category';
 
 // categories
 $string['categories'] = 'Categories';
@@ -67,6 +57,7 @@ $string['movedown'] = 'Move down';
 $string['editcategory'] = 'Edit category';
 $string['deletecategory'] = 'Delete category';
 $string['nocategories'] = 'No categories';
+$string['category_saved'] = 'Category saved';
 
 // elements
 $string['elementstitle'] = 'Category Elements';
@@ -85,9 +76,13 @@ $string['create_element'] = 'Create Element';
 $string['selectall'] = 'Select all';
 $string['details'] = 'View details';
 
+// still to be defined
 $string['elementsettings'] = 'Element settings';
 $string['back_overview'] = 'Back to overview';
 $string['editelement'] = 'Edit element';
+$string['invalidelelmentid'] = 'Invalid element ID';
 
+$string['elements_updated'] = 'Elements updated';
 $string['elementcreated'] = 'Element created';
+$string['elementupdated'] = 'Element updated';
 $string['error_nametooshort'] = 'Name is too short';

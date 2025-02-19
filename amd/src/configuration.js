@@ -21,7 +21,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {styleMenuItemName} from './common';
 import {
     addToolbarButtons,
     addMenubarItem,
@@ -36,13 +35,12 @@ import {
 const getToolbarConfiguration = (instanceConfig) => {
     let toolbar = instanceConfig.toolbar;
 
-    // todo: fix buttons to show icons
     toolbar = addToolbarButtons(toolbar, 'content', ['tiny_styles_button']);
     return toolbar;
 };
 
 /**
- * include "Styles" menu item under "Format"
+ * Add menu item under "Format"
  *
  * @param {Object} instanceConfig TinyMCE config object
  * @return {String|Array} updated menu setting
@@ -55,9 +53,8 @@ const getMenuConfiguration = (instanceConfig) => {
 };
 
 /**
- * exports a "configure" function
- * and merges changes into the existing instance config 
- * 
+ * Exports a "configure" function and merges changes to instance config
+ *
  * @param {Object} instanceConfig TinyMCE config object.
  * @return {Object} updated TinyMCE config object
  */

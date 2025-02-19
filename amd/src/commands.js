@@ -24,31 +24,24 @@
 import {getButtonImage} from 'editor_tiny/utils';
 import Ajax from 'core/ajax';
 import { get_string as getString } from 'core/str';
-import { styleMenuItemName, icon } from "./common";
-
-/**
- * Debugging
- */
-function debugLog(...args) {
-    console.log('[tiny_styles DEBUG]', ...args);
-}
+import { icon } from "./common";
 
 /**
  * Fetches categories dynamically using AJAX.
  * @returns {Promise<Array>} List of categories.
  */
 async function fetchCategories() {
-    debugLog('fetchCategories() - calling webservice tiny_styles_fetch_categories...');
+    //debugLog('fetchCategories() - calling webservice tiny_styles_fetch_categories...');
     const requests = [{
         methodname: 'tiny_styles_fetch_categories',
         args: {},
     }];
     try {
         const [data] = await Ajax.call(requests);
-        debugLog('fetchCategories - got data:', data);
+      //  debugLog('fetchCategories - got data:', data);
         return data;
     } catch (err) {
-        debugLog('fetchCategories - error:', err);
+        // debugLog('fetchCategories - error:', err);
         return [];
     }
 }
@@ -57,9 +50,10 @@ async function fetchCategories() {
  * Builds the category-based menu structure.
  * @param {Object} editor TinyMCE instance.
  * @param {Array} cats List of categories.
+ * @param {Object} icons Available icons for categories.
  * @returns {Array} Menu items.
  */
-function buildCategoryItems(editor, cats) {
+function buildCategoryItems(editor, cats, icons) {
     const items = [];
 
     cats.forEach((cat) => {
@@ -74,18 +68,25 @@ function buildCategoryItems(editor, cats) {
                     type: 'menuitem',
                     text: elem.name,
                     onAction: () => {
-                        debugLog(`Applying style for element ID=${elem.id}, name=${elem.name}`);
+                       // debugLog(`Applying style for element ID=${elem.id}, name=${elem.name}`);
                         applyStyle(editor, {
                             className: elem.cssclasses,
-                            block: (elem.type === 'submenu'),
+                            block: (elem.type === 'block'),
                         });
                     }
                 });
             });
         }
         if (subItems.length > 0) {
+            let caticon = icons.default;
+            if (cat.name === 'Labels') {
+                caticon = icons.label;
+            } else if (cat.name === 'Boxes') {
+                caticon = icons.box;
+            }
             items.push({
                 type: 'nestedmenuitem',
+                icon: caticon,
                 text: cat.name,
                 getSubmenuItems: () => subItems
             });
@@ -95,11 +96,11 @@ function buildCategoryItems(editor, cats) {
     return items;
 }
 
-/*
+/**
  * helper method for stripping the selected text
  * recursively strips everything except <a> and <img>
  *
- *
+ * @param root {HTMLDivElement} text snippet being parsed
  */
 function stripText(root) {
     if (root.nodeType === Node.ELEMENT_NODE) {
@@ -113,10 +114,10 @@ function stripText(root) {
 }
 
 /**
- * Applying a bootstrap style to the selected text
+ * Applying a bootstrap style to the selected text.
  *
- * @param editor tinyMCE editor instance
- * @param styleDef object style and bool val for the wrapping option
+ * @param editor {Object} tinyMCE editor instance
+ * @param styleDef {Object} object style and bool val for the wrapping option
  */
 function applyStyle(editor, styleDef) {
     const { className, block } = styleDef;
@@ -141,6 +142,70 @@ function applyStyle(editor, styleDef) {
 }
 
 /**
+ * Button, Icon and Menu setup for tinymce.
+ */
+export const getSetup = async () => {
+
+    const [
+        cats,
+        buttonImage,
+        labelImage,
+        boxImage,
+        defaultImage,
+        mainMenuLabel,
+    ] = await Promise.all([
+        fetchCategories(),
+        getButtonImage('icon', 'tiny_styles'),
+        getButtonImage('iconlabel', 'tiny_styles'),
+        getButtonImage('iconbox', 'tiny_styles'),
+        getButtonImage('icondefault', 'tiny_styles'),
+        getString('menuitem_styles', 'tiny_styles'),
+    ]);
+
+    // if (!cats || cats.length === 0) {
+    //    debugLog('No categories returned from web service.');
+    // }
+
+    return (editor) => {
+        // debugLog('Plugin callback, editor ID=', editor.id);
+
+        editor.ui.registry.addIcon(icon, buttonImage.html);
+        editor.ui.registry.addIcon('labelIcon', labelImage.html);
+        editor.ui.registry.addIcon('boxIcon', boxImage.html);
+        editor.ui.registry.addIcon('defaultIcon', defaultImage.html);
+
+        const icons = {
+            label: 'labelIcon',
+            box: 'boxIcon',
+            default: 'defaultIcon',
+        };
+
+        editor.ui.registry.addMenuButton('tiny_styles_button', {
+            icon: icon,
+            tooltip: mainMenuLabel,
+            fetch: (callback) => {
+                callback(buildCategoryItems(editor, cats, icons));
+            }
+        });
+
+        editor.ui.registry.addNestedMenuItem('tiny_styles_nestedmenu', {
+            icon: icon,
+            text: mainMenuLabel,
+            getSubmenuItems: () => buildCategoryItems(editor, cats, icons),
+        });
+
+        // debugLog('Added toolbar and menubar entries.');
+    };
+};
+
+/**
+ * Debugging
+ */
+//function debugLog(...args) {
+//    console.log('[tiny_styles DEBUG]', ...args);
+//}
+
+/**
  * New approach using the tiny formatter
  * @param editor
  * @param styleDef
@@ -152,7 +217,7 @@ function applyStyleTwo(editor, styleDef) {
     if (!selectedHtml.trim()) {
         return;
     }
-    // this would need a safety net
+    // this would need a check
     if (block) {
         editor.formatter.remove('blockFormat');
     } else {
@@ -184,46 +249,4 @@ function applyStyleTwo(editor, styleDef) {
     }
 
     editor.selection.setContent(newWrapper.outerHTML);
-
 }
-
-/**
- *
- */
-export const getSetup = async () => {
-
-    const [
-        cats,
-        buttonImage,
-        mainMenuLabel,
-    ] = await Promise.all([
-        fetchCategories(),
-        getButtonImage('icon', 'tiny_styles'),
-        getString('menuitem_styles', 'tiny_styles'),
-    ]);
-
-    if (!cats || cats.length === 0) {
-        debugLog('No categories returned from web service.');
-    }
-
-    return (editor) => {
-        debugLog('Plugin callback, editor ID=', editor.id);
-
-        editor.ui.registry.addIcon(icon, buttonImage.html);
-
-        editor.ui.registry.addMenuButton('tiny_styles_button', {
-            icon: icon,
-            tooltip: mainMenuLabel,
-            fetch: (callback) => {
-                callback(buildCategoryItems(editor, cats));
-            }
-        });
-
-        editor.ui.registry.addNestedMenuItem('tiny_styles_nestedmenu', {
-            text: mainMenuLabel,
-            getSubmenuItems: () => buildCategoryItems(editor, cats),
-        });
-
-        debugLog('Added toolbar and menubar entries.');
-    };
-};

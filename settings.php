@@ -22,13 +22,12 @@
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $settingspage = new admin_settingpage(
-        'tiny_styles_admin',
-        get_string('tiny_styles_admin', 'tiny_styles')
-    );
+
+    $settingspage = new admin_settingpage('tiny_styles_admin', get_string('tiny_styles_admin', 'tiny_styles'));
 
     if ($ADMIN->fulltree) {
         global $DB, $OUTPUT;
@@ -36,29 +35,44 @@ if ($hassiteconfig) {
         $records = $DB->get_records('tiny_styles_categories', null, 'sortorder ASC');
         $categorydata = [];
 
-        // todo: filtering for table link visibility
+        // Categories prepared for the template.
         foreach ($records as $cat) {
-            $categorydata[] = [
-                'name'        => $cat->name,
-                'description' => $cat->description,
-                'presentation'=> $cat->presentation,
-                'viewurl'     => '#',
-                'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-                    'catid' => $cat->id
-                ]))->out(false),
-                'moveupurl'   => '#',
-                'movedownurl' => '#',
-                'editurl'     => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-                    'action' => 'edit', 'id' => $cat->id
-                ]))->out(false),
-                'deleteurl'   => '#',
-            ];
+            // Filtering dividers out.
+            if ($cat->presentation === 'divider') {
+                $categorydata[] = [
+                    'name' => $cat->name,
+                    'description' => $cat->description,
+                    'presentation' => $cat->presentation,
+                    'viewurl' => '#',
+                    'elementsurl' => '#',
+                    'moveupurl' => '#',
+                    'movedownurl' => '#',
+                    'editurl' => '#',
+                    'deleteurl' => '#',
+                ];
+            } else {
+                $categorydata[] = [
+                    'name' => $cat->name,
+                    'description' => $cat->description,
+                    'presentation' => $cat->presentation,
+                    'viewurl' => '#',
+                    'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+                        'catid' => $cat->id
+                    ]))->out(false),
+                    'moveupurl' => '#',
+                    'movedownurl' => '#',
+                    'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
+                        'action' => 'edit', 'id' => $cat->id
+                    ]))->out(false),
+                    'deleteurl' => '#',
+                ];
+            }
         }
 
-        // to create a new category
+        // New category link.
         $createcaturl = new moodle_url('/lib/editor/tiny/plugins/styles/category.php', ['action'=>'create']);
 
-        // mustache
+        // Template for mustache.
         $templatecontext = [
             'categories'     => $categorydata,
             'createcaturl'   => $createcaturl->out(false),
@@ -72,6 +86,5 @@ if ($hassiteconfig) {
 
         $settingspage->add(new admin_setting_heading('tiny_styles_categorieslist', '', $headingcontent));
     }
-
     $ADMIN->add('editortiny', $settingspage);
 }

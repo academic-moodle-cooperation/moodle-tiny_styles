@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * fetching categories for the editor
+ * Methods for fetching categories from the DB to the editor.
  *
  * @category    database
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
@@ -38,16 +38,24 @@ use context_system;
 
 class fetch_categories extends external_api {
 
+    /**
+     * Returns the external function parameters required by execute().
+     * Additional parameters can be defined later.
+     *
+     * @return external_function_parameters
+     */
     public static function execute_parameters() {
-        return new external_function_parameters([
-            // no inputs needed?
-        ]);
+        return new external_function_parameters([]);
     }
 
+    /**
+     * Fetches and returns all enabled categories and associated elements.
+     *
+     * @return array Nested array of categories with associated elements
+     */
     public static function execute() {
         global $DB;
 
-        // todo: what here?
         $context = context_system::instance();
         self::validate_context($context);
 

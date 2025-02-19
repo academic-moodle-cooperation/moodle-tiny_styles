@@ -26,26 +26,29 @@
 require_once(__DIR__ . '/../../../../../config.php');
 require_login();
 
-//todo: admin instance
 $context = context_system::instance();
+require_capability('moodle/site:config', $context);
 $PAGE->set_context($context);
+$PAGE->set_pagelayout('admin');
 
-// category id for bridging table query.
+// Category id for bridging table query.
 $catid = required_param('catid', PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $catid]));
 $PAGE->set_title(get_string('elementstitle', 'tiny_styles'));
 
-// helper method for selecting all checkboxes
+// Helper method for selecting all checkboxes.
 $PAGE->requires->js_call_amd('tiny_styles/select_all', 'init');
 
-
-// TODO: any changes or ordering
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    redirect(new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']), 'Elements updated.', 2);
+    redirect(
+        new moodle_url('/admin/settings.php',
+        ['section' => 'tiny_styles_admin']),
+        get_string('elements_updated', 'tiny_styles'), 2
+    );
 }
 
-global $DB;
+global $DB, $OUTPUT;
 $sql = "SELECT e.* 
           FROM {tiny_styles_elements} e
           JOIN {tiny_styles_cat_elements} ce ON ce.elementid = e.id
@@ -55,7 +58,7 @@ $params = ['catid' => $catid];
 
 $records = $DB->get_records_sql($sql, $params);
 
-// array for mustache
+// Array of elements for mustache template.
 $elements = [];
 foreach ($records as $r) {
     $elements[] = [
@@ -67,24 +70,21 @@ foreach ($records as $r) {
         'viewdetailsurl' => '#',
         'moveupurl'      => '#',
         'movedownurl'    => '#',
-        'editurl'        => new moodle_url('/lib/editor/tiny/plugins/styles/element.php', [
+        'editurl'        => (new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', [
             'action' => 'edit',
-            'id'     => $r->id
-        ]),
+            'id'     => $r->id,
+            'catid' => $catid,
+        ]))->out(false),
 
         'deleteurl'      => '#',
     ];
 }
 
-// mustache context
 $templatecontext = [
     'heading'           => get_string('elementsheading', 'tiny_styles'),
     'navigateback'      => get_string('back_overview', 'tiny_styles'),
     'createbuttonlabel' => get_string('create_element', 'tiny_styles'),
-    
-    // TODO: element creation page
     'createelementurl'  => (new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', ['catid' => $catid]))->out(false),
-    
     'submiturl'         => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $catid]))->out(false),
     'elements'          => $elements,
 ];
