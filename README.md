@@ -1,10 +1,18 @@
-# TinyMCE-Gestaltungsvorlagen #
+# TinyMCE-Gestaltungsvorlagen - Tiny Styles 
 
-#### Tiny styles plugin to enable css bootstrap styling for the TinyMCE text editor.
+#### A plugin for the TinyMCE text editor to enable bootstrap styling.
 
-User can select a bootstrap style for their selected text from the format tab menu, or from the toolbar menu.
+Gives **User** the ability to select text in the editor and add a bootstrap style of their choosing from the format tab menu, or alternatively from the toolbar menu *(FA-Droplet Icon)*. 
 
-Admin sites enable new category and element creation for new style options. 
+Default style options are
+- Boxes (bootstrap class: 'alert')
+- Labels (bootstrap class: 'badge')
+- ~Uni-Vorlagen~ *(currently not implemented)* 
+
+Admin/Settings site enables the creation for new categories and style options.
+- Currently the icon selection feature is not enabled. The program will add a default icon for any created category.  
+- Uni-Vorlagen category is hidden from the editor side due to not being implemented yet.
+
 
 ## Current version ##
 
@@ -19,7 +27,7 @@ Categories, Elements, and a bridging table for category elements
 For a detailed structure see: 
 [Database details](Documentation/database.md)
 
-**Next:** A new table for svg icons for user to select from and the tinyMCE editor to use. 
+***Possible expansion:** A new table for svg icons for user to select from and the tinyMCE editor to use.*
 
 -----
 
@@ -27,7 +35,7 @@ For a detailed structure see:
 
 **Fully implemented:**
 
-- none
+- 
 
 **Functional, but missing features:**
 
@@ -38,32 +46,44 @@ For a detailed structure see:
 - Create element
 - Edit element
 
-**Missing features from admin**
+   **Missing features:**
 
-- Up/Down buttons
-- Delete button
-- Styles dropdown menu
-- Icon selection (category)
-- View style preview
-- Visible / Hidden
-- Selected elements options dropdown and actions
+  - Up/Down buttons
+  - Delete button
+  - Icon selection (category)
+  - View style preview
+  - Visible / Hidden category
+  - Selected elements dropdown menu actions
+  - Import & Export
 
-- *all admin pages need to be changed to admin settings context*
-
-~~**To be implemented:**~~
 
 ------
 ### Editor ###
 
-Functional, requires changes:
+Functional, but requires changes
  
-- missing icons
+Currently user has to clear formatting manually from the menu, before applying a new style due to the text selection logic of TinyMCE
 
-***Note:*** currently user has to clear formatting before applying a new style due to the text selection logic of TinyMCE
-
-***Fix suggestion (for later):*** manually take steps up in the text selection to expand 'view area' for selected text, then remove styling
+***Possible fix:*** 
+- Taking steps up in the text selection to expand 'view area' for selected text, then removing styling. 
+- Alternatively a solution could be modifying the TinyMCE built-in method:
+    
+   ```
+   editor.Formatter()
+   ```    
 
 -----
+
+
+
+Default installing options
+------
+
+Make sure you set up the plugin under 
+
+```
+    {your/moodle/dirroot}/lib/editor/tiny/plugins/styles
+```
 
 
 #### Installing via uploaded ZIP file ####
@@ -91,7 +111,7 @@ to complete the installation from the command line.
 
 ## License ##
 
-2024 Karri Pajarinen <pajarinenk66@univie.ac.at>
+Creator: 2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
