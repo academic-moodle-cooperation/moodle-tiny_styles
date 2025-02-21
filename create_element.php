@@ -95,14 +95,29 @@ class element_form extends moodleform {
 
         // CSS classes
         $elements = $DB->get_fieldset_sql("SELECT DISTINCT cssclasses FROM {tiny_styles_elements} ORDER BY sortorder ASC");
+        $elements[] = 'Manual style sheet';
+        $cssoptions = array_combine($elements, $elements);
 
         $mform->addElement(
             'select', 'cssclasses',
             get_string('bootstrapclass', 'tiny_styles'),
-            array_combine($elements, $elements)
+            $cssoptions
         );
         $mform->setType('cssclasses', PARAM_TEXT);
         $mform->addRule('cssclasses', null, 'required', null, 'client');
+
+        $mform->addElement(
+            'text',
+            'manualconfig',
+            get_string('manualconfig', 'tiny_styles')
+        );
+        $mform->setType('manualconfig', PARAM_RAW);
+        $mform->setDefault('manualconfig', '');
+
+        // Manual configuration hidden unless "Manual style sheet" selected.
+        $mform->hideIf('manualconfig', 'cssclasses', 'neq', 'Manual style sheet');
+
+        $mform->addRule('manualconfig', null, 'required', null, 'client');
 
         // Hidden fields
         $mform->addElement('hidden', 'id');

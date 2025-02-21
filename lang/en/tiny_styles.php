@@ -75,6 +75,7 @@ $string['type'] = 'Type';
 $string['create_element'] = 'Create Element';
 $string['selectall'] = 'Select all';
 $string['details'] = 'View details';
+$string['manualconfig'] = 'Manual configuration';
 
 // still to be defined
 $string['elementsettings'] = 'Element settings';
