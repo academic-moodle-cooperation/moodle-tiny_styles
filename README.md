@@ -9,13 +9,11 @@ Default style options are
 - Labels (bootstrap class: 'badge')
 - ~Uni-Vorlagen~ *(currently not implemented)* 
 
-Admin/Settings site enables the creation for new categories and style options.
+Admin/Settings site enables the creation for new categories and style options, and the ability to edit existing categories and styles.
 - Currently the icon selection feature is not enabled. The program will add a default icon for any created category.  
 - Uni-Vorlagen category is hidden from the editor side due to not being implemented yet.
 
-
 ## Current version ##
-
 
 ### Database ###
 
@@ -71,15 +69,30 @@ Currently user has to clear formatting manually from the menu, before applying a
    ```
    editor.Formatter()
    ```    
+---
+### Next planned updates: ###
+
+**Admin:**
+- Single action buttons (up, down, delete, preview)
+- Icon selection for category
+- Bulk actions for elements
+
+**Editor:**
+- Text wrapping logic improvements
+- Dynamically loaded icons
+- Preview for styles
+
+**General improvements:**
+- Refactoring
+- Code efficiency optimization
+- Dynamic style choosing on element creation page
 
 -----
 
 
+## Default installing options
 
-Default installing options
-------
-
-Make sure you set up the plugin under 
+Make sure to set up the plugin under: 
 
 ```
     {your/moodle/dirroot}/lib/editor/tiny/plugins/styles
