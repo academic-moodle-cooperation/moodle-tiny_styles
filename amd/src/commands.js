@@ -100,7 +100,7 @@ function buildCategoryItems(editor, cats, icons) {
  * helper method for stripping the selected text
  * recursively strips everything except <a> and <img>
  *
- * @param root {HTMLDivElement} text snippet being parsed
+ * @param {HTMLDivElement} root text snippet being parsed
  */
 function stripText(root) {
     if (root.nodeType === Node.ELEMENT_NODE) {
@@ -116,8 +116,8 @@ function stripText(root) {
 /**
  * Applying a bootstrap style to the selected text.
  *
- * @param editor {Object} tinyMCE editor instance
- * @param styleDef {Object} object style and bool val for the wrapping option
+ * @param {Object} editor tinyMCE editor instance
+ * @param {Object} styleDef object style and bool val for the wrapping option
  */
 function applyStyle(editor, styleDef) {
     const { className, block } = styleDef;

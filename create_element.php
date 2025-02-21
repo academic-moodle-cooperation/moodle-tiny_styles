@@ -35,12 +35,12 @@ $PAGE->set_pagelayout('admin');
 
 $action = optional_param('action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
-$catid = optional_param('catid', 0, PARAM_INT);
+$catid = required_param('catid', PARAM_INT);
 
-$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/element.php', [
+$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', [
     'action' => $action,
     'id'     => $id,
-    'catid'  => $catid
+    'catid'  => $catid,
 ]));
 
 if ($action === 'edit') {
@@ -59,6 +59,7 @@ class element_form extends moodleform {
     public function definition() {
         global $DB;
         $mform = $this->_form;
+
 
         // Header
         $mform->addElement('header', 'elementsettings', get_string('elementsettings', 'tiny_styles'));
@@ -80,8 +81,11 @@ class element_form extends moodleform {
 
         $mform->addElement('select', 'categoryid', 'Category', $categories);
         $mform->setType('categoryid', PARAM_INT);
+        $mform->setDefault('categoryid', 'catid');
         $mform->addRule('categoryid', null, 'required', null, 'client');
 
+        // todo: dynamically set based on style selected
+        // ->to avoid accidental styling errors (inline styling for a box vice versa)
         $typeoptions = [
             'inline' => 'Inline',
             'block'  => 'Block',
@@ -107,6 +111,9 @@ class element_form extends moodleform {
         $mform->addElement('hidden', 'action');
         $mform->setType('action', PARAM_ALPHA);
 
+        $mform->addElement('hidden', 'catid');
+        $mform->setType('catid', PARAM_INT);
+
         $this->add_action_buttons(true, get_string('savechanges'));
     }
 
@@ -121,14 +128,15 @@ class element_form extends moodleform {
     }
 }
 
-$mform = new element_form(null, []);
+$mform = new element_form(null);
 
-if($catid) {
-    $mform->set_data(['categoryid' => $catid]);
-}
-
+// todo: redirect back to category and not the main page
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']));
+    redirect(new moodle_url(
+        '/admin/settings.php',
+        ['section'=>'tiny_styles_admin']),
+        get_string('elementcancel', 'tiny_styles'), 2
+    );
     exit;
 }
 
@@ -154,19 +162,19 @@ if ($data = $mform->get_data()) {
                 // todo: validate
             }
 
-            redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']),
-                get_string('elementupdated', 'tiny_styles'), 2);
+            redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $data->categoryid])
+            )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
         }
         print_error('invalidelementid', 'tiny_styles');
 
     } else {
-        // new element
-        $record->enabled     = 1; // default
-        $record->sortorder   = 0; // or some logic
+        // New element addition, default enabled, sort order: new elements on top.
+        $record->enabled     = 1;
+        $record->sortorder   = 0;
         $record->timecreated = time();
         $elemid = $DB->insert_record('tiny_styles_elements', $record);
 
-        // bridging table
+        // Bridging table logic.
         if (!empty($data->categoryid)) {
             $link = new stdClass();
             $link->categoryid   = $data->categoryid;
@@ -178,8 +186,8 @@ if ($data = $mform->get_data()) {
             $DB->insert_record('tiny_styles_cat_elements', $link);
         }
 
-        redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']),
-            get_string('elementcreated', 'tiny_styles'), 2);
+        redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $data->categoryid])
+        )->out(false), get_string('elementcreated', 'tiny_styles'), 2);
     }
     exit;
 }
@@ -210,7 +218,7 @@ if ($action === 'edit' && $id > 0) {
     $formdata = new stdClass();
     $formdata->id = 0;
     $formdata->action = 'create';
-    $formdata->categoryid = 0;
+    $formdata->categoryid = $catid;
     $mform->set_data($formdata);
 }
 

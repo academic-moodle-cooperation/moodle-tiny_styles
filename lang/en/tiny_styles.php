@@ -86,3 +86,4 @@ $string['elements_updated'] = 'Elements updated';
 $string['elementcreated'] = 'Element created';
 $string['elementupdated'] = 'Element updated';
 $string['error_nametooshort'] = 'Name is too short';
+$string['elementcancel'] = 'Style form cancelled';
