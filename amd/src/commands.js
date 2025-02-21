@@ -104,11 +104,11 @@ function buildCategoryItems(editor, cats, icons) {
  */
 function stripText(root) {
     if (root.nodeType === Node.ELEMENT_NODE) {
-        const tag = root.tagName.toLowerCase();
-        if (tag !== 'a' && tag !== 'img') {
+        //const tag = root.tagName.toLowerCase();
+        //if (tag !== 'a' && tag !== 'img') {
             root.removeAttribute('class');
-        }
-        root.removeAttribute('style');
+        //}
+        //root.removeAttribute('style');
         Array.from(root.childNodes).forEach(stripText);
     }
 }
