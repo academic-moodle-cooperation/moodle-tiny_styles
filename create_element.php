@@ -117,7 +117,8 @@ class element_form extends moodleform {
         // Manual configuration hidden unless "Manual style sheet" selected.
         $mform->hideIf('manualconfig', 'cssclasses', 'neq', 'Manual style sheet');
 
-        $mform->addRule('manualconfig', null, 'required', null, 'client');
+        $mform->setDefault('manualconfig', get_string('manualdefault', 'tiny_styles'));
+        // $mform->addRule('manualconfig', null, 'required', null, 'client');
 
         // Hidden fields
         $mform->addElement('hidden', 'id');
@@ -159,7 +160,11 @@ if ($data = $mform->get_data()) {
     global $DB;
     $record = new stdClass();
 
-    if($data->csslasses = 'Manual style sheet') {
+    if (!isset($data->manualconfig)) {
+        $data->manualconfig = '';
+    }
+
+    if($data->cssclasses == 'Manual style sheet') {
         $record->cssclasses = $data->manualconfig;
         $record->custom = 1;
     } else {
@@ -190,7 +195,8 @@ if ($data = $mform->get_data()) {
         print_error('invalidelementid', 'tiny_styles');
 
     } else {
-        // New element addition, default enabled, sort order: new elements on top.
+        // New element addition.
+        // todo: sort order definig -> sequence in DB?
         $record->enabled     = 1;
         $record->sortorder   = 0;
         $record->timecreated = time();
@@ -247,6 +253,7 @@ if ($action === 'edit' && $id > 0) {
     $formdata->id = 0;
     $formdata->action = 'create';
     $formdata->categoryid = $catid;
+    $formdata->cssclasses = '';
     $mform->set_data($formdata);
 }
 
