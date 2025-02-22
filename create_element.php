@@ -157,11 +157,18 @@ if ($mform->is_cancelled()) {
 
 if ($data = $mform->get_data()) {
     global $DB;
-
     $record = new stdClass();
+
+    if($data->csslasses = 'Manual style sheet') {
+        $record->cssclasses = $data->manualconfig;
+        $record->custom = 1;
+    } else {
+        $record->cssclasses = $data->cssclasses;
+        $record->custom = 0;
+    }
+
     $record->name       = $data->name;
     $record->type       = $data->type;
-    $record->cssclasses = $data->cssclasses;
     $record->timemodified = time();
 
     if ($data->action === 'edit' && !empty($data->id)) {
@@ -215,7 +222,13 @@ if ($action === 'edit' && $id > 0) {
         $formdata->action      = 'edit';
         $formdata->name        = $element->name;
         $formdata->type        = $element->type;
-        $formdata->cssclasses  = $element->cssclasses;
+
+        if ($element->custom === '1') {
+            $formdata->cssclasses = 'Manual style sheet';
+            $formdata->manualconfig = $element->cssclasses;
+        } else {
+            $formdata->cssclasses  = $element->cssclasses;
+        }
 
         $catlink = $DB->get_record('tiny_styles_cat_elements', ['elementid' => $element->id], '*', IGNORE_MULTIPLE);
         if ($catlink) {

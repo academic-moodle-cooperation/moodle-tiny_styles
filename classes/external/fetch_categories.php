@@ -60,7 +60,7 @@ class fetch_categories extends external_api {
         self::validate_context($context);
 
         $sql = "SELECT c.id, c.name, c.symbol, c.presentation,
-            e.id AS elemid, e.name AS elemname, e.type, e.cssclasses
+            e.id AS elemid, e.name AS elemname, e.type, e.cssclasses, e.custom
         FROM {tiny_styles_categories} c
         LEFT JOIN {tiny_styles_cat_elements} ce ON ce.categoryid = c.id
         LEFT JOIN {tiny_styles_elements} e ON e.id = ce.elementid
@@ -86,6 +86,7 @@ class fetch_categories extends external_api {
                     'name'       => $r->elemname,
                     'type'       => $r->type,
                     'cssclasses' => $r->cssclasses,
+                    'custom'     => $r->custom,
                 ];
             }
         }
@@ -101,13 +102,14 @@ class fetch_categories extends external_api {
                 'id'           => new external_value(PARAM_INT, 'Category ID'),
                 'name'         => new external_value(PARAM_TEXT, 'Category name'),
                 'symbol'       => new external_value(PARAM_RAW,  'Optional FA symbol', VALUE_OPTIONAL),
-                'presentation' => new external_value(PARAM_TEXT, 'divider/submenu/inline/whatever'),
+                'presentation' => new external_value(PARAM_TEXT, 'divider/submenu/inline/'),
                 'elements'     => new external_multiple_structure(
                     new external_single_structure([
                         'id'         => new external_value(PARAM_INT, 'Element ID'),
                         'name'       => new external_value(PARAM_TEXT, 'Element name'),
                         'type'       => new external_value(PARAM_TEXT, 'inline/block'),
                         'cssclasses' => new external_value(PARAM_RAW,  'e.g. "alert alert-info"'),
+                        'custom'     => new external_value(PARAM_INT , 'Custom CSS class boolean'),
                     ]),
                     'list of bridging elements',
                     VALUE_OPTIONAL

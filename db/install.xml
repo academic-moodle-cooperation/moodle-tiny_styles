@@ -34,6 +34,7 @@
                 <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="inline" SEQUENCE="false" COMMENT="inline/block/other"/>
                 <FIELD NAME="cssclasses" TYPE="char" LENGTH="1024" NOTNULL="true" SEQUENCE="false" COMMENT="CSS classes e.g. 'badge badge-success'"/>
                 <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Global on/off"/>
+                <FIELD NAME="custom" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Indicates if a manually created custom style"/>
                 <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>

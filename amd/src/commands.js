@@ -72,6 +72,8 @@ function buildCategoryItems(editor, cats, icons) {
                         applyStyle(editor, {
                             className: elem.cssclasses,
                             block: (elem.type === 'block'),
+                            custom: (elem.custom === 1),
+                            id: elem.name,
                         });
                     }
                 });
@@ -120,7 +122,7 @@ function stripText(root) {
  * @param {Object} styleDef object style and bool val for the wrapping option
  */
 function applyStyle(editor, styleDef) {
-    const { className, block } = styleDef;
+    const { className, block, custom, id } = styleDef;
 
     const selectedHtml = editor.selection.getContent({ format: 'html' });
     if (!selectedHtml.trim()) {
@@ -133,13 +135,21 @@ function applyStyle(editor, styleDef) {
 
     const newTag = block ? 'div' : 'span';
     const newWrapper = document.createElement(newTag);
-    newWrapper.className = className;
+
+    if (custom){
+        newWrapper.style.cssText = className;
+        newWrapper.setAttribute('style_name', id || 'custom-style');
+    } else {
+        newWrapper.className = className;
+    }
     while (container.firstChild) {
         newWrapper.appendChild(container.firstChild);
     }
-
     editor.selection.setContent(newWrapper.outerHTML);
+    //todo: editor selection stop applying style
 }
+
+// todo: add js code to check for manual styling changes
 
 /**
  * Button, Icon and Menu setup for tinymce.
