@@ -62,10 +62,15 @@ class element_form extends moodleform {
 
 
         // Header
-        $mform->addElement('header', 'elementsettings', get_string('elementsettings', 'tiny_styles'));
+        //$mform->addElement('header', 'elementsettings', get_string('elementsettings', 'tiny_styles'));
 
         // Name
-        $mform->addElement('text', 'name', get_string('name'));
+        $mform->addElement(
+            'text',
+            'name',
+            get_string('name'),
+            ['size' => 50, 'style' => 'width: 400px;']
+        );
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
@@ -79,7 +84,13 @@ class element_form extends moodleform {
             }
         }
 
-        $mform->addElement('select', 'categoryid', 'Category', $categories);
+        $mform->addElement(
+            'select',
+            'categoryid',
+            'Category',
+            $categories,
+            ['size' => 1, 'style' => 'width: 400px;']
+        );
         $mform->setType('categoryid', PARAM_INT);
         $mform->setDefault('categoryid', 'catid');
         $mform->addRule('categoryid', null, 'required', null, 'client');
@@ -90,7 +101,12 @@ class element_form extends moodleform {
             'inline' => 'Inline',
             'block'  => 'Block',
         ];
-        $mform->addElement('select', 'type', get_string('type', 'tiny_styles'), $typeoptions);
+        $mform->addElement(
+            'select', 'type',
+            get_string('type', 'tiny_styles'),
+            $typeoptions,
+            ['size' => 1, 'style' => 'width: 400px;']
+        );
         $mform->setType('type', PARAM_ALPHA);
 
         // CSS classes
@@ -101,15 +117,22 @@ class element_form extends moodleform {
         $mform->addElement(
             'select', 'cssclasses',
             get_string('bootstrapclass', 'tiny_styles'),
-            $cssoptions
+            $cssoptions,
+            ['size' => 1, 'style' => 'width: 400px;']
         );
         $mform->setType('cssclasses', PARAM_TEXT);
         $mform->addRule('cssclasses', null, 'required', null, 'client');
 
         $mform->addElement(
-            'text',
+            'textarea',
             'manualconfig',
-            get_string('manualconfig', 'tiny_styles')
+            get_string('manualconfig', 'tiny_styles'),
+            [
+                'wrap' => 'virtual',
+                'rows' => 7,
+                'cols' => 30,
+                'style' => 'width: 400px;',
+            ]
         );
         $mform->setType('manualconfig', PARAM_RAW);
         $mform->setDefault('manualconfig', '');

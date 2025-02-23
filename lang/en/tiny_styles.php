@@ -58,6 +58,7 @@ $string['editcategory'] = 'Edit category';
 $string['deletecategory'] = 'Delete category';
 $string['nocategories'] = 'No categories';
 $string['category_saved'] = 'Category saved';
+$string['presentationhdr'] = 'Presentation of Category';
 
 // elements
 $string['elementstitle'] = 'Category Elements';

@@ -62,11 +62,26 @@ class category_form extends moodleform {
 
         $mform->addElement('header', 'generalsettings', get_string('generalsettings', 'admin'));
 
-        $mform->addElement('text', 'name', get_string('name'));
+        $mform->addElement(
+            'text',
+            'name',
+            get_string('name'),
+            ['size' => 1, 'style' => 'width: 400px;']
+        );
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('textarea', 'description', get_string('description'));
+        $mform->addElement(
+            'textarea',
+            'description',
+            get_string('description'),
+            [
+                'wrap' => 'virtual',
+                'rows' => 4,
+                'cols' => 30,
+                'style' => 'width: 400px;',
+            ]
+        );
         $mform->setType('description', PARAM_TEXT);
 
         // Description field stored in DB as "showdesc".
@@ -75,13 +90,24 @@ class category_form extends moodleform {
             'helptext' => 'Help text',
             'tooltip'  => 'Tooltip'
         ];
-        $mform->addElement('select', 'showdesc', 'Description display', $descdisplayoptions);
+        $mform->addElement(
+            'select',
+            'showdesc',
+            'Description display',
+            $descdisplayoptions,
+            ['size' => 1, 'style' => 'width: 300px;']
+        );
 
-        $mform->addElement('header', 'presentationhdr', 'Presentation of the Category');
+        $mform->addElement('header', 'presentationhdr', get_string('presentationhdr','tiny_styles'));
 
         // FA-symbol
         // todo: symbol selection dropdown
-        $mform->addElement('text', 'symbol', 'Symbol');
+        $mform->addElement(
+            'text',
+            'symbol',
+            'Symbol',
+            ['size' => 1, 'style' => 'width: 300px;']
+        );
         $mform->setType('symbol', PARAM_TEXT);
 
         // todo: langstrings for presentation type
@@ -90,7 +116,13 @@ class category_form extends moodleform {
             'inline'  => 'Inline',
             'divider' => 'Divider'
         ];
-        $mform->addElement('select', 'presentation', 'Presentation type', $presentationoptions);
+        $mform->addElement(
+            'select',
+            'presentation',
+            'Presentation type',
+            $presentationoptions,
+            ['size' => 1, 'style' => 'width: 300px;']
+        );
 
         // Hidden $id field for edit form.
         $mform->addElement('hidden', 'id');
