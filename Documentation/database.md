@@ -27,6 +27,7 @@
 | `type`       | `char(20) NOT NULL` | Defines if it’s "inline", "block", etc.        |
 | `cssclasses` | `char(255) NOT NULL` | The CSS classes to apply (e.g., "badge badge-success"). |
 | `enabled`    | `int(1) NOT NULL`  | `1` = globally active; `0` = globally hidden.   |
+| `custom`    | `int(1) NOT NULL`  | `1` =  custom class; `0` = bootstrap class   |
 | `sortorder`  | `int(10) NOT NULL` | Default sort order or fallback.                 |
 | `timecreated` | `int(10) NOT NULL` | Creation timestamp.                            |
 | `timemodified` | `int(10) NOT NULL` | Last update timestamp.                         |
