@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,17 +14,27 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Helper method for elements.php
  *
- * @package     tiny_styles
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Helper method to select all items on page 'elements.php'
+ */
+define(['jquery'], function($) {
+    return {
+        init: function() {
+            $(document).ready(function() {
+                var selectAllCheckbox = $('#select-all');
+                var checkboxes = $('input[name="selected_elements[]"]');
 
-$plugin->component = 'tiny_styles';
-$plugin->release = 'v4.5.0-r1';
-$plugin->version = 2025022202;
-$plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_BETA;
+                selectAllCheckbox.on('change', function() {
+                    var isChecked = $(this).prop('checked');
+                    checkboxes.prop('checked', isChecked);
+                });
+            });
+        }
+    };
+});

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="lib/editor/tiny/plugins/styles/db" VERSION="2025020204"
+       COMMENT="Database schema for the Tiny Styles plugin"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd">
+
+    <TABLES>
+
+        <!-- 1) Categories table -->
+        <TABLE NAME="tiny_styles_categories" COMMENT="Tiny Styles Categories of styles">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="30" NOTNULL="true"  SEQUENCE="false" COMMENT="Category name"/>
+                <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Full text description of the category"/>
+                <FIELD NAME="showdesc" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="never" SEQUENCE="false" COMMENT="never/helptext/tooltip"/>
+                <FIELD NAME="symbol" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" COMMENT="Optional FA icon e.g. 'fa fa-bolt'"/>
+                <FIELD NAME="presentation" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="submenu" SEQUENCE="false" COMMENT="submenu/inline/divider"/>
+                <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+                <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+
+        <!-- 2) Elements table -->
+        <TABLE NAME="tiny_styles_elements" COMMENT="Tiny Styles Definition of each style element">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="Element name"/>
+                <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="inline" SEQUENCE="false" COMMENT="inline/block/other"/>
+                <FIELD NAME="cssclasses" TYPE="char" LENGTH="1024" NOTNULL="true" SEQUENCE="false" COMMENT="CSS classes e.g. 'badge badge-success'"/>
+                <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Global on/off"/>
+                <FIELD NAME="custom" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Indicates if a manually created custom style"/>
+                <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+
+        <!-- 3) Cat-Elements bridging table (many-to-many link/bridge) -->
+        <TABLE NAME="tiny_styles_cat_elements" COMMENT="Many-to-many linking categories to elements">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="elementid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="enable element within this category"/>
+                <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="catidx" TYPE="foreign" FIELDS="categoryid" REFTABLE="tiny_styles_categories" REFFIELDS="id"/>
+                <KEY NAME="elemidx" TYPE="foreign" FIELDS="elementid" REFTABLE="tiny_styles_elements" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+    </TABLES>
+</XMLDB>

@@ -24,28 +24,24 @@
 import {getPluginOptionName} from 'editor_tiny/options';
 import {pluginName} from './common';
 
-// Helper variables for the option names.
-const propertyName = getPluginOptionName(pluginName, 'property');
+
+const myStylesPropertyName = getPluginOptionName(pluginName, 'myStylesProperty');
 
 /**
- * Options registration function.
+ * Register the plugin-specific options with TinyMCE.
  *
- * @param {tinyMCE} editor
+ * @param {TinyMCE.editor} editor
  */
 export const register = (editor) => {
-    const registerOption = editor.options.register;
-
-    // For each option, register it with the editor.
-    // Valid type are defined in https://www.tiny.cloud/docs/tinymce/6/apis/tinymce.editoroptions/
-    registerOption(propertyName, {
+    editor.options.register(myStylesPropertyName, {
         processor: 'string',
     });
 };
 
 /**
- * Fetch the property value for this editor instance.
+ * Retrieve the value (if needed) from the editor instance.
  *
- * @param {tinyMCE} editor The editor instance to fetch the value for
- * @returns {object} The value of the property option
+ * @param {TinyMCE.editor} editor
+ * @returns {string} The current value of myStylesProperty (if set)
  */
-export const getProperty = (editor) => editor.options.get(propertyName);
+export const getMyStylesProperty = (editor) => editor.options.get(myStylesPropertyName);

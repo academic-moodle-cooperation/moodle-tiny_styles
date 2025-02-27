@@ -26,3 +26,67 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'TinyMCE-Gestaltungsvorlagen';
+$string['privacy:metadata'] = 'Font case does not store any personal data';
+
+// Main menu item
+$string['menuitem_styles'] = 'Styles';
+$string['tiny_styles_button'] = 'Styles';
+
+// Toolbar button tooltips or text
+$string['boxes'] = 'Boxes';
+$string['labels'] = 'Labels';
+
+// settings
+$string['tiny_styles_admin'] = 'Tiny Styles';
+$string['managecategories'] = 'Manage Categories';
+$string['manageelements'] = 'Manage Elements';
+$string['createelement'] = 'Create New Element';
+$string['createcategory'] = 'Create New Category';
+
+// categories
+$string['categories'] = 'Categories';
+$string['createcategory'] = 'Create category';
+$string['name'] = 'Name';
+$string['description'] = 'Description   ';
+$string['presentation'] = 'Presentation';
+$string['actions'] = 'Actions';
+$string['view'] = 'View';
+$string['elements'] = 'Edit elements';
+$string['moveup'] = 'Move up';
+$string['movedown'] = 'Move down';
+$string['editcategory'] = 'Edit category';
+$string['deletecategory'] = 'Delete category';
+$string['nocategories'] = 'No categories';
+$string['category_saved'] = 'Category saved';
+$string['presentationhdr'] = 'Presentation of Category';
+
+// elements
+$string['elementstitle'] = 'Category Elements';
+$string['elementsheading'] = 'Elements';
+$string['type'] = 'Type';
+$string['bootstrapclass'] = 'Bootstrap Class / CSS Style';
+$string['edit'] = 'Edit';
+$string['delete'] = 'Delete';
+$string['noelements'] = 'No elements found.';
+$string['no_selection'] = 'No selection';
+$string['category'] = 'Category';
+
+$string['submit'] = 'Submit';
+$string['type'] = 'Type';
+$string['create_element'] = 'Create Element';
+$string['selectall'] = 'Select all';
+$string['details'] = 'View details';
+$string['manualconfig'] = 'Manual configuration';
+$string['manualdefault'] = 'Make sure to enter a valid css';
+
+// still to be defined
+$string['elementsettings'] = 'Element settings';
+$string['back_overview'] = 'Back to overview';
+$string['editelement'] = 'Edit element';
+$string['invalidelelmentid'] = 'Invalid element ID';
+
+$string['elements_updated'] = 'Elements updated';
+$string['elementcreated'] = 'Element created';
+$string['elementupdated'] = 'Element updated';
+$string['error_nametooshort'] = 'Name is too short';
+$string['elementcancel'] = 'Style form cancelled';

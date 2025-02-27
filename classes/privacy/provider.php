@@ -14,18 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+namespace tiny_styles\privacy;
+
 /**
- * Plugin version and other meta-data are defined here.
+ * Privacy API implementation for the Font case plugin.
  *
  * @package     tiny_styles
+ * @category    privacy
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class provider implements \core_privacy\local\metadata\null_provider {
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'tiny_styles';
-$plugin->release = 'v4.5.0-r1';
-$plugin->version = 2025022202;
-$plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_BETA;
+    /**
+     * Returns a text explaining that this plugin stores no personal data.
+     *
+     * @return string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
