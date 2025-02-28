@@ -19,3 +19,4 @@ function xmldb_tiny_styles_upgrade($oldversion) {
 
     return true;
 }
+

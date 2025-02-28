@@ -182,8 +182,10 @@ if ($data = $mform->get_data()) {
         print_error('Invalid category ID');
     } else {
         // CREATE new category
+        $maxsort = $DB->get_field_sql("SELECT MAX(sortorder)
+                                 FROM {tiny_styles_categories}");
         $record->enabled     = 1;
-        $record->sortorder   = 0;
+        $record->sortorder   = $maxsort+1;
         $record->timecreated = time();
         $newid = $DB->insert_record('tiny_styles_categories', $record);
         redirect(new moodle_url(

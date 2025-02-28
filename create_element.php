@@ -218,16 +218,26 @@ if ($data = $mform->get_data()) {
                 // todo: validate
             }
 
-            redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $data->categoryid])
+            redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+                'catid' => $data->categoryid,
+                'sesskey' => sesskey()
+            ])
             )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
         }
         print_error('invalidelementid', 'tiny_styles');
 
     } else {
         // New element addition.
-        // todo: sort order definig -> sequence in DB?
+        $maxsort = $DB->get_field_sql("
+            SELECT MAX(sortorder)
+            FROM {tiny_styles_cat_elements}
+            WHERE categoryid = :catid",
+            ['catid' => $catid]);
+        if ($maxsort === null) {
+            $maxsort = 0;
+        }
         $record->enabled     = 1;
-        $record->sortorder   = 0;
+        $record->sortorder   = $maxsort+1;
         $record->timecreated = time();
         $elemid = $DB->insert_record('tiny_styles_elements', $record);
 
@@ -243,7 +253,10 @@ if ($data = $mform->get_data()) {
             $DB->insert_record('tiny_styles_cat_elements', $link);
         }
 
-        redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $data->categoryid])
+        redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+            'catid' => $data->categoryid,
+            'sesskey' => sesskey()
+        ])
         )->out(false), get_string('elementcreated', 'tiny_styles'), 2);
     }
     exit;

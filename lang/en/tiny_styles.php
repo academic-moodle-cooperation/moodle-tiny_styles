@@ -90,3 +90,8 @@ $string['elementcreated'] = 'Element created';
 $string['elementupdated'] = 'Element updated';
 $string['error_nametooshort'] = 'Name is too short';
 $string['elementcancel'] = 'Style form cancelled';
+
+$string['confirmdeleteelement'] = 'Are you sure you want to delete this element?';
+$string['confirmdeletecategory'] = 'Are you sure you want to delete this category?';
+$string['elementdeleted'] = 'Element deleted';
+$string['categorydeleted'] = 'Category deleted';
