@@ -110,7 +110,13 @@ class element_form extends moodleform {
         $mform->setType('type', PARAM_ALPHA);
 
         // CSS classes
-        $elements = $DB->get_fieldset_sql("SELECT DISTINCT cssclasses FROM {tiny_styles_elements} ORDER BY sortorder ASC");
+        $elements = $DB->get_fieldset_sql("
+            SELECT cssclasses
+            FROM {tiny_styles_elements} 
+            GROUP BY cssclasses
+            ORDER BY cssclasses ASC
+        ");
+
         $elements[] = 'Manual style sheet';
         $cssoptions = array_combine($elements, $elements);
 
