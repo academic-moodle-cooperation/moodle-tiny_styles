@@ -57,7 +57,19 @@ if ($action === 'moveup' && $id > 0) {
     redirect(
         new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']),
         get_string('categorydeleted', 'tiny_styles'),
-        2
+        1
+    );
+    exit;
+} else if ($action === 'toggleenable' && $id > 0) {
+    require_sesskey();
+    require_capability('moodle/site:config', context_system::instance());
+
+    $cat = $DB->get_record('tiny_styles_categories', ['id' => $id], '*', MUST_EXIST);
+    $cat->enabled = $cat->enabled ? 0 : 1;
+    $DB->update_record('tiny_styles_categories', $cat);
+
+    redirect(
+        new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin'])
     );
     exit;
 }
@@ -75,6 +87,7 @@ if ($hassiteconfig) {
         // Categories prepared for the template.
         foreach ($records as $cat) {
 
+            // Move up/down actions.
             $moveupurl = new moodle_url('/admin/settings.php', [
                 'section' => 'tiny_styles_admin',
                 'action'  => 'moveup',
@@ -106,7 +119,7 @@ if ($hassiteconfig) {
 
             $confirmstring = get_string('confirmdeletecategory', 'tiny_styles');
 
-            // Action icon with a confirm_action.
+            // Delete icon with a confirm action.
             $deleteiconhtml = $OUTPUT->action_icon(
                 $deleteurl,
                 new pix_icon('t/delete', get_string('delete')),
@@ -114,6 +127,28 @@ if ($hassiteconfig) {
                 ['title' => get_string('delete')]
             );
 
+            // Enable/disable icon.
+            $enabled = (int)$cat->enabled;
+
+            if ($enabled) {
+                $eyeiconname = 't/hide';
+                $eyealt = get_string('hide');
+            } else {
+                $eyeiconname = 't/show';
+                $eyealt = get_string('show');
+            }
+
+            $toggleurl = new moodle_url('/admin/settings.php', [
+                'section' => 'tiny_styles_admin',
+                'action'  => 'toggleenable',
+                'id'      => $cat->id,
+                'sesskey' => sesskey()
+            ]);
+
+            $toggleiconhtml = $OUTPUT->action_icon(
+                $toggleurl,
+                new pix_icon($eyeiconname, $eyealt)
+            );
 
             // Filtering dividers out.
             if ($cat->presentation === 'divider') {
@@ -121,7 +156,7 @@ if ($hassiteconfig) {
                     'name' => $cat->name,
                     'description' => $cat->description,
                     'presentation' => $cat->presentation,
-                    'viewurl' => '#',
+                    'toggleiconhtml' => $toggleiconhtml,
                     'elementsurl' => '#',
                     'moveupiconhtml'  => $moveupiconhtml,
                     'movedowniconhtml'=> $movedowniconhtml,
@@ -133,7 +168,7 @@ if ($hassiteconfig) {
                     'name' => $cat->name,
                     'description' => $cat->description,
                     'presentation' => $cat->presentation,
-                    'viewurl' => '#',
+                    'toggleiconhtml' => $toggleiconhtml,
                     'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                         'catid' => $cat->id,
                         'sesskey' => sesskey()

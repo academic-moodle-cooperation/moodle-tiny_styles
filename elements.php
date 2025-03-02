@@ -66,6 +66,7 @@ $records = $DB->get_records_sql($sql, $params);
 $elements = [];
 foreach ($records as $r) {
 
+    // Moving up and down methods.
     $moveupurl = new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
         'catid'   => $catid,
         'action'  => 'moveup',
@@ -104,12 +105,34 @@ foreach ($records as $r) {
         ['title' => get_string('delete')]
     );
 
+    // Enable disable action.
+    $enabled = (int)$r->enabled;
+    if ($enabled) {
+        $eyeiconname = 't/hide';
+        $eyealt = get_string('hide');
+    } else {
+        $eyeiconname = 't/show';
+        $eyealt = get_string('show');
+    }
+
+    $toggleenableurl = new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+        'catid'   => $catid,
+        'action'  => 'toggleenable',
+        'id'      => $r->id,
+        'sesskey' => sesskey()
+    ]);
+
+    $toggleiconhtml = $OUTPUT->action_icon(
+        $toggleenableurl,
+        new pix_icon($eyeiconname, $eyealt)
+    );
+
     $elements[] = [
         'id'             => $r->id,
         'name'           => $r->name,
         'type'           => $r->type,
         'bootstrapclass' => $r->cssclasses,
-        'viewurl'        => '#',
+        'toggleiconhtml' => $toggleiconhtml,
         'viewdetailsurl' => '#',
         'moveupiconhtml'   => $moveupiconhtml,
         'movedowniconhtml' => $movedowniconhtml,
@@ -147,7 +170,7 @@ if ($action === 'delete' && $id > 0) {
             'sesskey' => sesskey()
         ]),
         get_string('elementdeleted', 'tiny_styles'),
-        2
+        1
     );
     exit;
 } else if ($action === 'moveup' && $id > 0) {
@@ -165,6 +188,20 @@ if ($action === 'delete' && $id > 0) {
         'catid' => $catid,
         'sesskey' => sesskey()
     ]));
+    exit;
+} else if ($action === 'toggleenable' && $id > 0) {
+    confirm_sesskey();
+
+    $element = $DB->get_record('tiny_styles_elements', ['id' => $id], '*', MUST_EXIST);
+    $element->enabled = $element->enabled ? 0 : 1;
+    $DB->update_record('tiny_styles_elements', $element);
+
+    redirect(
+        new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+            'catid' => $catid,
+            'sesskey' => sesskey()
+        ])
+    );
     exit;
 }
 

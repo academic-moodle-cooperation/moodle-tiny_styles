@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * locallib for extra methods
+ * Locallib for extra methods.
  *
  * @package     tiny_styles
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>

@@ -38,24 +38,20 @@
                     <td>{{type}}</td>
                     <td>{{bootstrapclass}}</td>
                     <td>
-                        <a href="{{viewurl}}" title="View" style="text-decoration: none;">
-                            <i class="icon fa fa-eye fa-fw"></i>
-                        </a>
+                            {{{toggleiconhtml}}}
+
                         <a href="{{viewdetailsurl}}" title="Details" style="text-decoration: none;">
                             <i class="icon fa fa-search fa-fw"></i>
                         </a>
-                        <a>
+
                             {{{moveupiconhtml}}}
-                        </a>
-                        <a>
                             {{{movedowniconhtml}}}
-                        </a>
+
                         <a href="{{editurl}}" title="Edit" style="text-decoration: none;">
                             <i class="icon fa fa-cog fa-fw"></i>
                         </a>
-                        <a>
+
                             {{{deleteiconhtml}}}
-                        </a>
                     </td>
                 </tr>
                 {{/elements}}

@@ -240,7 +240,7 @@ if ($data = $mform->get_data()) {
         } else {
             $maxsort = 0;
         }
-        $record->enabled     = 1;
+        $record->enabled     = 0;
         $record->sortorder   = $maxsort+1;
         $record->timecreated = time();
         $elemid = $DB->insert_record('tiny_styles_elements', $record);

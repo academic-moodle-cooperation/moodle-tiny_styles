@@ -184,7 +184,7 @@ if ($data = $mform->get_data()) {
         // CREATE new category
         $maxsort = $DB->get_field_sql("SELECT MAX(sortorder)
                                  FROM {tiny_styles_categories}");
-        $record->enabled     = 1;
+        $record->enabled     = 0;
         $record->sortorder   = $maxsort+1;
         $record->timecreated = time();
         $newid = $DB->insert_record('tiny_styles_categories', $record);
