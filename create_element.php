@@ -228,12 +228,16 @@ if ($data = $mform->get_data()) {
 
     } else {
         // New element addition.
-        $maxsort = $DB->get_field_sql("
-            SELECT MAX(sortorder)
-            FROM {tiny_styles_cat_elements}
-            WHERE categoryid = :catid",
-            ['catid' => $catid]);
-        if ($maxsort === null) {
+        $catid = $data->categoryid;
+        $exists = $DB->record_exists('tiny_styles_cat_elements', ['categoryid' => $catid]);
+
+        if ($exists) {
+            $maxsort = $DB->get_field_sql("
+                SELECT MAX(sortorder)
+                FROM {tiny_styles_cat_elements}
+                WHERE categoryid = ?",
+                [$catid]);
+        } else {
             $maxsort = 0;
         }
         $record->enabled     = 1;
@@ -247,7 +251,7 @@ if ($data = $mform->get_data()) {
             $link->categoryid   = $data->categoryid;
             $link->elementid    = $elemid;
             $link->enabled      = 1;
-            $link->sortorder    = 0;
+            $link->sortorder    = $maxsort+1;
             $link->timecreated  = time();
             $link->timemodified = time();
             $DB->insert_record('tiny_styles_cat_elements', $link);

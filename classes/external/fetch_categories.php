@@ -64,8 +64,9 @@ class fetch_categories extends external_api {
         FROM {tiny_styles_categories} c
         LEFT JOIN {tiny_styles_cat_elements} ce ON ce.categoryid = c.id
         LEFT JOIN {tiny_styles_elements} e ON e.id = ce.elementid
-        WHERE c.enabled = 1 AND e.enabled = 1
-        ORDER BY c.sortorder, e.sortorder";
+        WHERE c.enabled = 1 
+        AND (e.enabled = 1 OR c.presentation = 'divider')
+        ORDER BY c.sortorder, ce.sortorder";
         $rs = $DB->get_recordset_sql($sql);
 
         $cats = [];

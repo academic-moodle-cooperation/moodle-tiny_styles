@@ -57,7 +57,7 @@ $sql = "SELECT e.*
           FROM {tiny_styles_elements} e
           JOIN {tiny_styles_cat_elements} ce ON ce.elementid = e.id
          WHERE ce.categoryid = :catid
-         ORDER BY ce.sortorder, e.id";
+         ORDER BY ce.sortorder ASC, e.id";
 $params = ['catid' => $catid];
 
 $records = $DB->get_records_sql($sql, $params);
@@ -69,7 +69,7 @@ foreach ($records as $r) {
     $moveupurl = new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
         'catid'   => $catid,
         'action'  => 'moveup',
-        'id'      => $r->id,         // element ID
+        'id'      => $r->id,
         'sesskey' => sesskey()
     ]);
 

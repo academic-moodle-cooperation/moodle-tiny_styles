@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * locallib for methods
+ * locallib for extra methods
  *
  * @package     tiny_styles
  * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
@@ -74,14 +74,11 @@ function move_category_down(int $catid): void {
 function move_element_up(int $catid, int $elementid): void {
     global $DB;
 
-    // 1) Get bridging record for this category+element.
     $catElem = $DB->get_record('tiny_styles_cat_elements', [
         'categoryid' => $catid,
         'elementid'  => $elementid
     ], '*', MUST_EXIST);
 
-    // 2) Find the “above” record with a smaller sortorder.
-    //    We only want 1 record, so use the cross-DB approach with limit arguments.
     $sql = "SELECT *
               FROM {tiny_styles_cat_elements}
              WHERE categoryid = :catid
@@ -92,15 +89,13 @@ function move_element_up(int $catid, int $elementid): void {
         'currsort' => $catElem->sortorder
     ];
     $neighbors = $DB->get_records_sql($sql, $params, 0, 1);
-    $above = reset($neighbors); // or array_shift($neighbors)
+    $above = reset($neighbors);
 
     if ($above) {
-        // Swap their sortorders.
         $oldsort = $catElem->sortorder;
         $catElem->sortorder = $above->sortorder;
         $above->sortorder = $oldsort;
 
-        // Update both.
         $DB->update_record('tiny_styles_cat_elements', $catElem);
         $DB->update_record('tiny_styles_cat_elements', $above);
     }
@@ -114,7 +109,6 @@ function move_element_down(int $catid, int $elementid): void {
         'elementid'  => $elementid
     ], '*', MUST_EXIST);
 
-    // Find the “below” record with a bigger sortorder.
     $sql = "SELECT *
               FROM {tiny_styles_cat_elements}
              WHERE categoryid = :catid
