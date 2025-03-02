@@ -43,6 +43,7 @@ $PAGE->set_title(get_string('elementstitle', 'tiny_styles'));
 
 // Helper method for selecting all checkboxes.
 $PAGE->requires->js_call_amd('tiny_styles/select_all', 'init');
+$PAGE->requires->js_call_amd('tiny_styles/preview_element', 'init', ['a.element-preview-link']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(
@@ -127,13 +128,26 @@ foreach ($records as $r) {
         new pix_icon($eyeiconname, $eyealt)
     );
 
+    $viewdetailsattrs = [
+        'href'           => '#',
+        'class'          => 'element-preview-link',
+        'data-name'      => $r->name,
+        'data-cssclass'  => $r->cssclasses,
+        'data-type'      => $r->type
+    ];
+
+    $viewdetailsicon = new pix_icon('i/preview', get_string('details'));
+
+    $viewdetailshtml = $OUTPUT->action_icon('#', $viewdetailsicon, null, $viewdetailsattrs);
+
+
     $elements[] = [
         'id'             => $r->id,
         'name'           => $r->name,
         'type'           => $r->type,
         'bootstrapclass' => $r->cssclasses,
         'toggleiconhtml' => $toggleiconhtml,
-        'viewdetailsurl' => '#',
+        'viewdetailsiconhtml' => $viewdetailshtml,
         'moveupiconhtml'   => $moveupiconhtml,
         'movedowniconhtml' => $movedowniconhtml,
         'editurl'        => (new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', [
