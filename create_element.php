@@ -160,6 +160,15 @@ class element_form extends moodleform {
         $mform->setType('catid', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('savechanges'));
+
+        $mform->registerNoSubmitButton('previewstyle');
+
+        $mform->addElement(
+            'button',
+            'previewstyle',
+            get_string('preview', 'tiny_styles'),
+            ['id' => 'btn-preview-element']
+        );
     }
 
     // todo: expand validation
@@ -306,4 +315,11 @@ if ($action === 'edit' && $id > 0) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($formtitle);
 $mform->display();
+// Require form preview js for the preview dialog.
+$PAGE->requires->js_call_amd(
+    'tiny_styles/form_preview',
+    'init',
+    ['#btn-preview-element']
+);
+
 echo $OUTPUT->footer();
