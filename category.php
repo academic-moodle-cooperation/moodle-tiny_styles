@@ -93,7 +93,7 @@ class category_form extends moodleform {
         $mform->addElement(
             'select',
             'showdesc',
-            'Description display',
+            get_string('descriptiondisp', 'tiny_styles'),
             $descdisplayoptions,
             ['size' => 1, 'style' => 'width: 300px;']
         );
@@ -119,7 +119,7 @@ class category_form extends moodleform {
         $mform->addElement(
             'select',
             'presentation',
-            'Presentation type',
+            get_string('presentationtype', 'tiny_styles'),
             $presentationoptions,
             ['size' => 1, 'style' => 'width: 300px;']
         );
@@ -142,7 +142,7 @@ class category_form extends moodleform {
     public function validation($data, $files) {
         $errors = [];
         if (strlen(trim($data['name'])) < 3) {
-            $errors['name'] = 'Name must be at least 3 characters.';
+            $errors['name'] = get_string('errorname', 'tiny_styles');
         }
         return $errors;
     }
@@ -182,8 +182,10 @@ if ($data = $mform->get_data()) {
         print_error('Invalid category ID');
     } else {
         // CREATE new category
-        $record->enabled     = 1;
-        $record->sortorder   = 0;
+        $maxsort = $DB->get_field_sql("SELECT MAX(sortorder)
+                                 FROM {tiny_styles_categories}");
+        $record->enabled     = 0;
+        $record->sortorder   = $maxsort+1;
         $record->timecreated = time();
         $newid = $DB->insert_record('tiny_styles_categories', $record);
         redirect(new moodle_url(

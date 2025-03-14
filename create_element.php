@@ -87,7 +87,7 @@ class element_form extends moodleform {
         $mform->addElement(
             'select',
             'categoryid',
-            'Category',
+            get_string('category', 'tiny_styles'),
             $categories,
             ['size' => 1, 'style' => 'width: 400px;']
         );
@@ -160,6 +160,15 @@ class element_form extends moodleform {
         $mform->setType('catid', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('savechanges'));
+
+        $mform->registerNoSubmitButton('previewstyle');
+
+        $mform->addElement(
+            'button',
+            'previewstyle',
+            get_string('preview', 'tiny_styles'),
+            ['id' => 'btn-preview-element']
+        );
     }
 
     // todo: expand validation
@@ -218,16 +227,30 @@ if ($data = $mform->get_data()) {
                 // todo: validate
             }
 
-            redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $data->categoryid])
+            redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+                'catid' => $data->categoryid,
+                'sesskey' => sesskey()
+            ])
             )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
         }
         print_error('invalidelementid', 'tiny_styles');
 
     } else {
         // New element addition.
-        // todo: sort order definig -> sequence in DB?
-        $record->enabled     = 1;
-        $record->sortorder   = 0;
+        $catid = $data->categoryid;
+        $exists = $DB->record_exists('tiny_styles_cat_elements', ['categoryid' => $catid]);
+
+        if ($exists) {
+            $maxsort = $DB->get_field_sql("
+                SELECT MAX(sortorder)
+                FROM {tiny_styles_cat_elements}
+                WHERE categoryid = ?",
+                [$catid]);
+        } else {
+            $maxsort = 0;
+        }
+        $record->enabled     = 0;
+        $record->sortorder   = $maxsort+1;
         $record->timecreated = time();
         $elemid = $DB->insert_record('tiny_styles_elements', $record);
 
@@ -237,13 +260,16 @@ if ($data = $mform->get_data()) {
             $link->categoryid   = $data->categoryid;
             $link->elementid    = $elemid;
             $link->enabled      = 1;
-            $link->sortorder    = 0;
+            $link->sortorder    = $maxsort+1;
             $link->timecreated  = time();
             $link->timemodified = time();
             $DB->insert_record('tiny_styles_cat_elements', $link);
         }
 
-        redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $data->categoryid])
+        redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+            'catid' => $data->categoryid,
+            'sesskey' => sesskey()
+        ])
         )->out(false), get_string('elementcreated', 'tiny_styles'), 2);
     }
     exit;
@@ -289,4 +315,11 @@ if ($action === 'edit' && $id > 0) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($formtitle);
 $mform->display();
+// Require form preview js for the preview dialog.
+$PAGE->requires->js_call_amd(
+    'tiny_styles/form_preview',
+    'init',
+    ['#btn-preview-element']
+);
+
 echo $OUTPUT->footer();

@@ -22,10 +22,10 @@
                     <th>
                         <input type="checkbox" id="select-all">
                     </th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Bootstrap Class / CSS Style</th>
-                    <th>Actions</th>
+                    <th>{{#str}} name, tiny_styles {{/str}}</th>
+                    <th>{{#str}} type, tiny_styles {{/str}}</th>
+                    <th>{{#str}} bootstrapclass, tiny_styles {{/str}}</th>
+                    <th>{{#str}} actions, tiny_styles {{/str}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,24 +38,16 @@
                     <td>{{type}}</td>
                     <td>{{bootstrapclass}}</td>
                     <td>
-                        <a href="{{viewurl}}" title="View" style="text-decoration: none;">
-                            <i class="icon fa fa-eye fa-fw"></i>
-                        </a>
-                        <a href="{{viewdetailsurl}}" title="Details" style="text-decoration: none;">
-                            <i class="icon fa fa-search fa-fw"></i>
-                        </a>
-                        <a href="{{moveupurl}}" title="Move Up" style="text-decoration: none;">
-                            <i class="icon fa fa-arrow-up fa-fw"></i>
-                        </a>
-                        <a href="{{movedownurl}}" title="Move Down" style="text-decoration: none;">
-                            <i class="icon fa fa-arrow-down fa-fw"></i>
-                        </a>
+                            {{{toggleiconhtml}}}
+                            {{{viewdetailsiconhtml}}}
+                            {{{moveupiconhtml}}}
+                            {{{movedowniconhtml}}}
+
                         <a href="{{editurl}}" title="Edit" style="text-decoration: none;">
                             <i class="icon fa fa-cog fa-fw"></i>
                         </a>
-                        <a href="{{deleteurl}}" title="Delete" style="text-decoration: none;">
-                            <i class="icon fa fa-trash fa-fw"></i>
-                        </a>
+
+                            {{{deleteiconhtml}}}
                     </td>
                 </tr>
                 {{/elements}}

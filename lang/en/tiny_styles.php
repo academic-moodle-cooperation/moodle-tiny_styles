@@ -60,6 +60,9 @@ $string['nocategories'] = 'No categories';
 $string['category_saved'] = 'Category saved';
 $string['presentationhdr'] = 'Presentation of Category';
 
+$string['descriptiondisp'] = 'Description display';
+$string['presentationtype'] = 'Presentation type';
+
 // elements
 $string['elementstitle'] = 'Category Elements';
 $string['elementsheading'] = 'Elements';
@@ -81,7 +84,7 @@ $string['manualdefault'] = 'Make sure to enter a valid css';
 
 // still to be defined
 $string['elementsettings'] = 'Element settings';
-$string['back_overview'] = 'Back to overview';
+$string['back_overview'] = 'Back to overview'; 
 $string['editelement'] = 'Edit element';
 $string['invalidelelmentid'] = 'Invalid element ID';
 
@@ -90,3 +93,11 @@ $string['elementcreated'] = 'Element created';
 $string['elementupdated'] = 'Element updated';
 $string['error_nametooshort'] = 'Name is too short';
 $string['elementcancel'] = 'Style form cancelled';
+
+$string['confirmdeleteelement'] = 'Are you sure you want to delete this element?';
+$string['confirmdeletecategory'] = 'Are you sure you want to delete this category?';
+$string['elementdeleted'] = 'Element deleted';
+$string['categorydeleted'] = 'Category deleted';
+$string['preview'] = 'Preview';
+
+$string['errorname'] = 'Name must be at least 3 characters.';
