@@ -81,7 +81,7 @@ Currently user has to clear formatting manually from the menu, before applying a
 
 -----
 
-### Suggested imporovements ###
+### Suggested improvements ###
 
 **Settings page**
 - AJAX implementation for not reloading page after every: Hide/Show and Up/Down actions.
