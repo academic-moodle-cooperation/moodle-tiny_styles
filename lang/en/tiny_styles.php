@@ -60,6 +60,9 @@ $string['nocategories'] = 'No categories';
 $string['category_saved'] = 'Category saved';
 $string['presentationhdr'] = 'Presentation of Category';
 
+$string['descriptiondisp'] = 'Description display';
+$string['presentationtype'] = 'Presentation type';
+
 // elements
 $string['elementstitle'] = 'Category Elements';
 $string['elementsheading'] = 'Elements';
@@ -96,3 +99,5 @@ $string['confirmdeletecategory'] = 'Are you sure you want to delete this categor
 $string['elementdeleted'] = 'Element deleted';
 $string['categorydeleted'] = 'Category deleted';
 $string['preview'] = 'Preview';
+
+$string['errorname'] = 'Name must be at least 3 characters.';

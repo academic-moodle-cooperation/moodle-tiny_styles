@@ -87,7 +87,7 @@ class element_form extends moodleform {
         $mform->addElement(
             'select',
             'categoryid',
-            'Category',
+            get_string('category', 'tiny_styles'),
             $categories,
             ['size' => 1, 'style' => 'width: 400px;']
         );

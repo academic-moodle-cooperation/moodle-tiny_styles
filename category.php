@@ -93,7 +93,7 @@ class category_form extends moodleform {
         $mform->addElement(
             'select',
             'showdesc',
-            'Description display',
+            get_string('descriptiondisp', 'tiny_styles'),
             $descdisplayoptions,
             ['size' => 1, 'style' => 'width: 300px;']
         );
@@ -119,7 +119,7 @@ class category_form extends moodleform {
         $mform->addElement(
             'select',
             'presentation',
-            'Presentation type',
+            get_string('presentationtype', 'tiny_styles'),
             $presentationoptions,
             ['size' => 1, 'style' => 'width: 300px;']
         );
@@ -142,7 +142,7 @@ class category_form extends moodleform {
     public function validation($data, $files) {
         $errors = [];
         if (strlen(trim($data['name'])) < 3) {
-            $errors['name'] = 'Name must be at least 3 characters.';
+            $errors['name'] = get_string('errorname', 'tiny_styles');
         }
         return $errors;
     }
