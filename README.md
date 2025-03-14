@@ -31,26 +31,19 @@ For a detailed structure see:
 
 ### Admin pages ###
 
-**Fully implemented:**
+**Fully implemented for usage:**
 
-- 
+- Settings page (see section: [Suggested improvements](#suggested-improvements))
+- Create/Edit element (see section: [Suggested improvements](#suggested-improvements))
 
 **Functional, but missing features:**
 
-- Settings page
-- Create category 
+- Create/Edit category
 - View category elements
-- Edit category
-- Create element
-- Edit element
 
    **Missing features:**
 
-  - Up/Down buttons
-  - Delete button
   - Icon selection (category)
-  - View style preview
-  - Visible / Hidden category
   - Selected elements dropdown menu actions
   - Import & Export
 
@@ -73,7 +66,6 @@ Currently user has to clear formatting manually from the menu, before applying a
 ### Next planned updates: ###
 
 **Admin:**
-- Single action buttons (up, down, delete, preview)
 - Icon selection for category
 - Bulk actions for elements
 
@@ -84,11 +76,18 @@ Currently user has to clear formatting manually from the menu, before applying a
 
 **General improvements:**
 - Refactoring
-- Code efficiency optimization
+- Code optimization
 - Dynamic style choosing on element creation page
 
 -----
 
+### Suggested imporovements ###
+
+**Settings page**
+- AJAX implementation for not reloading page after every: Hide/Show and Up/Down actions.
+
+**Create/Edit element**
+- Button layout for a pleasing look and usability
 
 ## Default installing options
 
