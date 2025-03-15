@@ -136,7 +136,7 @@ foreach ($records as $r) {
         'data-type'      => $r->type
     ];
 
-    $viewdetailsicon = new pix_icon('i/preview', get_string('details'));
+    $viewdetailsicon = new pix_icon('i/preview', get_string('preview', 'tiny_styles'));
 
     $viewdetailshtml = $OUTPUT->action_icon('#', $viewdetailsicon, null, $viewdetailsattrs);
 
