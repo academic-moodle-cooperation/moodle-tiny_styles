@@ -25,6 +25,7 @@ import {getButtonImage} from 'editor_tiny/utils';
 import Ajax from 'core/ajax';
 import { get_string as getString } from 'core/str';
 import { icon } from "./common";
+import PreviewElement from "./preview_element";
 
 /**
  * Fetches categories dynamically using AJAX.
@@ -61,24 +62,48 @@ function buildCategoryItems(editor, cats, icons) {
             items.push({ type: 'separator' });
             return;
         }
+
         const subItems = [];
+
         if (Array.isArray(cat.elements)) {
             cat.elements.forEach((elem) => {
-                subItems.push({
-                    type: 'menuitem',
-                    text: elem.name,
-                    onAction: () => {
-                       // debugLog(`Applying style for element ID=${elem.id}, name=${elem.name}`);
-                        applyStyle(editor, {
-                            className: elem.cssclasses,
-                            block: (elem.type === 'block'),
-                            custom: (elem.custom === 1),
-                            id: elem.name,
-                        });
+                // For each element "Apply" and "Preview" items.
+                const elementSubmenuItems = [
+                    {
+                        type: 'menuitem',
+                        text: 'Apply style',
+                        icon: icons.apply,
+                        onAction: () => {
+                            applyStyle(editor, {
+                                className: elem.cssclasses,
+                                block: (elem.type === 'block'),
+                                custom: (elem.custom === 1),
+                                id: elem.name
+                            });
+                        }
+                    },
+                    {
+                        type: 'menuitem',
+                        text: 'Preview style',
+                        icon: icons.preview,
+                        onAction: () => {
+                            PreviewElement.showPreview(
+                                elem.name,
+                                elem.cssclasses,
+                                elem.type === 'block' ? 'block' : 'inline'
+                            );
+                        }
                     }
+                ];
+
+                subItems.push({
+                    type: 'nestedmenuitem',
+                    text: elem.name,
+                    getSubmenuItems: () => elementSubmenuItems
                 });
             });
         }
+
         if (subItems.length > 0) {
             let caticon = icons.default;
             if (cat.name === 'Labels') {
@@ -86,6 +111,7 @@ function buildCategoryItems(editor, cats, icons) {
             } else if (cat.name === 'Boxes') {
                 caticon = icons.box;
             }
+
             items.push({
                 type: 'nestedmenuitem',
                 icon: caticon,
@@ -97,6 +123,8 @@ function buildCategoryItems(editor, cats, icons) {
 
     return items;
 }
+
+
 
 /**
  * helper method for stripping the selected text
@@ -180,6 +208,8 @@ export const getSetup = async () => {
         boxImage,
         defaultImage,
         mainMenuLabel,
+        previewImage,
+        applyImage,
     ] = await Promise.all([
         fetchCategories(),
         getButtonImage('icon', 'tiny_styles'),
@@ -187,6 +217,8 @@ export const getSetup = async () => {
         getButtonImage('iconbox', 'tiny_styles'),
         getButtonImage('icondefault', 'tiny_styles'),
         getString('menuitem_styles', 'tiny_styles'),
+        getButtonImage('preview', 'tiny_styles'),
+        getButtonImage('apply', 'tiny_styles'),
     ]);
 
     // if (!cats || cats.length === 0) {
@@ -200,11 +232,16 @@ export const getSetup = async () => {
         editor.ui.registry.addIcon('labelIcon', labelImage.html);
         editor.ui.registry.addIcon('boxIcon', boxImage.html);
         editor.ui.registry.addIcon('defaultIcon', defaultImage.html);
+        editor.ui.registry.addIcon('previewIcon', previewImage.html);
+        editor.ui.registry.addIcon('applyIcon', applyImage.html);
+
 
         const icons = {
             label: 'labelIcon',
             box: 'boxIcon',
             default: 'defaultIcon',
+            preview: 'previewIcon',
+            apply: 'applyIcon',
         };
 
         editor.ui.registry.addMenuButton('tiny_styles_button', {
