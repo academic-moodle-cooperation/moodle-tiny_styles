@@ -1,3 +1,4 @@
+// Separate file for the elements menu preview dialog
 define([
     'jquery',
     'core/modal_factory',
@@ -5,7 +6,13 @@ define([
 ], function($, ModalFactory, ModalEvents) {
     "use strict";
 
-    // Returns the snippet with Lorem Ipsum text,
+    /**
+     * Returns the snippet with Lorem Ipsum text, in a dialog
+     * @param {string} name name of the style
+     * @param {string} cssclasses css styling or a css class
+     * @param {string} type inline or block
+     * @returns a dialog with styled text snippetS
+     */
     function buildPreviewHtml(name, cssclasses, type) {
         // Example snippet.
         const snippetBlock = `
@@ -16,6 +23,31 @@ define([
                <li>Auto</li>
                <li>Auto</li>
             </ul>`;
+
+
+        const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
+
+        // Full CSS definition
+        let className = '';
+        if (isFullCssDefinition) {
+            // Extract class name from the CSS definition
+            const classMatch = cssclasses.match(/[.][a-zA-Z0-9_-]+/);
+            if (classMatch && classMatch.length > 0) {
+                className = classMatch[0].substring(1);
+            }
+
+            // Use the extracted name
+            if (className) {
+                if (type === 'inline') {
+                    return snippetBlock.replace(
+                        '<strong>dolor</strong>',
+                        `<span class="${className}">dolor</span>`
+                    );
+                } else {
+                    return `<div class="${className}">${snippetBlock}</div>`;
+                }
+            }
+        }
 
         let attribute = `class="${cssclasses}"`;
 
@@ -42,6 +74,8 @@ define([
                 const cssclasses = $link.data('cssclass');
                 const type = $link.data('type');
 
+                const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
+
                 const previewhtml = buildPreviewHtml(name, cssclasses, type);
 
                 ModalFactory.create({
@@ -50,8 +84,14 @@ define([
                     body: previewhtml
                 })
                     .then(function(modal) {
-                        modal.show();
 
+                        if (isFullCssDefinition) {
+                            const styleEl = document.createElement('style');
+                            styleEl.textContent = cssclasses;
+                            modal.getRoot().append(styleEl);
+                        }
+
+                        modal.show();
                         modal.getRoot().on(ModalEvents.hidden, function() {
                         });
                     });

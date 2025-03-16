@@ -7,10 +7,11 @@ define([
     "use strict";
 
     /**
-     * Returns the preview content with chosen styling before saving changes
-     *
-     * If a custom CSS set style.
-     * Otherwise set class.
+     * Returns the snippet with Lorem Ipsum text, in a dialog
+     * @param {string} name name of the style
+     * @param {string} cssclasses css styling or a css class
+     * @param {string} type inline or block
+     * @returns a dialog with styled text snippet
      */
     function buildPreviewHtml(name, cssclasses, type) {
         // Example snippet.
@@ -23,9 +24,32 @@ define([
                <li>Auto</li>
             </ul>`;
 
+        const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
+
+        // Full CSS definition, get the class name
+        let className = '';
+        if (isFullCssDefinition) {
+            // Extract class name from the CSS definition
+            const classMatch = cssclasses.match(/[.][a-zA-Z0-9_-]+/);
+            if (classMatch && classMatch.length > 0) {
+                className = classMatch[0].substring(1); // Remove the leading dot
+            }
+
+            // Use the extracted name
+            if (className) {
+                if (type === 'inline') {
+                    return snippetBlock.replace(
+                        '<strong>dolor</strong>',
+                        `<span class="${className}">dolor</span>`
+                    );
+                } else {
+                    return `<div class="${className}">${snippetBlock}</div>`;
+                }
+            }
+        }
+
         let attribute = `class="${cssclasses}"`;
-        if (cssclasses.includes(':') && cssclasses.includes(';')) {
-            // Probably inline CSS.
+        if (cssclasses.includes(':') && cssclasses.includes(';') && !isFullCssDefinition) {
             attribute = `style="${cssclasses}"`;
         }
 
@@ -41,7 +65,7 @@ define([
 
     return {
         /**
-         * Initializes the button that opens the preview dialog.
+         * Initializes the button that opens a preview dialog.
          * @param {string} previewButtonSelector - "#btn-preview-element"
          */
         init: function(previewButtonSelector) {
@@ -64,6 +88,8 @@ define([
                         cssVal = $('#id_manualconfig').val();
                     }
 
+                    const isFullCssDefinition = cssVal.includes('{') && cssVal.includes('}');
+
                     const previewhtml = buildPreviewHtml(nameVal, cssVal, typeVal);
 
                     ModalFactory.create({
@@ -72,6 +98,13 @@ define([
                         body: previewhtml
                     })
                         .then(function(modal) {
+
+                            if (isFullCssDefinition) {
+                                const styleEl = document.createElement('style');
+                                styleEl.textContent = cssVal;
+                                modal.getRoot().append(styleEl);
+                            }
+
                             modal.show();
                             modal.getRoot().on(ModalEvents.hidden, function() {
                             });
