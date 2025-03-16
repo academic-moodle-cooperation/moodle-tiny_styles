@@ -136,6 +136,8 @@ function applyStyle(editor, styleDef) {
     const newTag = block ? 'div' : 'span';
     const newWrapper = document.createElement(newTag);
 
+
+    // todo: full css definition handling
     if (custom){
         newWrapper.style.cssText = className;
         newWrapper.setAttribute('style_name', id || 'custom-style');
@@ -145,8 +147,23 @@ function applyStyle(editor, styleDef) {
     while (container.firstChild) {
         newWrapper.appendChild(container.firstChild);
     }
+
     editor.selection.setContent(newWrapper.outerHTML);
-    //todo: editor selection stop applying style
+
+    // Stops the styling and enters a new line.
+    if(block) {
+        const currentElement = editor.selection.getNode();
+
+        editor.selection.setCursorLocation(currentElement, currentElement.childNodes.length);
+        editor.insertContent('<p>&nbsp;</p>');
+
+        const newParagraph = editor.dom.select('p:last')[0];
+        if (newParagraph) {
+            editor.selection.setCursorLocation(newParagraph, 0);
+            editor.dom.setHTML(newParagraph, '');
+        }
+    }
+    editor.focus();
 }
 
 // todo: add js code to check for manual styling changes
