@@ -49,61 +49,37 @@ async function fetchCategories() {
 
 /**
  * Builds the category-based menu structure.
+ *
  * @param {Object} editor TinyMCE instance.
- * @param {Array} cats List of categories.
+ * @param {Array} categories List of categories.
  * @param {Object} icons Available icons for categories.
  * @returns {Array} Menu items.
  */
-function buildCategoryItems(editor, cats, icons) {
+function buildCategoryItems(editor, categories, icons) {
     const items = [];
 
-    cats.forEach((cat) => {
+    categories.forEach((cat) => {
         if (cat.presentation === 'divider') {
             items.push({ type: 'separator' });
             return;
         }
-
         const subItems = [];
-
         if (Array.isArray(cat.elements)) {
             cat.elements.forEach((elem) => {
-                // For each element "Apply" and "Preview" items.
-                const elementSubmenuItems = [
-                    {
-                        type: 'menuitem',
-                        text: 'Apply style',
-                        icon: icons.apply,
-                        onAction: () => {
-                            applyStyle(editor, {
-                                className: elem.cssclasses,
-                                block: (elem.type === 'block'),
-                                custom: (elem.custom === 1),
-                                id: elem.name
-                            });
-                        }
-                    },
-                    {
-                        type: 'menuitem',
-                        text: 'Preview style',
-                        icon: icons.preview,
-                        onAction: () => {
-                            PreviewElement.showPreview(
-                                elem.name,
-                                elem.cssclasses,
-                                elem.type === 'block' ? 'block' : 'inline'
-                            );
-                        }
-                    }
-                ];
-
                 subItems.push({
-                    type: 'nestedmenuitem',
+                    type: 'menuitem',
                     text: elem.name,
-                    getSubmenuItems: () => elementSubmenuItems
+                    onAction: () => {
+                        applyStyle(editor, {
+                            className: elem.cssclasses,
+                            block: (elem.type === 'block'),
+                            custom: (elem.custom === 1),
+                            id: elem.name,
+                        });
+                    }
                 });
             });
         }
-
         if (subItems.length > 0) {
             let caticon = icons.default;
             if (cat.name === 'Labels') {
@@ -111,7 +87,6 @@ function buildCategoryItems(editor, cats, icons) {
             } else if (cat.name === 'Boxes') {
                 caticon = icons.box;
             }
-
             items.push({
                 type: 'nestedmenuitem',
                 icon: caticon,
@@ -125,35 +100,35 @@ function buildCategoryItems(editor, cats, icons) {
 }
 
 
-
 /**
- * helper method for stripping the selected text
- * recursively strips everything except <a> and <img>
+ * Helper method for stripping the selected text.
+ * Recursively removes the 'class' attribute from all elements.
  *
- * @param {HTMLDivElement} root text snippet being parsed
+ * @param {HTMLElement} root - The element to process.
  */
 function stripText(root) {
     if (root.nodeType === Node.ELEMENT_NODE) {
-        //const tag = root.tagName.toLowerCase();
-        //if (tag !== 'a' && tag !== 'img') {
-            root.removeAttribute('class');
-        //}
-        //root.removeAttribute('style');
+        root.removeAttribute('class');
         Array.from(root.childNodes).forEach(stripText);
     }
 }
 
 /**
- * Applying a bootstrap style to the selected text.
+ * Applies a bootstrap style to the selected text.
  *
- * @param {Object} editor tinyMCE editor instance
- * @param {Object} styleDef object style and bool val for the wrapping option
+ * @param {Object} editor - TinyMCE editor instance.
+ * @param {Object} styleDef - Object containing the style definition.
+ *   @param {string} styleDef.className - The CSS class/style to apply.
+ *   @param {boolean} styleDef.block - Whether the style is a block element.
+ *   @param {boolean} styleDef.custom - Whether the style is custom.
+ *   @param {string} styleDef.id - A name identifier for the custom style.
  */
 function applyStyle(editor, styleDef) {
     const { className, block, custom, id } = styleDef;
 
     const selectedHtml = editor.selection.getContent({ format: 'html' });
     if (!selectedHtml.trim()) {
+        PreviewElement.showPreview(id, className, block ? 'block' : 'inline');
         return;
     }
 
@@ -164,27 +139,25 @@ function applyStyle(editor, styleDef) {
     const newTag = block ? 'div' : 'span';
     const newWrapper = document.createElement(newTag);
 
-
-    // todo: full css definition handling
-    if (custom){
+    if (custom) {
         newWrapper.style.cssText = className;
-        newWrapper.setAttribute('style_name', id || 'custom-style');
+        // CUstom style identifier as a CSS custom property.
+        newWrapper.style.setProperty('--custom-style-id', id);
     } else {
         newWrapper.className = className;
     }
+
     while (container.firstChild) {
         newWrapper.appendChild(container.firstChild);
     }
 
     editor.selection.setContent(newWrapper.outerHTML);
 
-    // Stops the styling and enters a new line.
-    if(block) {
+    // For block styles extra paragraph to end the styling.
+    if (block) {
         const currentElement = editor.selection.getNode();
-
         editor.selection.setCursorLocation(currentElement, currentElement.childNodes.length);
         editor.insertContent('<p>&nbsp;</p>');
-
         const newParagraph = editor.dom.select('p:last')[0];
         if (newParagraph) {
             editor.selection.setCursorLocation(newParagraph, 0);
@@ -194,7 +167,70 @@ function applyStyle(editor, styleDef) {
     editor.focus();
 }
 
-// todo: add js code to check for manual styling changes
+
+/**
+ * Asynchronous function to scan the custom styles for updates/deletions.
+ *
+ * @param editor - The TInyMCE editor instance.
+ */
+export async function editCustomStyles(editor) {
+
+    const categoriesResponse = await fetchCategories();
+
+    // Normalize the response to an array.
+    let categories = [];
+    if (Array.isArray(categoriesResponse)) {
+        categories = categoriesResponse;
+    } else if (categoriesResponse && Array.isArray(categoriesResponse.categories)) {
+        // If response is an object with a 'categories' property.
+        categories = categoriesResponse.categories;
+    }
+
+    const customStylesMap = {};
+    categories.forEach(cat => {
+        if (Array.isArray(cat.elements)) {
+            cat.elements.forEach(elem => {
+                if (elem.custom === 1) {
+                    customStylesMap[elem.name] = elem;
+                }
+            });
+        }
+    });
+
+    const customElements = editor.getBody().querySelectorAll('[style*="--custom-style-id"]');
+
+    customElements.forEach(element => {
+        // Custom style identifier by computed style.
+        const computed = window.getComputedStyle(element);
+        const customStyleId = computed.getPropertyValue('--custom-style-id').trim();
+
+        if (!customStyleId) {
+            return;
+        }
+
+        // Styling removed if the style has been removed, re-named or hidden.
+        const styleDefinition = customStylesMap[customStyleId];
+        if (!styleDefinition) {
+            // Keeps the id in the styling for recovering hidden styles.
+            const minimalCss = `--custom-style-id: ${customStyleId};`;
+            editor.dom.setAttrib(element, 'style', minimalCss);
+            editor.dom.setAttrib(element, 'data-mce-style', minimalCss);
+
+            // todo: or delete styling completely?
+            // editor.dom.removeAttrib(element, 'style');
+            // editor.dom.removeAttrib(element, 'data-mce-style');
+
+        } else {
+            // If inline style does not match it's updated.
+            if (element.style.cssText !== styleDefinition.cssclasses) {
+                const newCss = styleDefinition.cssclasses + '; --custom-style-id: ' + styleDefinition.name;
+                editor.dom.setAttrib(element, 'style', newCss);
+                editor.dom.setAttrib(element, 'data-mce-style', newCss);
+            }
+        }
+    });
+
+}
 
 /**
  * Button, Icon and Menu setup for tinymce.
@@ -202,7 +238,7 @@ function applyStyle(editor, styleDef) {
 export const getSetup = async () => {
 
     const [
-        cats,
+        categories,
         buttonImage,
         labelImage,
         boxImage,
@@ -221,12 +257,7 @@ export const getSetup = async () => {
         getButtonImage('apply', 'tiny_styles'),
     ]);
 
-    // if (!cats || cats.length === 0) {
-    //    debugLog('No categories returned from web service.');
-    // }
-
     return (editor) => {
-        // debugLog('Plugin callback, editor ID=', editor.id);
 
         editor.ui.registry.addIcon(icon, buttonImage.html);
         editor.ui.registry.addIcon('labelIcon', labelImage.html);
@@ -248,69 +279,15 @@ export const getSetup = async () => {
             icon: icon,
             tooltip: mainMenuLabel,
             fetch: (callback) => {
-                callback(buildCategoryItems(editor, cats, icons));
+                callback(buildCategoryItems(editor, categories, icons));
             }
         });
 
         editor.ui.registry.addNestedMenuItem('tiny_styles_nestedmenu', {
             icon: icon,
             text: mainMenuLabel,
-            getSubmenuItems: () => buildCategoryItems(editor, cats, icons),
+            getSubmenuItems: () => buildCategoryItems(editor, categories, icons),
         });
 
-        // debugLog('Added toolbar and menubar entries.');
     };
 };
-
-/**
- * Debugging
- */
-//function debugLog(...args) {
-//    console.log('[tiny_styles DEBUG]', ...args);
-//}
-
-/**
- * New approach using the tiny formatter
- * @param editor
- * @param styleDef
- */
-function applyStyleTwo(editor, styleDef) {
-    const { className, block } = styleDef;
-
-    const selectedHtml = editor.selection.getContent({ format: 'html' });
-    if (!selectedHtml.trim()) {
-        return;
-    }
-    // this would need a check
-    if (block) {
-        editor.formatter.remove('blockFormat');
-    } else {
-        editor.formatter.remove('inlineFormat');
-    }
-
-    const container = document.createElement('div');
-    container.innerHTML = selectedHtml;
-
-    if (block) {
-        editor.formatter.register('blockFormat', {
-            block: 'div',
-            classes: className,
-            remove: 'none',
-        });
-    } else {
-        editor.formatter.register('inlineFormat', {
-            inline: 'span',
-            classes: className,
-            remove: 'none',
-        });
-    }
-
-    const newTag = block ? 'div' : 'span';
-    const newWrapper = document.createElement(newTag);
-    newWrapper.className = className;
-    while (container.firstChild) {
-        newWrapper.appendChild(container.firstChild);
-    }
-
-    editor.selection.setContent(newWrapper.outerHTML);
-}

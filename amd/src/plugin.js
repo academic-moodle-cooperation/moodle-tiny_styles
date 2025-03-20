@@ -26,6 +26,7 @@ import {getPluginMetadata} from 'editor_tiny/utils';
 import {pluginName} from './common';
 import {register as registerOptions} from './options';
 import {getSetup as getCommandSetup} from './commands';
+import {editCustomStyles} from './commands';
 import * as Configuration from './configuration';
 
 // eslint-disable-next-line no-async-promise-executor
@@ -44,6 +45,11 @@ export default new Promise(async (resolve) => {
         tinyMCE.PluginManager.add(pluginName, (editor) => {
             registerOptions(editor);
             setupCommands(editor);
+
+            // Runs a check on the editor text to update custom in text styles.
+            editor.on('init', async () => {
+                await editCustomStyles(editor);
+            });
             return pluginMetadata;
         });
 
