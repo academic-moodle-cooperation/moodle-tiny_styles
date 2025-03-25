@@ -101,3 +101,18 @@ $string['categorydeleted'] = 'Kategorie gelöscht';
 $string['preview'] = 'Vorschau';
 
 $string['errorname'] = 'Der Name muss mindestens 3 Zeichen lang sein.';
+
+// export import
+$string['exportdata'] = 'Daten exportieren';
+$string['importdata'] = 'Daten importieren';
+$string['importsuccess'] = 'Import erfolgreich';
+$string['import'] = 'Importieren';
+$string['close'] = 'Schließen';
+
+$string['nofileuploaded'] = 'Es wurde keine Datei hochgeladen.';
+$string['invalidjson'] = 'Ungültige JSON-Datei.';
+
+$string['selectjsonfile'] = 'JSON-Datei zum Importieren auswählen:';
+$string['jsonfilehelp'] = 'Um das korrekte JSON-Format sicherzustellen, können Sie die aktuellen Kategorien exportieren und die JSON-Dateistruktur als Vorlage verwenden.';
+$string['invalidfiletype'] = 'Ungültiger Dateityp. Bitte laden Sie eine JSON-Datei hoch.';
+$string['invalidjsonstructure'] = 'Ungültige JSON-Struktur. Die Datei muss Kategorien, Elemente und cat_elements enthalten.';

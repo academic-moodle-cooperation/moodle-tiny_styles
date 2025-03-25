@@ -48,8 +48,7 @@ $PAGE->requires->js_call_amd('tiny_styles/preview_element', 'init', ['a.element-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(
         new moodle_url('/admin/settings.php',
-        ['section' => 'tiny_styles_admin']),
-        get_string('elements_updated', 'tiny_styles'), 2
+        ['section' => 'tiny_styles_admin'])
     );
 }
 
@@ -187,6 +186,7 @@ if ($action === 'delete' && $id > 0) {
         1
     );
     exit;
+
 } else if ($action === 'moveup' && $id > 0) {
     confirm_sesskey();
     move_element_up($catid, $id);

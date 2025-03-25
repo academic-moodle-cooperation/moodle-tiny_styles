@@ -151,20 +151,29 @@ function applyStyle(editor, styleDef) {
         newWrapper.appendChild(container.firstChild);
     }
 
+    // Temp identification for block styles to find them.
+    if (block) {
+        newWrapper.setAttribute('data-temp-style', 'true');
+    }
+
+    // Styled content pushed into the selected part.
     editor.selection.setContent(newWrapper.outerHTML);
 
-    // For block styles extra paragraph to end the styling.
+    // A new paragraph for block styles.
     if (block) {
-        const currentElement = editor.selection.getNode();
-        editor.selection.setCursorLocation(currentElement, currentElement.childNodes.length);
-        editor.insertContent('<p>&nbsp;</p>');
-        const newParagraph = editor.dom.select('p:last')[0];
-        if (newParagraph) {
+        // Find by temp id.
+        const insertedBlock = editor.dom.select('[data-temp-style="true"]')[0];
+        if (insertedBlock) {
+            editor.dom.setAttrib(insertedBlock, 'data-temp-style', null);
+
+            const newParagraph = editor.dom.create('p', {}, '');
+            editor.dom.insertAfter(newParagraph, insertedBlock);
             editor.selection.setCursorLocation(newParagraph, 0);
-            editor.dom.setHTML(newParagraph, '');
         }
     }
+    // Ensure the editor regains focus.
     editor.focus();
+
 }
 
 
@@ -177,7 +186,7 @@ export async function editCustomStyles(editor) {
 
     const categoriesResponse = await fetchCategories();
 
-    // Normalize the response to an array.
+    // Normalize the reponse to an array.
     let categories = [];
     if (Array.isArray(categoriesResponse)) {
         categories = categoriesResponse;

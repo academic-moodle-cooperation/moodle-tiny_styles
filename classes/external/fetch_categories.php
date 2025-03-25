@@ -59,7 +59,7 @@ class fetch_categories extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $sql = "SELECT c.id, c.name, c.symbol, c.presentation,
+        $sql = "SELECT c.id, c.name, c.symbol, c.presentation, c.description,
             e.id AS elemid, e.name AS elemname, e.type, e.cssclasses, e.custom
         FROM {tiny_styles_categories} c
         LEFT JOIN {tiny_styles_cat_elements} ce ON ce.categoryid = c.id
@@ -67,22 +67,23 @@ class fetch_categories extends external_api {
         WHERE c.enabled = 1 
         AND (e.enabled = 1 OR c.presentation = 'divider')
         ORDER BY c.sortorder, ce.sortorder";
-        $rs = $DB->get_recordset_sql($sql);
+        $recordset = $DB->get_recordset_sql($sql);
 
-        $cats = [];
-        foreach ($rs as $r) {
-            $cid = $r->id;
-            if (!isset($cats[$cid])) {
-                $cats[$cid] = [
-                    'id' => $cid,
+        $categories = [];
+        foreach ($recordset as $r) {
+            $catid = $r->id;
+            if (!isset($categories[$catid])) {
+                $categories[$catid] = [
+                    'id' => $catid,
                     'name' => $r->name,
                     'symbol' => $r->symbol,
+                    'description' => $r->description,
                     'presentation' => $r->presentation,
                     'elements' => [],
                 ];
             }
             if (!empty($r->elemid)) {
-                $cats[$cid]['elements'][] = [
+                $categories[$catid]['elements'][] = [
                     'id'         => $r->elemid,
                     'name'       => $r->elemname,
                     'type'       => $r->type,
@@ -91,8 +92,8 @@ class fetch_categories extends external_api {
                 ];
             }
         }
-        $rs->close();
-        $results = array_values($cats);
+        $recordset->close();
+        $results = array_values($categories);
 
         return $results;
     }
@@ -103,6 +104,7 @@ class fetch_categories extends external_api {
                 'id'           => new external_value(PARAM_INT, 'Category ID'),
                 'name'         => new external_value(PARAM_TEXT, 'Category name'),
                 'symbol'       => new external_value(PARAM_RAW,  'Optional FA symbol', VALUE_OPTIONAL),
+                'description'  => new external_value(PARAM_TEXT, 'Category description'),
                 'presentation' => new external_value(PARAM_TEXT, 'divider/submenu/inline/'),
                 'elements'     => new external_multiple_structure(
                     new external_single_structure([

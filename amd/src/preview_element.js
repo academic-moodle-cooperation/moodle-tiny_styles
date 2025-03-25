@@ -13,6 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Separate pop up window for previewing a style.
+ *
+ * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 define([
     'jquery',
     'core/modal_factory',
@@ -36,8 +43,8 @@ define([
                sed diam nonumy eirmod tempor.</p>
             <p>Invidunt ut labore et dolore magna aliquyam erat:</p>
             <ul>
-               <li>Item one</li>
-               <li>Item two</li>
+               <li>Auto</li>
+               <li>Auto</li>
             </ul>`;
 
         const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
@@ -104,6 +111,9 @@ define([
         });
     }
 
+    /**
+     * @param selector
+     */
     function init(selector) {
         $(document).on('click', selector, function(e) {
             e.preventDefault();
