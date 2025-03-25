@@ -2,16 +2,14 @@
 
 #### A plugin for the TinyMCE text editor to enable bootstrap styling.
 
-Gives **User** the ability to select text in the editor and add a bootstrap style of their choosing from the format tab menu, or alternatively from the toolbar menu *(FA-Droplet Icon)*. 
+Gives **User** the ability to select text in the editor and add a bootstrap style of their choosing from the format tab menu, or alternatively from the toolbar menu *(FA Icon)*. 
 
 Default style options are
 - Boxes (bootstrap class: 'alert')
 - Labels (bootstrap class: 'badge')
-- ~Uni-Vorlagen~ *(currently not implemented)* 
 
 Admin/Settings site enables the creation for new categories and style options, and the ability to edit existing categories and styles.
 - Currently the icon selection feature is not enabled. The program will add a default icon for any created category.  
-- Uni-Vorlagen category is hidden from the editor side due to not being implemented yet.
 
 ## Current version ##
 
