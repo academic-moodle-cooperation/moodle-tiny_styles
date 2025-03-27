@@ -182,7 +182,9 @@ if ($hassiteconfig) {
                     'elementsurl' => '#',
                     'moveupiconhtml'  => $moveupiconhtml,
                     'movedowniconhtml'=> $movedowniconhtml,
-                    'editurl' => '#',
+                    'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
+                        'action' => 'edit', 'id' => $category->id
+                    ]))->out(false),
                     'deleteiconhtml' => $deleteiconhtml,
                 ];
             } else {
@@ -193,7 +195,6 @@ if ($hassiteconfig) {
                     'toggleiconhtml' => $toggleiconhtml,
                     'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                         'catid' => $category->id,
-                        'sesskey' => sesskey()
                     ]))->out(false),
                     'moveupiconhtml'  => $moveupiconhtml,
                     'movedowniconhtml'=> $movedowniconhtml,
@@ -207,7 +208,6 @@ if ($hassiteconfig) {
 
         $createcaturl = new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
             'action' => 'create',
-            'sesskey' => sesskey(),
         ]);
         $exporturl    = new moodle_url('/admin/settings.php', [
             'section' => 'tiny_styles_admin',

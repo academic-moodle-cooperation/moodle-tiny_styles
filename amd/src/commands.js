@@ -25,7 +25,7 @@ import {getButtonImage} from 'editor_tiny/utils';
 import Ajax from 'core/ajax';
 import { get_string as getString } from 'core/str';
 import { icon } from "./common";
-import PreviewElement from "./preview_element";
+// import PreviewElement from "./preview_element";
 
 /**
  * Fetches categories dynamically using AJAX.
@@ -128,7 +128,7 @@ function applyStyle(editor, styleDef) {
 
     const selectedHtml = editor.selection.getContent({ format: 'html' });
     if (!selectedHtml.trim()) {
-        PreviewElement.showPreview(id, className, block ? 'block' : 'inline');
+        // PreviewElement.showPreview(id, className, block ? 'block' : 'inline');
         return;
     }
 

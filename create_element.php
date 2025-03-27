@@ -229,7 +229,6 @@ if ($data = $mform->get_data()) {
 
             redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                 'catid' => $data->categoryid,
-                'sesskey' => sesskey()
             ])
             )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
         }
@@ -268,7 +267,6 @@ if ($data = $mform->get_data()) {
 
         redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
             'catid' => $data->categoryid,
-            'sesskey' => sesskey()
         ])
         )->out(false), get_string('elementcreated', 'tiny_styles'), 2);
     }

@@ -26,7 +26,6 @@
 require_once(__DIR__ . '/../../../../../config.php');
 require_once($CFG->dirroot . '/lib/editor/tiny/plugins/styles/locallib.php');
 require_login();
-require_sesskey();
 
 $context = context_system::instance();
 require_capability('moodle/site:config', $context);
