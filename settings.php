@@ -26,10 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/editor/tiny/plugins/styles/locallib.php');
 
-
 $action = optional_param('action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 $PAGE->requires->js_call_amd('tiny_styles/importdata', 'init');
+$PAGE->requires->js_call_amd('tiny_styles/sortcategories', 'init');
 
 // todo: move up/down, delete and toggle enable to ajax implementation.
 if ($action === 'moveup' && $id > 0) {
@@ -109,27 +109,28 @@ if ($hassiteconfig) {
         // Categories prepared for the template.
         foreach ($records as $category) {
 
-            // Move up/down actions.
-            $moveupurl = new moodle_url('/admin/settings.php', [
-                'section' => 'tiny_styles_admin',
-                'action'  => 'moveup',
-                'id'      => $category->id,
-                'sesskey' => sesskey()
-            ]);
-            $moveupiconhtml = $OUTPUT->action_icon(
-                $moveupurl,
-                new pix_icon('t/up', get_string('moveup'))
+            $moveupiconhtml = html_writer::tag('button',
+                $OUTPUT->pix_icon('t/up', get_string('moveup')),
+                [
+                    'type' => 'button',
+                    'class' => 'btn-icon moveup',
+                    'data-action' => 'moveup',
+                    'data-id' => $category->id,
+                    'title' => get_string('moveup'),
+                    'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+                ]
             );
 
-            $movedownurl = new moodle_url('/admin/settings.php', [
-                'section' => 'tiny_styles_admin',
-                'action'  => 'movedown',
-                'id'      => $category->id,
-                'sesskey' => sesskey()
-            ]);
-            $movedowniconhtml = $OUTPUT->action_icon(
-                $movedownurl,
-                new pix_icon('t/down', get_string('movedown'))
+            $movedowniconhtml = html_writer::tag('button',
+                $OUTPUT->pix_icon('t/down', get_string('movedown')),
+                [
+                    'type' => 'button',
+                    'class' => 'btn-icon movedown',
+                    'data-action' => 'movedown',
+                    'data-id' => $category->id,
+                    'title' => get_string('movedown'),
+                    'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+                ]
             );
 
             $deleteurl = new moodle_url('/admin/settings.php', [

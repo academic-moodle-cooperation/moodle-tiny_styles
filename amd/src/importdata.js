@@ -38,7 +38,6 @@ export const init = () => {
             const jsonData = JSON.parse(text);
 
             const response = await fetch(
-                //M.cfg.wwwroot + '/admin/settings.php?section=tiny_styles_admin&action=import',
                 M.cfg.wwwroot
                 + '/admin/settings.php?section=tiny_styles_admin&action=import&sesskey='
                 + encodeURIComponent(M.cfg.sesskey),
