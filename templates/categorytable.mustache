@@ -44,7 +44,13 @@
       <td>{{description}}</td>
       <td>{{presentation}}</td>
       <td>
-        {{{toggleiconhtml}}}
+        <a href="#" class="toggle-enable"
+           data-id="{{id}}"
+           title="{{#enabled}}{{#str}}show, core{{/str}}{{/enabled}}{{^enabled}}{{#str}}hide, core{{/str}}{{/enabled}}"
+           style="text-decoration: none; color: #0f6cbf;">
+            <i class="icon fa enabled-icon {{#enabled}}fa-eye{{/enabled}}{{^enabled}}fa-eye-slash{{/enabled}} fa-fw"></i>
+        </a>
+
         <a href="{{elementsurl}}" class="mr-2" title="{{#str}} elements, tiny_styles {{/str}}" style="text-decoration: none;">
           <i class="fa-solid fa-list"></i>
         </a>

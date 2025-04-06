@@ -116,3 +116,12 @@ $string['selectjsonfile'] = 'JSON-Datei zum Importieren auswählen:';
 $string['jsonfilehelp'] = 'Um das korrekte JSON-Format sicherzustellen, können Sie die aktuellen Kategorien exportieren und die JSON-Dateistruktur als Vorlage verwenden.';
 $string['invalidfiletype'] = 'Ungültiger Dateityp. Bitte laden Sie eine JSON-Datei hoch.';
 $string['invalidjsonstructure'] = 'Ungültige JSON-Struktur. Die Datei muss Kategorien, Elemente und cat_elements enthalten.';
+
+$string['reorder'] = 'Reorder';
+
+$string['withselection'] = 'Mit Auswahl: ';
+$string['selectdefault'] = 'Auswählen';
+$string['showaction'] = 'Anzeigen';
+$string['hideaction'] = 'Ausblenden';
+$string['duplicateaction'] = 'Duplizieren';
+$string['deleteaction'] = 'Löschen';

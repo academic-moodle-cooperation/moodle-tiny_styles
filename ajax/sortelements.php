@@ -1,6 +1,4 @@
 <?php
-// sortcategories.php
-
 // Enable error reporting for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -12,7 +10,7 @@ ini_set('error_log', __DIR__ . '/error_log.txt');
 require_once(__DIR__ . '/../../../../../../config.php');
 
 // Log initial access
-error_log('Sortcategories AJAX request received at: ' . date('Y-m-d H:i:s'));
+error_log('AJAX request received at: ' . date('Y-m-d H:i:s'));
 
 try {
     require_login();
@@ -32,40 +30,59 @@ try {
     // Log parsed data
     error_log('Parsed data: ' . print_r($data, true));
 
-    if (!isset($data['action'], $data['id'])) {
+    if (!isset($data['elementid'], $data['categoryid'], $data['direction'])) {
         throw new moodle_exception('Missing required parameters: ' .
-            (isset($data['action']) ? '' : 'action ') .
-            (isset($data['id']) ? '' : 'id '));
+            (isset($data['elementid']) ? '' : 'elementid ') .
+            (isset($data['categoryid']) ? '' : 'categoryid ') .
+            (isset($data['direction']) ? '' : 'direction'));
     }
 
-    $action = $data['action'];
-    $catid = (int)$data['id'];
+    $elementid = (int)$data['elementid'];
+    $categoryid = (int)$data['categoryid'];
+    $direction = $data['direction'];
 
-    error_log("Received action: $action, CategoryID: $catid");
+    // Log parsed values
+    error_log("ElementID: $elementid, CategoryID: $categoryid, Direction: $direction");
 
-    if (!in_array($action, ['moveup', 'movedown'])) {
-        throw new moodle_exception('Invalid action: ' . $action);
+    if (!in_array($direction, ['up', 'down'])) {
+        throw new moodle_exception('Invalid direction: ' . $direction);
     }
 
     global $DB;
 
-    // Get the current category record from tiny_styles_categories
-    $current = $DB->get_record('tiny_styles_categories', ['id' => $catid], '*', MUST_EXIST);
-    error_log("Current category record: " . print_r($current, true));
+    // Check if the record exists
+    $exists = $DB->record_exists('tiny_styles_cat_elements', [
+        'categoryid' => $categoryid,
+        'elementid' => $elementid
+    ]);
 
-    // Build SQL query to find neighbor based on action
-    if ($action === 'moveup') {
-        $sql = "SELECT *
-                  FROM {tiny_styles_categories}
-                 WHERE sortorder < :currsort
-              ORDER BY sortorder DESC";
-    } else { // movedown
-        $sql = "SELECT *
-                  FROM {tiny_styles_categories}
-                 WHERE sortorder > :currsort
-              ORDER BY sortorder ASC";
+    if (!$exists) {
+        throw new moodle_exception("No record found for categoryid=$categoryid and elementid=$elementid");
     }
-    $params = ['currsort' => $current->sortorder];
+
+    // Get the current element's bridging record
+    $current = $DB->get_record('tiny_styles_cat_elements', [
+        'categoryid' => $categoryid,
+        'elementid' => $elementid
+    ], '*', MUST_EXIST);
+
+    error_log("Current record found: " . print_r($current, true));
+
+    // Find the neighbor element (the one above or below)
+    $params = ['catid' => $categoryid, 'sort' => $current->sortorder];
+    if ($direction === 'up') {
+        $sql = "SELECT *
+              FROM {tiny_styles_cat_elements}
+             WHERE categoryid = :catid
+               AND sortorder < :sort
+          ORDER BY sortorder DESC";
+    } else {
+        $sql = "SELECT *
+              FROM {tiny_styles_cat_elements}
+             WHERE categoryid = :catid
+               AND sortorder > :sort
+          ORDER BY sortorder ASC";
+    }
 
     error_log("SQL query: $sql");
     error_log("Params: " . print_r($params, true));
@@ -74,17 +91,17 @@ try {
     error_log("Neighbors found: " . print_r($neighbors, true));
 
     if (empty($neighbors)) {
-        // No neighbors found; nothing to swap.
+        // No neighbors found, nothing to swap
         $response = ['status' => 'success', 'message' => 'No change required (no neighbor found)'];
         error_log("Response: " . json_encode($response));
         echo json_encode($response);
         exit;
     }
 
-    // Get the first (and only) neighbor record.
+    // Get the first (and only) record
     $neighbor = reset($neighbors);
 
-    // Swap sortorder values between current and neighbor.
+    // Swap sortorder values
     $temp = $current->sortorder;
     $current->sortorder = $neighbor->sortorder;
     $neighbor->sortorder = $temp;
@@ -92,13 +109,13 @@ try {
     error_log("Updating records - Current ID: {$current->id}, New sortorder: {$current->sortorder}");
     error_log("Updating records - Neighbor ID: {$neighbor->id}, New sortorder: {$neighbor->sortorder}");
 
-    // Save changes to the database.
-    $DB->update_record('tiny_styles_categories', $current);
-    $DB->update_record('tiny_styles_categories', $neighbor);
+    // Save changes to database
+    $DB->update_record('tiny_styles_cat_elements', $current);
+    $DB->update_record('tiny_styles_cat_elements', $neighbor);
 
     $response = [
         'status' => 'success',
-        'message' => 'Category order updated successfully',
+        'message' => 'Order updated successfully',
         'debug' => [
             'current' => $current->id . ' (now ' . $current->sortorder . ')',
             'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')'

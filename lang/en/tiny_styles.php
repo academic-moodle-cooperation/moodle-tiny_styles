@@ -116,3 +116,12 @@ $string['selectjsonfile'] = 'Select JSON file to import:';
 $string['jsonfilehelp'] = 'For ensuring the correct JSON format you can export current categories and use the JSON file structure as a template.';
 $string['invalidfiletype'] = 'Invalid file type. Please upload a JSON file';
 $string['invalidjsonstructure'] = 'Invalid JSON structure. The file must contain categories, elements, and cat_elements';
+
+$string['reorder'] = 'Reorder';
+
+$string['withselection'] = 'With selection: ';
+$string['selectdefault'] = 'Select';
+$string['showaction'] = 'Show';
+$string['hideaction'] = 'Hide';
+$string['duplicateaction'] = 'Duplicate';
+$string['deleteaction'] = 'Delete';

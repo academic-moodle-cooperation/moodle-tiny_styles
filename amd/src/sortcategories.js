@@ -25,7 +25,6 @@ define([], function() {
                 const action = button.dataset.action;
                 const id = parseInt(button.dataset.id);
                 if (isNaN(id)) {
-                    console.error('Invalid id value:', button.dataset.id);
                     return;
                 }
                 const row = button.closest('tr');
@@ -51,15 +50,12 @@ define([], function() {
                             credentials: 'same-origin'
                         }
                     );
+
                     if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('Server responded with error:', errorText);
-                    } else {
-                        const data = await response.json();
-                        console.log('Server response:', data);
+                        alert(response.status);
                     }
-                } catch (error) {
-                    console.error('Fetch error:', error);
+                } catch (e) {
+                    alert(e.message);
                 }
             });
         });
