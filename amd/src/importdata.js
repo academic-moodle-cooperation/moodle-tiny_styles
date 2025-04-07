@@ -51,18 +51,18 @@ export const init = () => {
                 });
 
             if (!response.ok) {
-                const responseText = await response.text();
-                throw new Error(`Server error: ${response.status} - ${response.statusText}\n${responseText}`);
+                alert(response.status);
+                return;
             }
 
             const result = await response.json();
             if (result.success) {
                 location.reload();
-            } else {
-                alert('Server error: ' + result.message);
+            }else {
+                alert(result.message);
             }
         } catch (e) {
-            alert("Upload failed: " + e.message);
+            alert(e.message);
         }
     });
 };
