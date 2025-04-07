@@ -37,14 +37,9 @@ For a detailed structure see:
 **Functional, but missing features:**
 
 - Create/Edit category
-- View category elements
 
    **Missing features:**
-
   - Icon selection (category)
-  - Selected elements dropdown menu actions
-  - Import & Export
-
 
 ------
 ### Editor ###
@@ -65,7 +60,6 @@ Currently user has to clear formatting manually from the menu, before applying a
 
 **Admin:**
 - Icon selection for category
-- Bulk actions for elements
 
 **Editor:**
 - Text wrapping logic improvements
@@ -75,14 +69,10 @@ Currently user has to clear formatting manually from the menu, before applying a
 **General improvements:**
 - Refactoring
 - Code optimization
-- Dynamic style choosing on element creation page
 
 -----
 
 ### Suggested improvements ###
-
-**Settings page**
-- AJAX implementation for not reloading page after every: Hide/Show and Up/Down actions.
 
 **Create/Edit element**
 - Button layout for a pleasing look and usability
