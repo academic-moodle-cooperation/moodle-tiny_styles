@@ -1,4 +1,28 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Enables bulk actions for the elements page.
+ *
+ * @package     tiny_styles
+ * @category    admin
+ * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 define('AJAX_SCRIPT', true);
 
 require_once(__DIR__ . '/../../../../../../config.php');
@@ -55,7 +79,6 @@ try {
                 $newelement->timemodified = time();
                 $newelementid = $DB->insert_record('tiny_styles_elements', $newelement);
 
-                // If a category id is provided, add the duplicated element to that category.
                 if ($catid) {
                     // The current maximum sort.
                     $exists = $DB->record_exists('tiny_styles_cat_elements', ['categoryid' => $catid]);
@@ -89,10 +112,8 @@ try {
             throw new moodle_exception('Invalid action');
     }
     echo json_encode(['success' => true]);
-} catch (\moodle_exception $e) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+
 } catch (\Exception $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
 }

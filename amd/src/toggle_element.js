@@ -1,3 +1,25 @@
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Enables toggling the elements enabled/disabled seamlessly.
+ *
+ * @category    admin
+ * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 define([], function() {
     /**
      * Toggle the visibility icon based on new state
@@ -23,9 +45,9 @@ define([], function() {
     };
 
     const init = () => {
-        document.querySelectorAll('.toggle-enable').forEach(button => {
-            button.addEventListener('click', async (e) => {
-                e.preventDefault();
+        document.querySelectorAll('.toggle-enable-element').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                event.preventDefault();
 
                 const elementid = parseInt(button.dataset.id);
                 if (isNaN(elementid)) {
@@ -39,11 +61,11 @@ define([], function() {
                     elementid: elementid,
                 };
 
-                try {
-                    const ajaxUrl = M.cfg.wwwroot +
-                        '/lib/editor/tiny/plugins/styles/ajax/toggle_element.php?sesskey=' +
-                        encodeURIComponent(M.cfg.sesskey);
+                const ajaxUrl = M.cfg.wwwroot +
+                    '/lib/editor/tiny/plugins/styles/ajax/toggle_element.php?sesskey=' +
+                    encodeURIComponent(M.cfg.sesskey);
 
+                try {
                     const response = await fetch(ajaxUrl, {
                         method: 'POST',
                         headers: {
@@ -54,27 +76,24 @@ define([], function() {
                         credentials: 'same-origin'
                     });
 
+
                     if (!response.ok) {
                         alert(response.status);
                         return;
                     }
 
-                    const text = await response.text();
+                    const data = await response.json();
 
-                    try {
-                        const data = JSON.parse(text);
-
-                        if (!data.success) {
-                            alert(data.message || 'Unexpected error');
-                        } else {
-                            updateIcon(button, data.newstate);
-                        }
-                    } catch (e) {
-                        alert(+ e.message);
+                    if (data.success) {
+                        updateIcon(button, data.newstate);
+                    } else {
+                        alert(data.message);
                     }
+
                 } catch (e) {
                     alert(e.message);
-                } finally {
+                }
+                finally {
                     button.disabled = false;
                 }
             });

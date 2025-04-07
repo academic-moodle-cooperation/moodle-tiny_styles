@@ -1,3 +1,26 @@
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Enables the bulk actions on the elements page.
+ *
+ * @category    admin
+ * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 define(['jquery'], function($) {
     return {
         init: function() {
@@ -7,22 +30,23 @@ define(['jquery'], function($) {
                     if (!action) {
                         return;
                     }
-                    // Selected element IDs.
+                    // Gets selected element IDs.
                     var selected = [];
                     $('input[name="selected_elements[]"]:checked').each(function() {
                         selected.push($(this).val());
                     });
                     if (selected.length === 0) {
+                        alert('At least 1 element must be selected.');
                         $(this).val('');
                         return;
                     }
                     // Confirm deletion.
-                    // todo: change to a moodle core pop up
                     if (action === 'delete' && !confirm('Are you sure you want to delete the selected elements?')) {
                         $(this).val('');
                         return;
                     }
 
+                    // Retrieves category id from M.cfg or URL.
                     var catid = M.cfg.catid || new URLSearchParams(window.location.search).get('catid');
                     if (!catid) {
                         return;
