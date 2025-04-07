@@ -31,7 +31,6 @@ For a detailed structure see:
 
 **Fully implemented for usage:**
 
-- Settings page (see section: [Suggested improvements](#suggested-improvements))
 - Create/Edit element (see section: [Suggested improvements](#suggested-improvements))
 
 **Functional, but missing features:**
