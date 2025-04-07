@@ -60,10 +60,6 @@ class element_form extends moodleform {
         global $DB;
         $mform = $this->_form;
 
-
-        // Header
-        //$mform->addElement('header', 'elementsettings', get_string('elementsettings', 'tiny_styles'));
-
         // Name
         $mform->addElement(
             'text',
@@ -96,7 +92,6 @@ class element_form extends moodleform {
         $mform->addRule('categoryid', null, 'required', null, 'client');
 
         // todo: dynamically set based on style selected
-        // ->to avoid accidental styling errors (inline styling for a box vice versa)
         $typeoptions = [
             'inline' => 'Inline',
             'block'  => 'Block',
@@ -147,7 +142,6 @@ class element_form extends moodleform {
         $mform->hideIf('manualconfig', 'cssclasses', 'neq', 'Manual style sheet');
 
         $mform->setDefault('manualconfig', get_string('manualdefault', 'tiny_styles'));
-        // $mform->addRule('manualconfig', null, 'required', null, 'client');
 
         // Hidden fields
         $mform->addElement('hidden', 'id');
@@ -319,5 +313,23 @@ $PAGE->requires->js_call_amd(
     'init',
     ['#btn-preview-element']
 );
+
+// Function to check if selected class contains 'alert' => switches to Block
+$PAGE->requires->js_amd_inline("
+require(['jquery'], function($) {
+    function checkForAlertClass() {
+        var selectedClass = $('#id_cssclasses').val();
+        if (selectedClass && selectedClass.indexOf('alert') !== -1) {
+            $('#id_type').val('block');
+        }
+    }
+    $(document).ready(function() {    
+        // Run whenever the cssclasses field changes
+        $('#id_cssclasses').on('change', function() {
+            checkForAlertClass();
+        });
+    });
+});
+");
 
 echo $OUTPUT->footer();
