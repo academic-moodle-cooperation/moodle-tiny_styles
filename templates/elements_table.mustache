@@ -1,4 +1,4 @@
-<div class="tiny-elements">
+<div class="tiny-elements" id="elements-container" data-catid="{{catid}}">
     <h3>{{heading}}</h3>
 
     <form method="post" action="{{submiturl}}">
@@ -28,30 +28,44 @@
                     <th>{{#str}} actions, tiny_styles {{/str}}</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="sortable-list">
                 {{#elements}}
-                <tr>
-                    <td>
-                        <input type="checkbox" name="selected_elements[]" value="{{id}}">
-                    </td>
+                <tr data-elementid="{{id}}" data-sortorder="{{sortorder}}">
+                    <td><input type="checkbox" name="selected_elements[]" value="{{id}}"></td>
                     <td>{{name}}</td>
                     <td>{{type}}</td>
                     <td>{{bootstrapclass}}</td>
                     <td>
-                            {{{toggleiconhtml}}}
-                            {{{viewdetailsiconhtml}}}
-                            {{{moveupiconhtml}}}
-                            {{{movedowniconhtml}}}
 
-                        <a href="{{editurl}}" title="{{#str}} editelement, tiny_styles {{/str}}" style="text-decoration: none;">
+                       <a href="#" class="toggle-enable-element"
+                          data-id="{{id}}"
+                          title="{{#enabled}}{{#str}}hide, core{{/str}}{{/enabled}}{{^enabled}}{{#str}}show, core{{/str}}{{/enabled}}"
+                          style="text-decoration: none; color: #0f6cbf;">
+                           <i class="icon fa enabled-icon {{#enabled}}fa-eye{{/enabled}}{{^enabled}}fa-eye-slash{{/enabled}} fa-fw"></i>
+                       </a>
+
+                        {{{moveupiconhtml}}}
+                        {{{movedowniconhtml}}}
+
+                        <a href="{{editurl}}" title="Edit" style="text-decoration: none;">
                             <i class="icon fa fa-cog fa-fw"></i>
                         </a>
-
-                            {{{deleteiconhtml}}}
+                        {{{deleteiconhtml}}}
                     </td>
                 </tr>
                 {{/elements}}
             </tbody>
         </table>
     </form>
+    <!-- Bulk Actions Dropdown -->
+    <div class="bulk-actions mt-3 ml-3">
+        <label for="bulk-actions-dropdown">{{bulkactionslabel}}</label>
+        <select id="bulk-actions-dropdown" class="custom-select custom-select-lg rounded">
+            <option value="">{{selectdefault}}</option>
+            <option value="show">{{showaction}}</option>
+            <option value="hide">{{hideaction}}</option>
+            <option value="duplicate">{{duplicateaction}}</option>
+            <option value="delete">{{deleteaction}}</option>
+        </select>
+    </div>
 </div>

@@ -70,15 +70,16 @@ function move_category_down(int $catid): void {
         $DB->update_record('tiny_styles_categories', $below);
     }
 }
-
 function move_element_up(int $catid, int $elementid): void {
     global $DB;
 
+    // Retrieve the current element's bridging record.
     $catElem = $DB->get_record('tiny_styles_cat_elements', [
         'categoryid' => $catid,
         'elementid'  => $elementid
     ], '*', MUST_EXIST);
 
+    // Find the neighbor with a lower sort order (the one immediately above).
     $sql = "SELECT *
               FROM {tiny_styles_cat_elements}
              WHERE categoryid = :catid
@@ -91,6 +92,7 @@ function move_element_up(int $catid, int $elementid): void {
     $neighbors = $DB->get_records_sql($sql, $params, 0, 1);
     $above = reset($neighbors);
 
+    // If an above neighbor exists, swap their sort orders.
     if ($above) {
         $oldsort = $catElem->sortorder;
         $catElem->sortorder = $above->sortorder;
@@ -104,11 +106,13 @@ function move_element_up(int $catid, int $elementid): void {
 function move_element_down(int $catid, int $elementid): void {
     global $DB;
 
+    // Retrieve the current element's bridging record.
     $catElem = $DB->get_record('tiny_styles_cat_elements', [
         'categoryid' => $catid,
         'elementid'  => $elementid
     ], '*', MUST_EXIST);
 
+    // Find the neighbor with a higher sort order (the one immediately below).
     $sql = "SELECT *
               FROM {tiny_styles_cat_elements}
              WHERE categoryid = :catid
@@ -121,6 +125,7 @@ function move_element_down(int $catid, int $elementid): void {
     $neighbors = $DB->get_records_sql($sql, $params, 0, 1);
     $below = reset($neighbors);
 
+    // If a below neighbor exists, swap their sort orders.
     if ($below) {
         $oldsort = $catElem->sortorder;
         $catElem->sortorder = $below->sortorder;

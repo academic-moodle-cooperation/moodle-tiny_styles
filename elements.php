@@ -40,9 +40,12 @@ $id = optional_param('id', 0, PARAM_INT);
 $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $catid]));
 $PAGE->set_title(get_string('elementstitle', 'tiny_styles'));
 
-// Helper method for selecting all checkboxes.
+// Javascript helpers.
 $PAGE->requires->js_call_amd('tiny_styles/select_all', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/preview_element', 'init', ['a.element-preview-link']);
+$PAGE->requires->js_call_amd('tiny_styles/sortelements', 'init');
+$PAGE->requires->js_call_amd('tiny_styles/bulk_actions', 'init');
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(
@@ -65,28 +68,26 @@ $records = $DB->get_records_sql($sql, $params);
 $elements = [];
 foreach ($records as $r) {
 
-    // Moving up and down methods.
-    $moveupurl = new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-        'catid'   => $catid,
-        'action'  => 'moveup',
-        'id'      => $r->id,
-        'sesskey' => sesskey()
-    ]);
-
-    $moveupiconhtml = $OUTPUT->action_icon(
-        $moveupurl,
-        new pix_icon('t/up', get_string('moveup'))
+    $moveupiconhtml = html_writer::tag('button',
+        $OUTPUT->pix_icon('t/up', get_string('moveup')),
+        [
+            'type'        => 'button',
+            'class'       => 'move-up btn-icon',
+            'data-id'     => $r->id,
+            'title'       => get_string('moveup'),
+            'style'       => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+        ]
     );
 
-    $movedownurl = new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-        'catid'   => $catid,
-        'action'  => 'movedown',
-        'id'      => $r->id,
-        'sesskey' => sesskey()
-    ]);
-    $movedowniconhtml = $OUTPUT->action_icon(
-        $movedownurl,
-        new pix_icon('t/down', get_string('movedown'))
+    $movedowniconhtml = html_writer::tag('button',
+        $OUTPUT->pix_icon('t/down', get_string('movedown')),
+        [
+            'type'        => 'button',
+            'class'       => 'move-down btn-icon',
+            'data-id'     => $r->id,
+            'title'       => get_string('movedown'),
+            'style'       => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+        ]
     );
 
     // Delete url for delete action.
@@ -104,28 +105,6 @@ foreach ($records as $r) {
         ['title' => get_string('delete')]
     );
 
-    // Enable disable action.
-    $enabled = (int)$r->enabled;
-    if ($enabled) {
-        $eyeiconname = 't/hide';
-        $eyealt = get_string('hide');
-    } else {
-        $eyeiconname = 't/show';
-        $eyealt = get_string('show');
-    }
-
-    $toggleenableurl = new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-        'catid'   => $catid,
-        'action'  => 'toggleenable',
-        'id'      => $r->id,
-        'sesskey' => sesskey()
-    ]);
-
-    $toggleiconhtml = $OUTPUT->action_icon(
-        $toggleenableurl,
-        new pix_icon($eyeiconname, $eyealt)
-    );
-
     $viewdetailsattrs = [
         'href'           => '#',
         'class'          => 'element-preview-link',
@@ -135,16 +114,14 @@ foreach ($records as $r) {
     ];
 
     $viewdetailsicon = new pix_icon('i/preview', get_string('preview', 'tiny_styles'));
-
     $viewdetailshtml = $OUTPUT->action_icon('#', $viewdetailsicon, null, $viewdetailsattrs);
-
 
     $elements[] = [
         'id'             => $r->id,
         'name'           => $r->name,
         'type'           => $r->type,
         'bootstrapclass' => $r->cssclasses,
-        'toggleiconhtml' => $toggleiconhtml,
+        'enabled' => (bool)$r->enabled,
         'viewdetailsiconhtml' => $viewdetailshtml,
         'moveupiconhtml'   => $moveupiconhtml,
         'movedowniconhtml' => $movedowniconhtml,
@@ -161,12 +138,20 @@ $templatecontext = [
     'heading'           => get_string('elementsheading', 'tiny_styles'),
     'navigateback'      => get_string('back_overview', 'tiny_styles'),
     'createbuttonlabel' => get_string('create_element', 'tiny_styles'),
-    'createelementurl'  => (new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', ['catid' => $catid]))->out(false),
+    'createelementurl'  => (new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php',
+        ['catid' => $catid
+        ]))->out(false),
     'submiturl'         => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php',
         ['catid' => $catid,
         'sesskey' => sesskey()
         ]))->out(false),
     'elements'          => $elements,
+    'bulkactionslabel' => get_string('withselection', 'tiny_styles'),
+    'selectdefault'    => get_string('selectdefault', 'tiny_styles'),
+    'showaction'       => get_string('showaction', 'tiny_styles'),
+    'hideaction'       => get_string('hideaction', 'tiny_styles'),
+    'duplicateaction'  => get_string('duplicateaction', 'tiny_styles'),
+    'deleteaction'     => get_string('deleteaction', 'tiny_styles'),
 ];
 
 
@@ -185,39 +170,9 @@ if ($action === 'delete' && $id > 0) {
         1
     );
     exit;
-
-} else if ($action === 'moveup' && $id > 0) {
-    confirm_sesskey();
-    move_element_up($catid, $id);
-    redirect(new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-        'catid' => $catid,
-        'sesskey' => sesskey()
-    ]));
-    exit;
-} else if ($action === 'movedown' && $id > 0) {
-    confirm_sesskey();
-    move_element_down($catid, $id);
-    redirect(new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-        'catid' => $catid,
-        'sesskey' => sesskey()
-    ]));
-    exit;
-} else if ($action === 'toggleenable' && $id > 0) {
-    confirm_sesskey();
-
-    $element = $DB->get_record('tiny_styles_elements', ['id' => $id], '*', MUST_EXIST);
-    $element->enabled = $element->enabled ? 0 : 1;
-    $DB->update_record('tiny_styles_elements', $element);
-
-    redirect(
-        new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-            'catid' => $catid,
-            'sesskey' => sesskey()
-        ])
-    );
-    exit;
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('tiny_styles/elements_table', $templatecontext);
+$PAGE->requires->js_call_amd('tiny_styles/toggle_element', 'init');
 echo $OUTPUT->footer();

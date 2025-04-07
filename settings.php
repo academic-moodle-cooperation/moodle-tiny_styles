@@ -26,10 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/editor/tiny/plugins/styles/locallib.php');
 
-
 $action = optional_param('action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 $PAGE->requires->js_call_amd('tiny_styles/importdata', 'init');
+$PAGE->requires->js_call_amd('tiny_styles/sortcategories', 'init');;
 
 // todo: move up/down, delete and toggle enable to ajax implementation.
 if ($action === 'moveup' && $id > 0) {
@@ -75,18 +75,6 @@ if ($action === 'moveup' && $id > 0) {
     );
     exit;
 
-} else if ($action === 'toggleenable' && $id > 0) {
-    require_sesskey();
-    require_capability('moodle/site:config', context_system::instance());
-
-    $category = $DB->get_record('tiny_styles_categories', ['id' => $id], '*', MUST_EXIST);
-    $category->enabled = $category->enabled ? 0 : 1;
-    $DB->update_record('tiny_styles_categories', $category);
-
-    redirect(
-        new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin'])
-    );
-    exit;
 } else if ($action === 'export') {
     require_once(__DIR__ . '/exporthandler.php');
     exit;
@@ -109,27 +97,28 @@ if ($hassiteconfig) {
         // Categories prepared for the template.
         foreach ($records as $category) {
 
-            // Move up/down actions.
-            $moveupurl = new moodle_url('/admin/settings.php', [
-                'section' => 'tiny_styles_admin',
-                'action'  => 'moveup',
-                'id'      => $category->id,
-                'sesskey' => sesskey()
-            ]);
-            $moveupiconhtml = $OUTPUT->action_icon(
-                $moveupurl,
-                new pix_icon('t/up', get_string('moveup'))
+            $moveupiconhtml = html_writer::tag('button',
+                $OUTPUT->pix_icon('t/up', get_string('moveup')),
+                [
+                    'type' => 'button',
+                    'class' => 'btn-icon moveup',
+                    'data-action' => 'moveup',
+                    'data-id' => $category->id,
+                    'title' => get_string('moveup'),
+                    'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+                ]
             );
 
-            $movedownurl = new moodle_url('/admin/settings.php', [
-                'section' => 'tiny_styles_admin',
-                'action'  => 'movedown',
-                'id'      => $category->id,
-                'sesskey' => sesskey()
-            ]);
-            $movedowniconhtml = $OUTPUT->action_icon(
-                $movedownurl,
-                new pix_icon('t/down', get_string('movedown'))
+            $movedowniconhtml = html_writer::tag('button',
+                $OUTPUT->pix_icon('t/down', get_string('movedown')),
+                [
+                    'type' => 'button',
+                    'class' => 'btn-icon movedown',
+                    'data-action' => 'movedown',
+                    'data-id' => $category->id,
+                    'title' => get_string('movedown'),
+                    'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+                ]
             );
 
             $deleteurl = new moodle_url('/admin/settings.php', [
@@ -149,36 +138,14 @@ if ($hassiteconfig) {
                 ['title' => get_string('delete')]
             );
 
-            // Enable/disable icon.
-            $enabled = (int)$category->enabled;
-
-            if ($enabled) {
-                $eyeiconname = 't/hide';
-                $eyealt = get_string('hide');
-            } else {
-                $eyeiconname = 't/show';
-                $eyealt = get_string('show');
-            }
-
-            $toggleurl = new moodle_url('/admin/settings.php', [
-                'section' => 'tiny_styles_admin',
-                'action'  => 'toggleenable',
-                'id'      => $category->id,
-                'sesskey' => sesskey()
-            ]);
-
-            $toggleiconhtml = $OUTPUT->action_icon(
-                $toggleurl,
-                new pix_icon($eyeiconname, $eyealt)
-            );
-
             // Filtering dividers out.
             if ($category->presentation === 'divider') {
                 $categorydata[] = [
+                    'id' => $category->id,
+                    'enabled' => $category->enabled,
                     'name' => $category->name,
                     'description' => $category->description,
                     'presentation' => $category->presentation,
-                    'toggleiconhtml' => $toggleiconhtml,
                     'elementsurl' => '#',
                     'moveupiconhtml'  => $moveupiconhtml,
                     'movedowniconhtml'=> $movedowniconhtml,
@@ -189,10 +156,11 @@ if ($hassiteconfig) {
                 ];
             } else {
                 $categorydata[] = [
+                    'id' => $category->id,
+                    'enabled' => $category->enabled,
                     'name' => $category->name,
                     'description' => $category->description,
                     'presentation' => $category->presentation,
-                    'toggleiconhtml' => $toggleiconhtml,
                     'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                         'catid' => $category->id,
                     ]))->out(false),
@@ -240,3 +208,4 @@ if ($hassiteconfig) {
     $ADMIN->add('editortiny', $settingspage);
     $settings = 0;
 }
+$PAGE->requires->js_call_amd('tiny_styles/toggle_category', 'init');
