@@ -80,7 +80,7 @@ $string['create_element'] = 'Element erstellen';
 $string['selectall'] = 'Alle auswählen';
 $string['details'] = 'Details anzeigen';
 $string['manualconfig'] = 'Manuelle Konfiguration';
-$string['manualdefault'] = 'Stellen Sie sicher, dass Sie ein gültiges CSS eingeben';
+$string['manualdefault'] = 'Bitte geben Sie gültigen Inline-CSS-Code ein. Beispiel: <code>color: red; font-weight: bold;</code><br>Mehr über Inline-Stile erfahren Sie <a href="https://www.freecodecamp.org/news/inline-style-in-html/" target="_blank" rel="noopener">hier</a>.';
 
 // Noch zu definieren
 $string['elementsettings'] = 'Element-Einstellungen';
@@ -125,3 +125,31 @@ $string['showaction'] = 'Anzeigen';
 $string['hideaction'] = 'Ausblenden';
 $string['duplicateaction'] = 'Duplizieren';
 $string['deleteaction'] = 'Löschen';
+
+$string['submenu'] = 'Untermenü';
+$string['inline'] = 'Inline';
+$string['divider'] = 'Trenner';
+
+$string['symbol'] = 'Symbol';
+$string['selecticon'] = 'Symbol auswählen';
+$string['noiconselected'] = 'Keine Elemente ausgewählt';
+$string['selectanicon'] = 'Ein Symbol auswählen';
+$string['selectedicon'] = 'Ausgewähltes Symbol';
+
+$string['bulkactionmustselect'] = 'Bitte wählen Sie mindestens ein Element.';
+
+$string['category_help'] = 'Wählen Sie die Kategorie aus, zu der dieses Element gehört.';
+$string['type_help'] = 'Wählen Sie, ob dieser Stil als Inline- oder Blockelement angewendet werden soll.';
+$string['cssclasses_help'] = 'Wählen Sie aus vordefinierten Klassen oder verwenden Sie ein benutzerdefiniertes Stylesheet.';
+
+$string['categoryhelp'] = 'Kategorie';
+$string['typehelp'] = 'Typ';
+$string['cssclasseshelp'] = 'CSS-Klassen';
+$string['categoryhelp_help'] = 'Wähle die Kategorie aus, zu der dieses Element gehört.';
+$string['typehelp_help'] = 'Wähle, ob dieser Stil als Inline- oder Blockelement angewendet werden soll.';
+$string['cssclasseshelp_help'] = 'Wähle ein vordefiniertes Stil-Layout oder verwende ein eigenes Stylesheet.';
+
+$string['iconhelp'] = 'Icon';
+$string['presentationhelp'] = 'Darstellung';
+$string['iconhelp_help'] = 'Wähle ein Icon, das im Editor zusammen mit der Kategorie angezeigt wird.';
+$string['presentationhelp_help'] = 'Wählen Sie aus, ob die Stilelemente direkt im Styles-Menü angezeigt oder in einem Untermenü im Editor organisiert werden sollen.';

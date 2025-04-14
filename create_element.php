@@ -43,6 +43,12 @@ $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/create_element.ph
     'catid'  => $catid,
 ]));
 
+// Needed for redirecting the page.
+echo html_writer::tag('div', $catid, [
+    'id' => 'catid-holder',
+    'style' => 'display: none;',
+]);
+
 if ($action === 'edit') {
     $formtitle = get_string('editelement', 'tiny_styles');
 } else {
@@ -65,10 +71,12 @@ class element_form extends moodleform {
             'text',
             'name',
             get_string('name'),
-            ['size' => 50, 'style' => 'width: 400px;']
+            ['size' => 50, 'style' => 'width: 400px;', 'maxlength' => 100]
         );
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
+
 
         $categories = $DB->get_records_menu('tiny_styles_categories', null, 'sortorder ASC', 'id,name');
 
@@ -89,9 +97,8 @@ class element_form extends moodleform {
         );
         $mform->setType('categoryid', PARAM_INT);
         $mform->setDefault('categoryid', 'catid');
-        $mform->addRule('categoryid', null, 'required', null, 'client');
+        $mform->addHelpButton('categoryid', 'categoryhelp', 'tiny_styles');
 
-        // todo: dynamically set based on style selected
         $typeoptions = [
             'inline' => 'Inline',
             'block'  => 'Block',
@@ -103,26 +110,37 @@ class element_form extends moodleform {
             ['size' => 1, 'style' => 'width: 400px;']
         );
         $mform->setType('type', PARAM_ALPHA);
+        $mform->addHelpButton('type', 'typehelp', 'tiny_styles');
 
         // CSS classes
         $elements = $DB->get_fieldset_sql("
             SELECT cssclasses
-            FROM {tiny_styles_elements} 
-            GROUP BY cssclasses
-            ORDER BY cssclasses ASC
+            FROM (
+                SELECT cssclasses
+                FROM {tiny_styles_elements}
+                GROUP BY cssclasses
+                ORDER BY cssclasses ASC
+                LIMIT 16
+            ) sub
         ");
 
-        $elements[] = 'Manual style sheet';
+        $elements = array_merge(
+            ['Manual style sheet'],
+            $elements
+        );
+
         $cssoptions = array_combine($elements, $elements);
 
         $mform->addElement(
-            'select', 'cssclasses',
+            'select',
+            'cssclasses',
             get_string('bootstrapclass', 'tiny_styles'),
             $cssoptions,
             ['size' => 1, 'style' => 'width: 400px;']
         );
         $mform->setType('cssclasses', PARAM_TEXT);
         $mform->addRule('cssclasses', null, 'required', null, 'client');
+        $mform->addHelpButton('cssclasses', 'cssclasseshelp', 'tiny_styles');
 
         $mform->addElement(
             'textarea',
@@ -133,15 +151,23 @@ class element_form extends moodleform {
                 'rows' => 7,
                 'cols' => 30,
                 'style' => 'width: 400px;',
+                'maxlength' => 2048,
             ]
         );
         $mform->setType('manualconfig', PARAM_RAW);
         $mform->setDefault('manualconfig', '');
+        $mform->addRule('manualconfig', get_string('maximumchars', '', 2048), 'maxlength', 2048, 'client');
 
         // Manual configuration hidden unless "Manual style sheet" selected.
         $mform->hideIf('manualconfig', 'cssclasses', 'neq', 'Manual style sheet');
 
-        $mform->setDefault('manualconfig', get_string('manualdefault', 'tiny_styles'));
+        $mform->addElement(
+            'static',
+            'manualconfig_help',
+            '',
+            get_string('manualdefault', 'tiny_styles')
+        );
+        $mform->hideIf('manualconfig_help', 'cssclasses', 'neq', 'Manual style sheet');
 
         // Hidden fields
         $mform->addElement('hidden', 'id');
@@ -178,8 +204,9 @@ class element_form extends moodleform {
 
 $mform = new element_form(null);
 
-// todo: redirect back to category and not the main page
+// Fallback if js method fails
 if ($mform->is_cancelled()) {
+
     redirect(new moodle_url(
         '/admin/settings.php',
         ['section'=>'tiny_styles_admin']),
@@ -314,7 +341,7 @@ $PAGE->requires->js_call_amd(
     ['#btn-preview-element']
 );
 
-// Function to check if selected class contains 'alert' => switches to Block
+//  Checks if selected class contains 'alert' => switches style type to Block
 $PAGE->requires->js_amd_inline("
 require(['jquery'], function($) {
     function checkForAlertClass() {
@@ -327,6 +354,24 @@ require(['jquery'], function($) {
         // Run whenever the cssclasses field changes
         $('#id_cssclasses').on('change', function() {
             checkForAlertClass();
+        });
+    });
+});
+");
+
+// Fetches the category id for correct redirection after canceling form.
+$PAGE->requires->js_amd_inline("
+require(['jquery'], function($) {
+    $(document).ready(function() {
+        $('input[name=cancel]').on('click', function(e) {
+            e.preventDefault();
+            var catid = $('#catid-holder').text().trim();
+            if (catid && !isNaN(catid)) {
+                var url = '/lib/editor/tiny/plugins/styles/elements.php?catid=' + catid;
+                window.location.href = url;
+            } else {
+                alert('Category ID missing!');
+            }
         });
     });
 });

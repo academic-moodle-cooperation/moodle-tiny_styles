@@ -25,24 +25,21 @@ import {getButtonImage} from 'editor_tiny/utils';
 import Ajax from 'core/ajax';
 import { get_string as getString } from 'core/str';
 import { icon } from "./common";
-// import PreviewElement from "./preview_element";
+// import PreviewElement from "./preview_element"; // uncomment to enable preview
 
 /**
  * Fetches categories dynamically using AJAX.
  * @returns {Promise<Array>} List of categories.
  */
 async function fetchCategories() {
-    //debugLog('fetchCategories() - calling webservice tiny_styles_fetch_categories...');
     const requests = [{
         methodname: 'tiny_styles_fetch_categories',
         args: {},
     }];
     try {
         const [data] = await Ajax.call(requests);
-      //  debugLog('fetchCategories - got data:', data);
         return data;
     } catch (err) {
-        // debugLog('fetchCategories - error:', err);
         return [];
     }
 }
@@ -63,6 +60,26 @@ function buildCategoryItems(editor, categories, icons) {
             items.push({ type: 'separator' });
             return;
         }
+
+        // Inline presentation type
+        if (cat.presentation === 'inline' && Array.isArray(cat.elements)) {
+            cat.elements.forEach((elem) => {
+                items.push({
+                    type: 'menuitem',
+                    text: elem.name,
+                    onAction: () => {
+                        applyStyle(editor, {
+                            className: elem.cssclasses,
+                            block: (elem.type === 'block'),
+                            custom: (elem.custom === 1),
+                            id: elem.name,
+                        });
+                    }
+                });
+            });
+            return;
+        }
+
         const subItems = [];
         if (Array.isArray(cat.elements)) {
             cat.elements.forEach((elem) => {
@@ -82,15 +99,23 @@ function buildCategoryItems(editor, categories, icons) {
         }
         if (subItems.length > 0) {
             let caticon = icons.default;
-            if (cat.name === 'Labels') {
+
+            // Handle case if cat.symbol is missing or undefined.
+            const symbolraw = cat.symbol ? cat.symbol : '';
+            const symbolname = symbolraw.replace('.svg', '').trim();
+
+            if (icons[symbolname]) {
+                caticon = icons[symbolname];
+            } else if (cat.name === 'Labels'){
                 caticon = icons.label;
-            } else if (cat.name === 'Boxes') {
+            } else if (cat.name === 'Boxes'){
                 caticon = icons.box;
             }
             items.push({
                 type: 'nestedmenuitem',
                 icon: caticon,
                 text: cat.name,
+                title: 'tooltip',
                 getSubmenuItems: () => subItems
             });
         }
@@ -171,7 +196,6 @@ function applyStyle(editor, styleDef) {
             editor.selection.setCursorLocation(newParagraph, 0);
         }
     }
-    // Ensure the editor regains focus.
     editor.focus();
 
 }
@@ -186,12 +210,10 @@ export async function editCustomStyles(editor) {
 
     const categoriesResponse = await fetchCategories();
 
-    // Normalize the reponse to an array.
     let categories = [];
     if (Array.isArray(categoriesResponse)) {
         categories = categoriesResponse;
     } else if (categoriesResponse && Array.isArray(categoriesResponse.categories)) {
-        // If response is an object with a 'categories' property.
         categories = categoriesResponse.categories;
     }
 
@@ -255,6 +277,17 @@ export const getSetup = async () => {
         mainMenuLabel,
         previewImage,
         applyImage,
+        knightImage,
+        checkImage,
+        graduateImage,
+        laptopImage,
+        magnifyingImage,
+        rollerImage,
+        penImage,
+        schoolImage,
+        squareImage,
+        flagImage,
+        brushImage
     ] = await Promise.all([
         fetchCategories(),
         getButtonImage('icon', 'tiny_styles'),
@@ -264,6 +297,17 @@ export const getSetup = async () => {
         getString('menuitem_styles', 'tiny_styles'),
         getButtonImage('preview', 'tiny_styles'),
         getButtonImage('apply', 'tiny_styles'),
+        getButtonImage('knight', 'tiny_styles'),
+        getButtonImage('check', 'tiny_styles'),
+        getButtonImage('graduate', 'tiny_styles'),
+        getButtonImage('laptop', 'tiny_styles'),
+        getButtonImage('magnifying', 'tiny_styles'),
+        getButtonImage('roller', 'tiny_styles'),
+        getButtonImage('pen', 'tiny_styles'),
+        getButtonImage('school', 'tiny_styles'),
+        getButtonImage('square', 'tiny_styles'),
+        getButtonImage('flag', 'tiny_styles'),
+        getButtonImage('brush', 'tiny_styles')
     ]);
 
     return (editor) => {
@@ -274,7 +318,17 @@ export const getSetup = async () => {
         editor.ui.registry.addIcon('defaultIcon', defaultImage.html);
         editor.ui.registry.addIcon('previewIcon', previewImage.html);
         editor.ui.registry.addIcon('applyIcon', applyImage.html);
-
+        editor.ui.registry.addIcon('knightIcon', knightImage.html);
+        editor.ui.registry.addIcon('checkIcon', checkImage.html);
+        editor.ui.registry.addIcon('graduateIcon', graduateImage.html);
+        editor.ui.registry.addIcon('laptopIcon', laptopImage.html);
+        editor.ui.registry.addIcon('magnifyingIcon', magnifyingImage.html);
+        editor.ui.registry.addIcon('rollerIcon', rollerImage.html);
+        editor.ui.registry.addIcon('penIcon', penImage.html);
+        editor.ui.registry.addIcon('schoolIcon', schoolImage.html);
+        editor.ui.registry.addIcon('squareIcon', squareImage.html);
+        editor.ui.registry.addIcon('flagIcon', flagImage.html);
+        editor.ui.registry.addIcon('brushIcon', brushImage.html);
 
         const icons = {
             label: 'labelIcon',
@@ -282,6 +336,17 @@ export const getSetup = async () => {
             default: 'defaultIcon',
             preview: 'previewIcon',
             apply: 'applyIcon',
+            knight: 'knightIcon',
+            check: 'checkIcon',
+            graduate: 'graduateIcon',
+            laptop: 'laptopIcon',
+            magnifying: 'magnifyingIcon',
+            roller: 'rollerIcon',
+            pen: 'penIcon',
+            school: 'schoolIcon',
+            square: 'squareIcon',
+            flag: 'flagIcon',
+            brush: 'brushIcon',
         };
 
         editor.ui.registry.addMenuButton('tiny_styles_button', {

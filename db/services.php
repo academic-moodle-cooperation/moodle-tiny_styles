@@ -32,4 +32,3 @@ $functions = [
       'ajax' => true,
   ],
 ];
-

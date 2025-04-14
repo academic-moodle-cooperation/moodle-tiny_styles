@@ -50,7 +50,6 @@ if ($action === 'edit') {
 $PAGE->set_title($formtype);
 $heading = $formtype;
 
-
 require_once($CFG->libdir . '/formslib.php');
 
 /**
@@ -66,10 +65,12 @@ class category_form extends moodleform {
             'text',
             'name',
             get_string('name'),
-            ['size' => 1, 'style' => 'width: 400px;']
+            ['size' => 1, 'style' => 'width: 400px;', 'maxlength' => 100,]
         );
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
+
 
         $mform->addElement(
             'textarea',
@@ -80,9 +81,11 @@ class category_form extends moodleform {
                 'rows' => 4,
                 'cols' => 30,
                 'style' => 'width: 400px;',
+                'maxlength' => 400,
             ]
         );
         $mform->setType('description', PARAM_TEXT);
+        $mform->addRule('description', get_string('maximumchars', '', 400), 'maxlength', 400, 'client');
 
         // Description field stored in DB as "showdesc".
         $descdisplayoptions = [
@@ -90,31 +93,90 @@ class category_form extends moodleform {
             'helptext' => 'Help text',
             'tooltip'  => 'Tooltip'
         ];
-        $mform->addElement(
-            'select',
-            'showdesc',
-            get_string('descriptiondisp', 'tiny_styles'),
-            $descdisplayoptions,
-            ['size' => 1, 'style' => 'width: 300px;']
-        );
+        
+        /**
+         * Removed for not being implemented in editor side.
+         *
+         * $mform->addElement(
+         * 'select',
+         * 'showdesc',
+         * get_string('descriptiondisp', 'tiny_styles'),
+         * $descdisplayoptions,
+         * ['size' => 1, 'style' => 'width: 300px;']
+         * );
+         */
 
         $mform->addElement('header', 'presentationhdr', get_string('presentationhdr','tiny_styles'));
 
-        // FA-symbol
-        // todo: symbol selection dropdown
+        // Button to open an icon selection popup.
+        $mform->addElement('html', '
+        <div class="form-group row">
+            <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
+                <label for="open-icon-popup">' . get_string('selecticon', 'tiny_styles') . '</label>
+            </div>
+            <div class="col-md-9">
+                <button type="button" id="open-icon-popup" class="btn btn-secondary" style="padding: 7px 14px; font-size: 15px;">'.
+                get_string('selecticon', 'tiny_styles') . '</button>
+            </div>
+        </div>
+        ');
+
         $mform->addElement(
             'text',
-            'symbol',
-            'Symbol',
-            ['size' => 1, 'style' => 'width: 300px;']
+            'selectedicon',
+            get_string('selectedicon', 'tiny_styles'),
+            [
+                'readonly' => 'readonly',
+                'style' => 'width: 300px;'
+            ],
         );
-        $mform->setType('symbol', PARAM_TEXT);
+        $mform->setType('selectedicon', PARAM_TEXT);
+        $mform->addHelpButton('selectedicon', 'iconhelp', 'tiny_styles');
 
-        // todo: langstrings for presentation type
+        // The popup, scanning the plugin’s pix folder for .svg icons.
+        global $CFG;
+        $iconpath = $CFG->dirroot . '/lib/editor/tiny/plugins/styles/pix';
+        $iconurlbase = $CFG->wwwroot . '/lib/editor/tiny/plugins/styles/pix';
+        $iconpopuphtml = '<div id="icon-popup" style="display:none; position:fixed;top:25%; left:25%; width:50%; height:50%;
+                      background-color:#fff; border:1px solid #ccc; z-index:1000; overflow:auto; padding:20px;">';
+        $iconpopuphtml .= '<h4>' . get_string('selectanicon', 'tiny_styles') . '</h4>';
+        $iconpopuphtml .= '<div style="display:flex; flex-wrap:wrap; gap:15px;">';
+
+        // icons for the popup
+        if (is_dir($iconpath)) {
+            $files = scandir($iconpath);
+            foreach ($files as $file) {
+                if ($file === '.' || $file === '..' || $file === 'icon.svg') {
+                    continue;
+                }
+                $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                if ($ext === 'svg') {
+                    $iconurl = $iconurlbase . '/' . $file;
+                    $iconpopuphtml .= '<div class="icon-grid-item" data-icon="' . s($file) . '"
+                                     style="cursor:pointer; text-align:center;">';
+                    $iconpopuphtml .= '<img src="' . $iconurl . '" alt="' . s($file) . '"
+                                      style="width:80px; height:80px; display:block; margin:auto;" />';
+                    $iconpopuphtml .= '<div style="font-size:0.9em; margin-top:5px;">' . s($file) . '</div>';
+                    $iconpopuphtml .= '</div>';
+                }
+            }
+        }
+        $iconpopuphtml .= '</div>';
+
+        // Close button for popup
+        $iconpopuphtml .= '<div style="margin-top: 20px; display: flex; justify-content: center;">
+        <button type="button" id="close-icon-popup" class="btn btn-primary">'
+            . get_string('close', 'tiny_styles') . '</button>
+        </div>';
+        $iconpopuphtml .= '</div>';
+
+        // Popup HTML into the form.
+        $mform->addElement('html', $iconpopuphtml);
+
         $presentationoptions = [
-            'submenu' => 'Submenu',
-            'inline'  => 'Inline',
-            'divider' => 'Divider'
+            'submenu' => get_string('submenu', 'tiny_styles'),
+            'inline'  => get_string('inline', 'tiny_styles'),
+            'divider' => get_string('divider', 'tiny_styles'),
         ];
         $mform->addElement(
             'select',
@@ -123,6 +185,7 @@ class category_form extends moodleform {
             $presentationoptions,
             ['size' => 1, 'style' => 'width: 300px;']
         );
+        $mform->addHelpButton('presentation', 'presentationhelp', 'tiny_styles');
 
         // Hidden $id field for edit form.
         $mform->addElement('hidden', 'id');
@@ -161,8 +224,8 @@ if ($data = $mform->get_data()) {
     $record = new stdClass();
     $record->name         = $data->name;
     $record->description  = $data->description;
-    $record->showdesc     = $data->showdesc;
-    $record->symbol       = $data->symbol;
+    $record->showdesc     = 'null';//$data->showdesc;
+    $record->symbol       = $data->selectedicon;
     $record->presentation = $data->presentation;
     $record->timemodified = time();
 
@@ -202,13 +265,13 @@ if ($action === 'edit' && $id > 0) {
     global $DB;
     if ($category = $DB->get_record('tiny_styles_categories', ['id'=>$id], '*', MUST_EXIST)) {
         $formdata = new stdClass();
-        $formdata->id          = $category->id;
-        $formdata->action      = 'edit';
-        $formdata->name        = $category->name;
-        $formdata->description = $category->description;
-        $formdata->showdesc    = $category->showdesc;
-        $formdata->symbol      = $category->symbol;
-        $formdata->presentation= $category->presentation;
+        $formdata->id           = $category->id;
+        $formdata->action       = 'edit';
+        $formdata->name         = $category->name;
+        //$formdata->description  = $category->description; // removed for not being implemented in editor.
+        $formdata->showdesc     = $category->showdesc;
+        $formdata->selectedicon = $category->symbol;
+        $formdata->presentation = $category->presentation;
 
         $mform->set_data($formdata);
     } else {
@@ -226,4 +289,5 @@ if ($action === 'edit' && $id > 0) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($formtype);
 $mform->display();
+$PAGE->requires->js_call_amd('tiny_styles/iconselector', 'init');
 echo $OUTPUT->footer();

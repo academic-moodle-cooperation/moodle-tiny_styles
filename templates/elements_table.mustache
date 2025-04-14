@@ -50,6 +50,9 @@
                         <a href="{{editurl}}" title="Edit" style="text-decoration: none;">
                             <i class="icon fa fa-cog fa-fw"></i>
                         </a>
+                        <a href="#" class="duplicate-element" data-id="{{id}}" title="Duplicate" style="text-decoration: none;">
+                            <i class="icon fa fa-clone fa-fw"></i>
+                        </a>
                         {{{deleteiconhtml}}}
                     </td>
                 </tr>
@@ -60,12 +63,15 @@
     <!-- Bulk Actions Dropdown -->
     <div class="bulk-actions mt-3 ml-3">
         <label for="bulk-actions-dropdown">{{bulkactionslabel}}</label>
-        <select id="bulk-actions-dropdown" class="custom-select custom-select-lg rounded">
+        <select id="bulk-actions-dropdown" class="custom-select form-select form-select-sm rounded">
             <option value="">{{selectdefault}}</option>
             <option value="show">{{showaction}}</option>
             <option value="hide">{{hideaction}}</option>
             <option value="duplicate">{{duplicateaction}}</option>
             <option value="delete">{{deleteaction}}</option>
         </select>
+        <div id="bulk-action-warning" class="mt-2 text-danger" style="display: none;">
+                {{#str}} bulkactionmustselect, tiny_styles {{/str}}
+        </div>
     </div>
 </div>

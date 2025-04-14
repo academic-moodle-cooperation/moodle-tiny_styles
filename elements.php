@@ -45,6 +45,7 @@ $PAGE->requires->js_call_amd('tiny_styles/select_all', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/preview_element', 'init', ['a.element-preview-link']);
 $PAGE->requires->js_call_amd('tiny_styles/sortelements', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/bulk_actions', 'init');
+$PAGE->requires->js_call_amd('tiny_styles/duplicate', 'init');
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

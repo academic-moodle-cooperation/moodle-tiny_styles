@@ -31,24 +31,7 @@ $id = optional_param('id', 0, PARAM_INT);
 $PAGE->requires->js_call_amd('tiny_styles/importdata', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/sortcategories', 'init');;
 
-// todo: move up/down, delete and toggle enable to ajax implementation.
-if ($action === 'moveup' && $id > 0) {
-    require_sesskey();
-    require_capability('moodle/site:config', context_system::instance());
-
-    move_category_up($id);
-    redirect(new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']));
-    exit;
-
-} else if ($action === 'movedown' && $id > 0) {
-    require_sesskey();
-    require_capability('moodle/site:config', context_system::instance());
-
-    move_category_down($id);
-    redirect(new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']));
-    exit;
-
-} else if ($action === 'delete' && $id > 0) {
+if ($action === 'delete' && $id > 0) {
     require_sesskey();
     require_capability('moodle/site:config', context_system::instance());
 
@@ -138,6 +121,13 @@ if ($hassiteconfig) {
                 ['title' => get_string('delete')]
             );
 
+            $nameraw = $category->name;
+
+            $filtermanager = filter_manager::instance();
+            $context = context_system::instance();
+
+            $name = $filtermanager->filter_text($nameraw, $context);
+
             // Filtering dividers out.
             if ($category->presentation === 'divider') {
                 $categorydata[] = [
@@ -147,6 +137,7 @@ if ($hassiteconfig) {
                     'description' => $category->description,
                     'presentation' => $category->presentation,
                     'elementsurl' => '#',
+                    'elementsiconstyle' => 'color: gray; pointer-events: none;',
                     'moveupiconhtml'  => $moveupiconhtml,
                     'movedowniconhtml'=> $movedowniconhtml,
                     'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
@@ -164,6 +155,7 @@ if ($hassiteconfig) {
                     'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                         'catid' => $category->id,
                     ]))->out(false),
+                    'elementsiconstyle' => '',
                     'moveupiconhtml'  => $moveupiconhtml,
                     'movedowniconhtml'=> $movedowniconhtml,
                     'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [

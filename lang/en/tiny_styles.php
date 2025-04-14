@@ -80,7 +80,7 @@ $string['create_element'] = 'Create Element';
 $string['selectall'] = 'Select all';
 $string['details'] = 'View details';
 $string['manualconfig'] = 'Manual configuration';
-$string['manualdefault'] = 'Make sure to enter a valid css';
+$string['manualdefault'] = 'Please enter a valid inline CSS code. Example: <code>color: red; font-weight: bold;</code><br>Learn more about inline styles <a href="https://www.freecodecamp.org/news/inline-style-in-html/" target="_blank" rel="noopener">here</a>.';
 
 // still to be defined
 $string['elementsettings'] = 'Element settings';
@@ -101,7 +101,6 @@ $string['categorydeleted'] = 'Category deleted';
 $string['preview'] = 'Preview';
 
 $string['errorname'] = 'Name must be at least 3 characters.';
-
 
 $string['exportdata'] = 'Export data';
 $string['importdata'] = 'Import data';
@@ -125,3 +124,26 @@ $string['showaction'] = 'Show';
 $string['hideaction'] = 'Hide';
 $string['duplicateaction'] = 'Duplicate';
 $string['deleteaction'] = 'Delete';
+
+$string['submenu'] = 'Submenu';
+$string['inline'] = 'Inline';
+$string['divider'] = 'Divider';
+
+$string['symbol'] = 'Symbol';
+$string['selecticon'] = 'Select icon';
+$string['noiconselected'] = 'No elements selected';
+$string['selectanicon'] = 'Select an icon';
+$string['selectedicon'] = 'Selected icon';
+$string['bulkactionmustselect'] = 'Please select at least one element.';
+
+$string['categoryhelp'] = 'Category';
+$string['typehelp'] = 'Type';
+$string['cssclasseshelp'] = 'cssclasses';
+$string['categoryhelp_help'] = 'Select the category to which this element belongs.';
+$string['typehelp_help'] = 'Choose whether this style should be applied as inline or block.';
+$string['cssclasseshelp_help'] = 'Choose styling from predefined classes or use manual style sheet.';
+
+$string['iconhelp'] = 'Icon';
+$string['presentationhelp'] = 'Presentation';
+$string['iconhelp_help'] = 'Choose an icon to be displayed with the category in the Editor.';
+$string['presentationhelp_help'] = 'Select whether to display style elements directly in the Styles menu or organize them under a submenu within the editor.';

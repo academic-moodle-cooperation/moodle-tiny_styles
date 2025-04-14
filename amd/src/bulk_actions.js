@@ -36,9 +36,11 @@ define(['jquery'], function($) {
                         selected.push($(this).val());
                     });
                     if (selected.length === 0) {
-                        alert('At least 1 element must be selected.');
+                        $('#bulk-action-warning').show();
                         $(this).val('');
                         return;
+                    } else {
+                        $('#bulk-action-warning').hide();
                     }
                     // Confirm deletion.
                     if (action === 'delete' && !confirm('Are you sure you want to delete the selected elements?')) {
