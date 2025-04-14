@@ -265,6 +265,7 @@ export async function editCustomStyles(editor) {
 
 /**
  * Button, Icon and Menu setup for tinymce.
+ *
  */
 export const getSetup = async () => {
 
@@ -277,17 +278,19 @@ export const getSetup = async () => {
         mainMenuLabel,
         previewImage,
         applyImage,
-        knightImage,
         checkImage,
         graduateImage,
         laptopImage,
         magnifyingImage,
-        rollerImage,
         penImage,
         schoolImage,
         squareImage,
         flagImage,
-        brushImage
+        brushImage,
+        infoImage,
+        downloadImage,
+        bookImage,
+        folderImage,
     ] = await Promise.all([
         fetchCategories(),
         getButtonImage('icon', 'tiny_styles'),
@@ -297,17 +300,19 @@ export const getSetup = async () => {
         getString('menuitem_styles', 'tiny_styles'),
         getButtonImage('preview', 'tiny_styles'),
         getButtonImage('apply', 'tiny_styles'),
-        getButtonImage('knight', 'tiny_styles'),
         getButtonImage('check', 'tiny_styles'),
         getButtonImage('graduate', 'tiny_styles'),
         getButtonImage('laptop', 'tiny_styles'),
         getButtonImage('magnifying', 'tiny_styles'),
-        getButtonImage('roller', 'tiny_styles'),
         getButtonImage('pen', 'tiny_styles'),
         getButtonImage('school', 'tiny_styles'),
         getButtonImage('square', 'tiny_styles'),
         getButtonImage('flag', 'tiny_styles'),
-        getButtonImage('brush', 'tiny_styles')
+        getButtonImage('brush', 'tiny_styles'),
+        getButtonImage('info', 'tiny_styles'),
+        getButtonImage('download', 'tiny_styles'),
+        getButtonImage('book', 'tiny_styles'),
+        getButtonImage('folder', 'tiny_styles'),
     ]);
 
     return (editor) => {
@@ -318,17 +323,19 @@ export const getSetup = async () => {
         editor.ui.registry.addIcon('defaultIcon', defaultImage.html);
         editor.ui.registry.addIcon('previewIcon', previewImage.html);
         editor.ui.registry.addIcon('applyIcon', applyImage.html);
-        editor.ui.registry.addIcon('knightIcon', knightImage.html);
         editor.ui.registry.addIcon('checkIcon', checkImage.html);
         editor.ui.registry.addIcon('graduateIcon', graduateImage.html);
         editor.ui.registry.addIcon('laptopIcon', laptopImage.html);
         editor.ui.registry.addIcon('magnifyingIcon', magnifyingImage.html);
-        editor.ui.registry.addIcon('rollerIcon', rollerImage.html);
         editor.ui.registry.addIcon('penIcon', penImage.html);
         editor.ui.registry.addIcon('schoolIcon', schoolImage.html);
         editor.ui.registry.addIcon('squareIcon', squareImage.html);
         editor.ui.registry.addIcon('flagIcon', flagImage.html);
         editor.ui.registry.addIcon('brushIcon', brushImage.html);
+        editor.ui.registry.addIcon('infoIcon', infoImage.html);
+        editor.ui.registry.addIcon('downloadIcon', downloadImage.html);
+        editor.ui.registry.addIcon('bookIcon', bookImage.html);
+        editor.ui.registry.addIcon('folderIcon', folderImage.html);
 
         const icons = {
             label: 'labelIcon',
@@ -336,17 +343,19 @@ export const getSetup = async () => {
             default: 'defaultIcon',
             preview: 'previewIcon',
             apply: 'applyIcon',
-            knight: 'knightIcon',
             check: 'checkIcon',
             graduate: 'graduateIcon',
             laptop: 'laptopIcon',
             magnifying: 'magnifyingIcon',
-            roller: 'rollerIcon',
             pen: 'penIcon',
             school: 'schoolIcon',
             square: 'squareIcon',
             flag: 'flagIcon',
             brush: 'brushIcon',
+            info: 'infoIcon',
+            download: 'downloadIcon',
+            book: 'bookIcon',
+            folder: 'folderIcon',
         };
 
         editor.ui.registry.addMenuButton('tiny_styles_button', {
