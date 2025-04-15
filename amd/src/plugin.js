@@ -52,6 +52,14 @@ export default new Promise(async (resolve) => {
             });
             return pluginMetadata;
         });
+        // invert coloring for selected items
+        const style = document.createElement('style');
+        style.textContent = `
+            .tox-collection__item--active .tox-collection__item-icon svg,
+            .tox-collection__item--selected .tox-collection__item-icon svg {
+            filter: brightness(0.2) invert(1);
+        }`;
+        document.head.appendChild(style);
 
         resolve([pluginName, Configuration]);
 
