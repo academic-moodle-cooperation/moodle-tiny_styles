@@ -35,6 +35,15 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         upgrade_plugin_savepoint(true, 2025041002, 'tiny', 'styles');
     }
 
+    if ($oldversion < 2025041500) {
+        $table = new xmldb_table('tiny_styles_elements');
+        $field = new xmldb_field('cssclasses', XMLDB_TYPE_CHAR, '1024', null, XMLDB_NOTNULL, null, null);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_precision($table, $field);
+        }
+        upgrade_plugin_savepoint(true, 2025041500, 'tiny', 'styles');
+    }
+
     return true;
 }
 
