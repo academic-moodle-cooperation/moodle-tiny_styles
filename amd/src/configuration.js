@@ -33,9 +33,8 @@ import {
  * @return {String|Array} updated toolbar setting
  */
 const getToolbarConfiguration = (instanceConfig) => {
-    let toolbar = instanceConfig.toolbar;
-
-    toolbar = addToolbarButtons(toolbar, 'content', ['tiny_styles_button']);
+   let toolbar = instanceConfig.toolbar;
+    toolbar = addToolbarButtons(toolbar, 'formatting', ['tiny_styles_button']);
     return toolbar;
 };
 
