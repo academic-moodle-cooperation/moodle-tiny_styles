@@ -129,7 +129,7 @@ if (file_exists($examplefile)) {
     $zip->addFile($examplefile, 'example.json');
 }
 if (file_exists($readme)) {
-    $zip->addFile($readme, 'readme.md');
+    $zip->addFile($readme, 'instructions.md');
 }
 $zip->close();
 
