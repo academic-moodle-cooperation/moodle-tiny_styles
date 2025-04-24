@@ -18,7 +18,10 @@ category_2: [ element_x, element_y ...
 The example json can be easily used for editing it directly, and expanded by copying it.
 > The user should follow a correct json syntax and formatting for the file to work expectedly.
 
-How to use the **example.json**:
+
+#### How to fillout the *example.json*:
+
+*(see below for further explanations of enabled, type, etc.)*
 ```
 "categories": [
     {
