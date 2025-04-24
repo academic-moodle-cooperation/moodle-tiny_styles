@@ -1,7 +1,9 @@
 # Instructions for the import form fillout (example.json)
 
 ### Structure
-The example.json is structured into a category array, where each category contains an element array. This is the format in which any json file imported should follow.
+The example.json is structured into a category array, where each category contains an element array. 
+
+This is the format which any json file imported should follow.
 
 Visualized:
 ```
