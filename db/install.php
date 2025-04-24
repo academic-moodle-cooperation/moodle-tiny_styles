@@ -222,8 +222,6 @@ function xmldb_tiny_styles_install() {
             ['categoryid' => $boxencatid, 'elementid' => $elements[13]['id'], 'sortorder' => 6],
             ['categoryid' => $boxencatid, 'elementid' => $elements[14]['id'], 'sortorder' => 7],
             ['categoryid' => $boxencatid, 'elementid' => $elements[15]['id'], 'sortorder' => 8],
-            // line will be added later for divider displaying
-            //['categoryid' => $dividercatid, 'elementid' => $elements[16]['id'], 'sortorder' => 1],
         ];
 
         foreach ($links as $data) {

@@ -1,0 +1,27 @@
+{
+  "categories": [
+    {
+      "name": "Category name here.",
+      "description": "Category description here. Check readme.md for detailed instructions.",
+      "showdesc": "helptext/tooltip/never",
+      "presentation": "submenu/inline/divider",
+      "enabled": 1,
+      "elements": [
+        {
+          "name": "Red Label",
+          "type": "block",
+          "cssclasses": "alert alert-danger",
+          "enabled": 1,
+          "custom": 0
+        },
+        {
+          "name": "Green Text",
+          "type": "inline",
+          "cssclasses": "color: green; font-weight:bold;",
+          "enabled": 0,
+          "custom": 1
+        }
+      ]
+    }
+  ]
+}

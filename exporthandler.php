@@ -4,7 +4,7 @@
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// any later version.
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,7 +26,7 @@ require_login();
 require_sesskey();
 require_capability('moodle/site:config', context_system::instance());
 
-// Fetch categories and elements in one query for export.
+// categories and elements in one query for CSV.
 $sqlcsv = "SELECT c.id, c.name, c.symbol, c.presentation, c.sortorder AS catsort,
                   e.id AS elemid, e.name AS elemname, e.type, e.cssclasses, e.custom,
                   ce.sortorder AS cesort
@@ -37,7 +37,7 @@ $sqlcsv = "SELECT c.id, c.name, c.symbol, c.presentation, c.sortorder AS catsort
 
 $recordset = $DB->get_recordset_sql($sqlcsv);
 
-// Temporary in-memory CSV file.
+//temporary file
 $csvtemp = tmpfile();
 $csvheader = [
     'Category ID', 'Category Name', 'Category Symbol', 'Category Presentation',
@@ -65,17 +65,52 @@ rewind($csvtemp);
 $csvcontent = stream_get_contents($csvtemp);
 fclose($csvtemp);
 
+// table fetch
 $categories = $DB->get_records('tiny_styles_categories');
 $elements = $DB->get_records('tiny_styles_elements');
 $cat_elements = $DB->get_records('tiny_styles_cat_elements');
 
+// associative array, each key is a category id
+$exportcategories = [];
+foreach ($categories as $cat) {
+    $exportcategories[$cat->id] = [
+        'id'          => $cat->id,
+        'name'        => $cat->name,
+        'description' => $cat->description,
+        'showdesc'    => $cat->showdesc,
+        'presentation'=> $cat->presentation,
+        'enabled'     => $cat->enabled,
+        'elements'    => []
+    ];
+}
+
+// each element to its category based on cat_elements
+foreach ($cat_elements as $ce) {
+    $categoryid = $ce->categoryid;
+    $elementid  = $ce->elementid;
+
+    // the bridging references a non-existent category or element
+    if (!isset($exportcategories[$categoryid]) || !isset($elements[$elementid])) {
+        continue;
+    }
+
+    // adds element data to the category elements array
+    $exportcategories[$categoryid]['elements'][] = [
+        'id'        => $elements[$elementid]->id,
+        'name'      => $elements[$elementid]->name,
+        'type'      => $elements[$elementid]->type,
+        'cssclasses'=> $elements[$elementid]->cssclasses,
+        'custom'    => $elements[$elementid]->custom,
+    ];
+}
+
+// clean json
 $exportdata = [
-    'categories' => array_values($categories),
-    'elements' => array_values($elements),
-    'cat_elements' => array_values($cat_elements)
+    'categories' => array_values($exportcategories)
 ];
 $jsoncontent = json_encode($exportdata, JSON_PRETTY_PRINT);
 
+// ZIP json and csv
 if (!class_exists('ZipArchive')) {
     print_error('ZipArchive not available on this server.');
 }
@@ -85,8 +120,17 @@ $zipfilename = tempnam(sys_get_temp_dir(), 'export') . '.zip';
 if ($zip->open($zipfilename, ZipArchive::CREATE) !== TRUE) {
     print_error('Cannot create a zip file for export.');
 }
+
 $zip->addFromString('tiny_styles_export.csv', $csvcontent);
 $zip->addFromString('tiny_styles_export.json', $jsoncontent);
+$examplefile = __DIR__ . '/json/example.json';
+$readme = __DIR__ . '/json/instructions.md';
+if (file_exists($examplefile)) {
+    $zip->addFile($examplefile, 'example.json');
+}
+if (file_exists($readme)) {
+    $zip->addFile($readme, 'readme.md');
+}
 $zip->close();
 
 header('Content-Type: application/zip');
