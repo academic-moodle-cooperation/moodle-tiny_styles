@@ -1,6 +1,13 @@
 <div class="tiny-elements" id="elements-container" data-catid="{{catid}}">
     <h3>{{heading}}</h3>
-
+    {{#has_bulk_message}}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            {{bulk_message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {{/has_bulk_message}}
     <form method="post" action="{{submiturl}}">
         <div class="actions mb-3">
             <div class="mb-2">

@@ -173,6 +173,18 @@ if ($action === 'delete' && $id > 0) {
     exit;
 }
 
+// Info message.
+$bulkmessage = '';
+if (isset($_SESSION['tiny_styles_bulk_message'])) {
+    $bulkmessage = $_SESSION['tiny_styles_bulk_message'];
+    unset($_SESSION['tiny_styles_bulk_message']); // Clear the message
+}
+
+if (!empty($bulkmessage)) {
+    $templatecontext['has_bulk_message'] = true;
+    $templatecontext['bulk_message'] = $bulkmessage;
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('tiny_styles/elements_table', $templatecontext);
 $PAGE->requires->js_call_amd('tiny_styles/toggle_element', 'init');

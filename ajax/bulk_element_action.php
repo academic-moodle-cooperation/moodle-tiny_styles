@@ -111,6 +111,26 @@ try {
         default:
             throw new moodle_exception('Invalid action');
     }
+    $message = '';
+    switch ($action) {
+        case 'show':
+            $message = get_string('elementshown', 'tiny_styles', count($elementids));
+            break;
+        case 'hide':
+            $message = get_string('elementhidden', 'tiny_styles', count($elementids));
+            break;
+        case 'duplicate':
+            $message = get_string('elementduplicated', 'tiny_styles', count($elementids));
+            break;
+        case 'delete':
+            $message = get_string('elementdeleted', 'tiny_styles', count($elementids));
+            break;
+    }
+
+    if (!empty($message)) {
+        $_SESSION['tiny_styles_bulk_message'] = $message;
+    }
+
     echo json_encode(['success' => true]);
 
 } catch (\Exception $e) {

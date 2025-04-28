@@ -153,3 +153,9 @@ $string['iconhelp'] = 'Icon';
 $string['presentationhelp'] = 'Darstellung';
 $string['iconhelp_help'] = 'Wähle ein Icon, das im Editor zusammen mit der Kategorie angezeigt wird.';
 $string['presentationhelp_help'] = 'Wählen Sie aus, ob die Stilelemente direkt im Styles-Menü angezeigt oder in einem Untermenü im Editor organisiert werden sollen.';
+
+$string['elementshown'] = '{$a} Element(e) wurden erfolgreich sichtbar gemacht';
+$string['elementhidden'] = '{$a} Element(e) wurden erfolgreich ausgeblendet';
+$string['elementduplicated'] = '{$a} Element(e) wurden erfolgreich dupliziert';
+$string['elementdeleted'] = '{$a} Element(e) wurden erfolgreich gelöscht';
+
