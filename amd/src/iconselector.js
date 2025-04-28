@@ -35,10 +35,17 @@ define(['jquery'], function($) {
             // User clicks an icon on the grid.
             $('.icon-grid-item').on('click', function() {
                 var iconFile = $(this).data('icon');
-                $('#id_selectedicon').val(iconFile);
-                $('#selected-icon-name').text(iconFile);
+                $('input[name="selectedicon"]').val(iconFile);
+                $('#button-icon-name').text(iconFile);
                 $('#icon-popup').hide();
             });
+
+            // Initialize button text if there's a pre-selected icon
+            var initialIcon = $('input[name="selectedicon"]').val();
+            if (initialIcon && initialIcon.length > 0) {
+                $('#button-icon-name').text(initialIcon);
+            }
+
         }
     };
 });
