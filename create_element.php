@@ -43,12 +43,6 @@ $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/create_element.ph
     'catid'  => $catid,
 ]));
 
-// Needed for redirecting the page.
-echo html_writer::tag('div', $catid, [
-    'id' => 'catid-holder',
-    'style' => 'display: none;',
-]);
-
 if ($action === 'edit') {
     $formtitle = get_string('editelement', 'tiny_styles');
 } else {
@@ -176,7 +170,7 @@ class element_form extends moodleform {
         $mform->addElement('hidden', 'action');
         $mform->setType('action', PARAM_ALPHA);
 
-        $mform->addElement('hidden', 'catid');
+        $mform->addElement('hidden', 'catid', $this->_customdata['catid']);
         $mform->setType('catid', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('savechanges'));
@@ -201,17 +195,19 @@ class element_form extends moodleform {
         return $errors;
     }
 }
+$formurl = new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', [
+    'action' => $action,
+    'id'     => $id,
+    'catid'  => $catid
+]);
+$mform = new element_form($formurl, ['catid' => $catid]);
 
-$mform = new element_form(null);
-
-// Fallback if js method fails
 if ($mform->is_cancelled()) {
-
-    redirect(new moodle_url(
-        '/admin/settings.php',
-        ['section'=>'tiny_styles_admin']),
-        get_string('elementcancel', 'tiny_styles'), 2
+    $returnurl = new moodle_url(
+        '/lib/editor/tiny/plugins/styles/elements.php',
+        ['catid' => $catid]
     );
+    redirect($returnurl, get_string('elementcancel', 'tiny_styles'), 2);
     exit;
 }
 
@@ -354,24 +350,6 @@ require(['jquery'], function($) {
         // Run whenever the cssclasses field changes
         $('#id_cssclasses').on('change', function() {
             checkForAlertClass();
-        });
-    });
-});
-");
-
-// Fetches the category id for correct redirection after canceling form.
-$PAGE->requires->js_amd_inline("
-require(['jquery'], function($) {
-    $(document).ready(function() {
-        $('input[name=cancel]').on('click', function(e) {
-            e.preventDefault();
-            var catid = $('#catid-holder').text().trim();
-            if (catid && !isNaN(catid)) {
-                var url = '/lib/editor/tiny/plugins/styles/elements.php?catid=' + catid;
-                window.location.href = url;
-            } else {
-                alert('Category ID missing!');
-            }
         });
     });
 });
