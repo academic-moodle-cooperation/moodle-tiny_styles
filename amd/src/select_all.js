@@ -23,18 +23,16 @@
 /**
  * Helper method to select all items on page 'elements.php'
  */
-define(['jquery'], function($) {
-    return {
-        init: function() {
-            $(document).ready(function() {
-                var selectAllCheckbox = $('#select-all');
-                var checkboxes = $('input[name="selected_elements[]"]');
+export const init = () => {
+    const selectAllCheckbox = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('input[name="selected_elements[]"]');
 
-                selectAllCheckbox.on('change', function() {
-                    var isChecked = $(this).prop('checked');
-                    checkboxes.prop('checked', isChecked);
-                });
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', () => {
+            const isChecked = selectAllCheckbox.checked;
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
             });
-        }
-    };
-});
+        });
+    }
+};

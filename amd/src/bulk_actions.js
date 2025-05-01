@@ -21,65 +21,82 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], function($) {
-    return {
-        init: function() {
-            $(document).ready(function() {
-                $('#bulk-actions-dropdown').on('change', function() {
-                    var action = $(this).val();
-                    if (!action) {
-                        return;
-                    }
-                    // Gets selected element IDs.
-                    var selected = [];
-                    $('input[name="selected_elements[]"]:checked').each(function() {
-                        selected.push($(this).val());
-                    });
-                    if (selected.length === 0) {
-                        $('#bulk-action-warning').show();
-                        $(this).val('');
-                        return;
-                    } else {
-                        $('#bulk-action-warning').hide();
-                    }
-                    // Confirm deletion.
-                    if (action === 'delete' && !confirm('Are you sure you want to delete the selected elements?')) {
-                        $(this).val('');
-                        return;
-                    }
+/**
+ * Initialize bulk actions functionality
+ */
+export const init = () => {
+    // No need for $(document).ready - init function serves this purpose
+    const dropdown = document.getElementById('bulk-actions-dropdown');
 
-                    // Retrieves category id from M.cfg or URL.
-                    var catid = M.cfg.catid || new URLSearchParams(window.location.search).get('catid');
-                    if (!catid) {
-                        return;
-                    }
+    if (!dropdown) {
+        return;
+    }
 
-                    var payload = {
-                        action: action,
-                        elementids: selected,
-                        categoryid: parseInt(catid)
-                    };
-
-                    var ajaxUrl = M.cfg.wwwroot +
-                        '/lib/editor/tiny/plugins/styles/ajax/bulk_element_action.php?sesskey=' +
-                        encodeURIComponent(M.cfg.sesskey);
-                    $.ajax({
-                        url: ajaxUrl,
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(payload),
-                        dataType: 'json'
-                    }).done(function(response) {
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert(response.message);
-                        }
-                    }).fail(function(xhr, status, error) {
-                        alert(error);
-                    });
-                });
-            });
+    dropdown.addEventListener('change', (event) => {
+        const action = event.target.value;
+        if (!action) {
+            return;
         }
-    };
-});
+
+        // Get selected element IDs using native selectors
+        const selected = [];
+        document.querySelectorAll('input[name="selected_elements[]"]:checked').forEach(checkbox => {
+            selected.push(checkbox.value);
+        });
+
+        const warningElement = document.getElementById('bulk-action-warning');
+
+        if (selected.length === 0) {
+            if (warningElement) {
+                warningElement.style.display = 'block';
+            }
+            dropdown.value = '';
+            return;
+        } else if (warningElement) {
+            warningElement.style.display = 'none';
+        }
+
+        // Confirm deletion using native confirm dialog
+        if (action === 'delete' && !confirm('Are you sure you want to delete the selected elements?')) {
+            dropdown.value = '';
+            return;
+        }
+
+        // Get category ID from M.cfg or URL parameters
+        const catid = M.cfg.catid || new URLSearchParams(window.location.search).get('catid');
+        if (!catid) {
+            return;
+        }
+
+        const payload = {
+            action: action,
+            elementids: selected,
+            categoryid: parseInt(catid)
+        };
+
+        const ajaxUrl = M.cfg.wwwroot +
+            '/lib/editor/tiny/plugins/styles/ajax/bulk_element_action.php?sesskey=' +
+            encodeURIComponent(M.cfg.sesskey);
+
+        // Use fetch instead of $.ajax
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+            credentials: 'same-origin'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch((error) => {
+                alert(error.message || 'An error occurred');
+            });
+    });
+};

@@ -21,55 +21,61 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/ajax', 'core/notification', 'core/str'],
-    function($, Ajax, Notification) {
+import Notification from 'core/notification';
 
-        return {
-            init: function() {
-                $(document).on('click', '.duplicate-element', function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
+/**
+ * Initialize duplicate functionality
+ */
+export const init = () => {
+    document.addEventListener('click', (event) => {
+        const button = event.target.closest('.duplicate-element');
+        if (!button) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
 
-                    var $button = $(this);
-                    $button.prop('disabled', true);
+        // Disable the button
+        button.disabled = true;
 
-                    var elementid = $button.data('id');
+        const elementId = button.dataset.id;
+        const catid = M.cfg.catid || new URLSearchParams(window.location.search).get('catid');
+        if (!catid) {
+            button.disabled = false;
+            return;
+        }
 
-                    var catid = M.cfg.catid || new URLSearchParams(window.location.search).get('catid');
-                    if (!catid) {
-                        $button.prop('disabled', false);
-                        return;
-                    }
-
-                    var payload = {
-                        action: 'duplicate',
-                        elementids: [elementid],
-                        categoryid: parseInt(catid)
-                    };
-
-                    var ajaxUrl = M.cfg.wwwroot +
-                        '/lib/editor/tiny/plugins/styles/ajax/bulk_element_action.php?sesskey=' +
-                        encodeURIComponent(M.cfg.sesskey);
-
-                    //AJAX request to bulk actions php to duplicate the element
-                    $.ajax({
-                        url: ajaxUrl,
-                        method: 'POST',
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: JSON.stringify(payload)
-                    }).done(function(data) {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            Notification.alert( data.message);
-                        }
-                    }).fail(function() {
-                        alert('Failed to duplicate element');
-                    }).always(function() {
-                        $button.prop('disabled', false);
-                    });
-                });
-            }
+        const payload = {
+            action: 'duplicate',
+            elementids: [elementId],
+            categoryid: parseInt(catid)
         };
+
+        const ajaxUrl = M.cfg.wwwroot +
+            '/lib/editor/tiny/plugins/styles/ajax/bulk_element_action.php?sesskey=' +
+            encodeURIComponent(M.cfg.sesskey);
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+            credentials: 'same-origin'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    Notification.alert('', data.message);
+                }
+            })
+            .catch(() => {
+                alert('Failed to duplicate element');
+            })
+            .finally(() => {
+                button.disabled = false;
+            });
     });
+};

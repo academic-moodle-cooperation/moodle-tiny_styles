@@ -21,31 +21,60 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], function($) {
-    return {
-        init: function() {
-            // Open and close the popup on button
-            $('#open-icon-popup').on('click', function() {
-                $('#icon-popup').show();
-            });
-            $('#close-icon-popup').on('click', function() {
-                $('#icon-popup').hide();
-            });
+/**
+ * Initialize icon selector functionality
+ *
+ * @return {void}
+ */
+export const init = () => {
+    // Open and close the popup on button
+    const openIconPopupBtn = document.getElementById('open-icon-popup');
+    const closeIconPopupBtn = document.getElementById('close-icon-popup');
+    const iconPopup = document.getElementById('icon-popup');
+    const selectedIconInput = document.querySelector('input[name="selectedicon"]');
+    const buttonIconName = document.getElementById('button-icon-name');
 
-            // User clicks an icon on the grid.
-            $('.icon-grid-item').on('click', function() {
-                var iconFile = $(this).data('icon');
-                $('input[name="selectedicon"]').val(iconFile);
-                $('#button-icon-name').text(iconFile);
-                $('#icon-popup').hide();
-            });
+    if (openIconPopupBtn) {
+        openIconPopupBtn.addEventListener('click', () => {
+            if (iconPopup) {
+                iconPopup.style.display = 'block';
+            }
+        });
+    }
 
-            // Initialize button text if there's a pre-selected icon
-            var initialIcon = $('input[name="selectedicon"]').val();
-            if (initialIcon && initialIcon.length > 0) {
-                $('#button-icon-name').text(initialIcon);
+    if (closeIconPopupBtn) {
+        closeIconPopupBtn.addEventListener('click', () => {
+            if (iconPopup) {
+                iconPopup.style.display = 'none';
+            }
+        });
+    }
+
+    // User clicks an icon on the grid
+    const iconGridItems = document.querySelectorAll('.icon-grid-item');
+    iconGridItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const iconFile = item.dataset.icon;
+
+            if (selectedIconInput) {
+                selectedIconInput.value = iconFile;
             }
 
+            if (buttonIconName) {
+                buttonIconName.textContent = iconFile;
+            }
+
+            if (iconPopup) {
+                iconPopup.style.display = 'none';
+            }
+        });
+    });
+
+    // Button text for existing icon
+    if (selectedIconInput && buttonIconName) {
+        const initialIcon = selectedIconInput.value;
+        if (initialIcon && initialIcon.length > 0) {
+            buttonIconName.textContent = initialIcon;
         }
-    };
-});
+    }
+};

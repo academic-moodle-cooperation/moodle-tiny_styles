@@ -20,113 +20,120 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define([
-    'jquery',
-    'core/modal_factory',
-    'core/modal_events'
-], function($, ModalFactory, ModalEvents) {
-    "use strict";
+import ModalFactory from 'core/modal_factory';
+import ModalEvents from 'core/modal_events';
 
-    /**
-     * Builds a preview snippet with placeholder text and applies
-     * a given CSS class or style preview style look.
-     *
-     * @param {string} name - name for the style.
-     * @param {string} cssclasses - CSS string or classes to be applied.
-     * @param {string} type - 'block' or 'inline'
-     * @returns {string} HTML snippet to display in modal.
-     */
-    function buildPreviewHtml(name, cssclasses, type) {
-        // Example snippet.
-        const snippetBlock = `
-            <p>Lorem ipsum <strong>dolor</strong> sit amet, consetetur sadipscing elitr,
-               sed diam nonumy eirmod tempor.</p>
-            <p>Invidunt ut labore et dolore magna aliquyam erat:</p>
-            <ul>
-               <li>Auto</li>
-               <li>Auto</li>
-            </ul>`;
+/**
+ * Builds a preview snippet with placeholder text and applies
+ * a given CSS class or style preview style look.
+ *
+ * @param {string} name - name for the style.
+ * @param {string} cssclasses - CSS string or classes to be applied.
+ * @param {string} type - 'block' or 'inline'
+ * @returns {string} HTML snippet to display in modal.
+ */
+const buildPreviewHtml = (name, cssclasses, type) => {
+    // Example snippet.
+    const snippetBlock = `
+        <p>Lorem ipsum <strong>dolor</strong> sit amet, consetetur sadipscing elitr,
+           sed diam nonumy eirmod tempor.</p>
+        <p>Invidunt ut labore et dolore magna aliquyam erat:</p>
+        <ul>
+           <li>Auto</li>
+           <li>Auto</li>
+        </ul>`;
 
-        const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
+    const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
 
-        // If full CSS definition, extract the class name.
-        if (isFullCssDefinition) {
-            const classMatch = cssclasses.match(/[.][a-zA-Z0-9_-]+/);
-            if (classMatch && classMatch.length > 0) {
-                const extractedClassName = classMatch[0].substring(1);
-                if (extractedClassName) {
-                    if (type === 'inline') {
-                        return snippetBlock.replace(
-                            '<strong>dolor</strong>',
-                            `<span class="${extractedClassName}">dolor</span>`
-                        );
-                    } else {
-                        return `<div class="${extractedClassName}">${snippetBlock}</div>`;
-                    }
+    // If full CSS definition, extract the class name.
+    if (isFullCssDefinition) {
+        const classMatch = cssclasses.match(/[.][a-zA-Z0-9_-]+/);
+        if (classMatch && classMatch.length > 0) {
+            const extractedClassName = classMatch[0].substring(1);
+            if (extractedClassName) {
+                if (type === 'inline') {
+                    return snippetBlock.replace(
+                        '<strong>dolor</strong>',
+                        `<span class="${extractedClassName}">dolor</span>`
+                    );
+                } else {
+                    return `<div class="${extractedClassName}">${snippetBlock}</div>`;
                 }
             }
         }
-
-        let attribute = `class="${cssclasses}"`;
-
-        if (cssclasses.includes(':') && cssclasses.includes(';')) {
-            attribute = `style="${cssclasses}"`;
-        }
-
-        if (type === 'inline') {
-            return snippetBlock.replace(
-                '<strong>dolor</strong>',
-                `<span ${attribute}>dolor</span>`
-            );
-        } else {
-            return `<div ${attribute}>${snippetBlock}</div>`;
-        }
     }
 
-    /**
-     * Opens a preview dialog for the given style definition.
-     *
-     * @param {string} name - Name for the style.
-     * @param {string} cssclasses - CSS string or classes to be applied.
-     * @param {string} type - 'block' or 'inline'.
-     */
-    function showPreview(name, cssclasses, type) {
-        const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
-        const previewhtml = buildPreviewHtml(name, cssclasses, type);
+    let attribute = `class="${cssclasses}"`;
 
-        ModalFactory.create({
+    if (cssclasses.includes(':') && cssclasses.includes(';')) {
+        attribute = `style="${cssclasses}"`;
+    }
+
+    if (type === 'inline') {
+        return snippetBlock.replace(
+            '<strong>dolor</strong>',
+            `<span ${attribute}>dolor</span>`
+        );
+    } else {
+        return `<div ${attribute}>${snippetBlock}</div>`;
+    }
+};
+
+/**
+ * Opens a preview dialog for the given style definition.
+ *
+ * @param {string} name - Name for the style.
+ * @param {string} cssclasses - CSS string or classes to be applied.
+ * @param {string} type - 'block' or 'inline'.
+ */
+const showPreview = async (name, cssclasses, type) => {
+    const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
+    const previewhtml = buildPreviewHtml(name, cssclasses, type);
+
+    try {
+        const modal = await ModalFactory.create({
             type: ModalFactory.types.DEFAULT,
             title: `Preview "${name}"`,
             body: previewhtml
-        }).then(function(modal) {
-            if (isFullCssDefinition) {
-                const styleEl = document.createElement('style');
-                styleEl.textContent = cssclasses;
-                modal.getRoot().append(styleEl);
-            }
-            modal.show();
-
-            modal.getRoot().on(ModalEvents.hidden, function() {
-            });
         });
-    }
 
-    /**
-     * @param selector
-     */
-    function init(selector) {
-        $(document).on('click', selector, function(e) {
-            e.preventDefault();
-            const $link = $(this);
-            const name = $link.data('name');
-            const cssclasses = $link.data('cssclass');
-            const type = $link.data('type');
-            showPreview(name, cssclasses, type);
-        });
-    }
+        if (isFullCssDefinition) {
+            const styleEl = document.createElement('style');
+            styleEl.textContent = cssclasses;
+            modal.getRoot()[0].appendChild(styleEl);
+        }
 
-    return {
-        init: init,
-        showPreview: showPreview
-    };
-});
+        modal.show();
+
+        modal.getRoot()[0].addEventListener(ModalEvents.hidden, () => {});
+    } catch (error) {
+        console.error('Failed to create preview modal:', error);
+    }
+};
+
+/**
+ * Initialize preview functionality for selected elements
+ *
+ * @param {string} selector - CSS selector for clickable preview elements
+ */
+export const init = (selector) => {
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest(selector);
+        if (!target) {
+            return;
+        }
+
+        e.preventDefault();
+
+        const name = target.dataset.name;
+        const cssclasses = target.dataset.cssclass;
+        const type = target.dataset.type;
+
+        showPreview(name, cssclasses, type);
+    });
+};
+
+// Export showPreview for external use
+export const previewElement = {
+    showPreview
+};
