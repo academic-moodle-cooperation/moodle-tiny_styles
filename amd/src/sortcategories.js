@@ -26,9 +26,7 @@ define([], function() {
         if (!row) {
             return;
         }
-        const sibling = direction === 'up'
-            ? row.previousElementSibling
-            : row.nextElementSibling;
+        const sibling = direction === 'up' ? row.previousElementSibling : row.nextElementSibling;
 
         if (!sibling || sibling.nodeType !== 1) {
             return;

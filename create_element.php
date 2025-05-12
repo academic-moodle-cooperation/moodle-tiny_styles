@@ -114,7 +114,7 @@ class element_form extends moodleform {
                 FROM {tiny_styles_elements}
                 GROUP BY cssclasses
                 ORDER BY cssclasses ASC
-                LIMIT 16
+                LIMIT 17
             ) sub
         ");
 
@@ -173,16 +173,33 @@ class element_form extends moodleform {
         $mform->addElement('hidden', 'catid', $this->_customdata['catid']);
         $mform->setType('catid', PARAM_INT);
 
-        $this->add_action_buttons(true, get_string('savechanges'));
-
         $mform->registerNoSubmitButton('previewstyle');
 
-        $mform->addElement(
+        $buttons = [];
+
+        $buttons[] = $mform->createElement(
+            'submit',
+            'submitbutton',
+            get_string('savechanges'),
+            ['class'=>'btn-primary me-2']
+        );
+
+        $buttons[] = $mform->createElement(
             'button',
             'previewstyle',
             get_string('preview', 'tiny_styles'),
-            ['id' => 'btn-preview-element']
+            ['id' => 'btn-preview-element', 'class'=>'btn-danger me-2']
         );
+
+        $buttons[] = $mform->createElement(
+            'cancel',
+            'cancel',
+            get_string('cancel'),
+            ['class'=>'btn-secondary']
+        );
+
+        $mform->addGroup($buttons, 'actionar', '', [''], false);
+
     }
 
     // todo: expand validation

@@ -3,7 +3,7 @@
     {{#has_bulk_message}}
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             {{bulk_message}}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -11,12 +11,9 @@
     <form method="post" action="{{submiturl}}">
         <div class="actions mb-3">
             <div class="mb-2">
-                <!-- "Back to Overview" -> acts as the Save button -->
                 <button type="submit" class="btn btn-secondary">
                     {{navigateback}}
                 </button>
-            </div>
-            <div>
                 <a href="{{createelementurl}}" class="btn btn-primary">
                     {{createbuttonlabel}}
                 </a>
@@ -43,7 +40,7 @@
                     <td>{{type}}</td>
                     <td>{{bootstrapclass}}</td>
                     <td>
-
+                   
                        <a href="#" class="toggle-enable-element"
                           data-id="{{id}}"
                           title="{{#enabled}}{{#str}}hide, core{{/str}}{{/enabled}}{{^enabled}}{{#str}}show, core{{/str}}{{/enabled}}"
@@ -55,7 +52,7 @@
                        {{{moveupiconhtml}}}
                        {{{movedowniconhtml}}}
 
-                        <a href="{{editurl}}" title="Edit" style="text-decoration: none;">
+                        <a href="{{editurl}}" title="Edit" class="text-decoration-none text-primary">
                             <i class="icon fa fa-cog fa-fw"></i>
                         </a>
                         <a href="#" class="duplicate-element" data-id="{{id}}" title="Duplicate" style="text-decoration: none;">
@@ -69,9 +66,9 @@
         </table>
     </form>
     <!-- Bulk Actions Dropdown -->
-    <div class="bulk-actions mt-3 ml-3">
+    <div class="bulk-actions mt-3 ms-3">
         <label for="bulk-actions-dropdown">{{bulkactionslabel}}</label>
-        <select id="bulk-actions-dropdown" class="custom-select form-select form-select-sm rounded">
+        <select id="bulk-actions-dropdown" class="form-select form-select w-auto d-inline-block align-middle rounded">
             <option value="">{{selectdefault}}</option>
             <option value="show">{{showaction}}</option>
             <option value="hide">{{hideaction}}</option>
