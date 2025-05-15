@@ -154,8 +154,15 @@ $string['presentationhelp'] = 'Darstellung';
 $string['iconhelp_help'] = 'Wähle ein Icon, das im Editor zusammen mit der Kategorie angezeigt wird.';
 $string['presentationhelp_help'] = 'Wählen Sie aus, ob die Stilelemente direkt im Styles-Menü angezeigt oder in einem Untermenü im Editor organisiert werden sollen.';
 
-$string['elementshown'] = '{$a} Element(e) wurden erfolgreich sichtbar gemacht';
-$string['elementhidden'] = '{$a} Element(e) wurden erfolgreich ausgeblendet';
-$string['elementduplicated'] = '{$a} Element(e) wurden erfolgreich dupliziert';
-$string['elementdeleted'] = '{$a} Element(e) wurden erfolgreich gelöscht';
+$string['elementshown'] = 'Element(e) wurden erfolgreich sichtbar gemacht';
+$string['elementhidden'] = 'Element(e) wurden erfolgreich ausgeblendet';
+$string['elementduplicated'] = 'Element(e) wurden erfolgreich dupliziert';
+$string['elementdeleted'] = 'Element(e) wurden erfolgreich gelöscht';
 
+$string['importdatainfo'] = 'Laden Sie JSON-Dateien hoch, die Stilkonfigurationen für den TinyMCE-Editor enthalten.';
+$string['importjsonfile'] = 'JSON-Konfigurationsdatei';
+$string['importinstructions'] = 'Laden Sie eine JSON-Datei mit gültigem Format hoch, die Stilkonfigurationen für das TinyMCE-Plugin enthält.';
+$string['importsuccess'] = 'Stildatei erfolgreich importiert.';
+$string['importfailed'] = 'Fehler beim Importieren der Konfiguration aus der Datei.';
+$string['invalidjson'] = 'Die Datei enthält ungültige JSON-Daten.';
+$string['importjsonfile_help'] = 'Laden Sie eine JSON-Datei hoch, die die Stilkonfigurationen enthält.';

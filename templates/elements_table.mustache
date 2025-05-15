@@ -36,7 +36,7 @@
                 {{#elements}}
                 <tr data-elementid="{{id}}" data-sortorder="{{sortorder}}">
                     <td><input type="checkbox" name="selected_elements[]" value="{{id}}"></td>
-                    <td>{{name}}</td>
+                    <td class="text-truncate" style="max-width: 200px;" data-toggle="tooltip" title="{{name}}">{{name}}</td>
                     <td>{{type}}</td>
                     <td>{{bootstrapclass}}</td>
                     <td>

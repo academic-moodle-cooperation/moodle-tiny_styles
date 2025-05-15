@@ -143,17 +143,20 @@ $string['categoryhelp_help'] = 'Select the category to which this element belong
 $string['typehelp_help'] = 'Choose whether this style should be applied as inline or block.';
 $string['cssclasseshelp_help'] = 'Choose styling from predefined classes or use manual style sheet.';
 
-$string['elementshown'] = '{$a} element(s) shown successfully';
-$string['elementhidden'] = '{$a} element(s) hidden successfully';
-$string['elementduplicated'] = '{$a} element(s) duplicated successfully';
-$string['elementdeleted'] = '{$a} element(s) deleted successfully';
-
 $string['iconhelp'] = 'Icon';
 $string['presentationhelp'] = 'Presentation';
 $string['iconhelp_help'] = 'Choose an icon to be displayed with the category in the Editor.';
 $string['presentationhelp_help'] = 'Select whether to display style elements directly in the Styles menu or organize them under a submenu within the editor.';
 
-$string['elementshown'] = '{$a} element(s) set visible successfully';
-$string['elementhidden'] = '{$a} element(s) hidden successfully';
-$string['elementduplicated'] = '{$a} element(s) duplicated successfully';
-$string['elementdeleted'] = '{$a} element(s) deleted successfully';
+$string['elementshown'] = 'Element(s) set visible successfully';
+$string['elementhidden'] = 'Element(s) hidden successfully';
+$string['elementduplicated'] = 'Element(s) duplicated successfully';
+$string['elementdeleted'] = 'Element(s) deleted successfully';
+
+$string['importdatainfo'] = 'Upload JSON files containing style configurations for the TinyMCE editor.';
+$string['importjsonfile'] = 'JSON configuration file';
+$string['importinstructions'] = 'Upload one JSON file containing the style configurations. The file should contain a valid JSON format compatible with the TinyMCE styles plugin.';
+$string['importsuccess'] = 'Styling file imported successfully.';
+$string['importfailed'] = 'Failed to import configuration from file.';
+$string['invalidjson'] = 'The file contains invalid JSON data.';
+$string['importjsonfile_help'] = 'Upload one JSON file containing the style configurations.';

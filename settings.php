@@ -28,7 +28,6 @@ require_once($CFG->dirroot . '/lib/editor/tiny/plugins/styles/locallib.php');
 
 $action = optional_param('action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
-$PAGE->requires->js_call_amd('tiny_styles/importdata', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/sortcategories', 'init');;
 
 if ($action === 'delete' && $id > 0) {
@@ -60,10 +59,6 @@ if ($action === 'delete' && $id > 0) {
 
 } else if ($action === 'export') {
     require_once(__DIR__ . '/exporthandler.php');
-    exit;
-
-}else if ($action === 'import') {
-    require_once(__DIR__ . '/importhandler.php');
     exit;
 }
 
@@ -121,13 +116,6 @@ if ($hassiteconfig) {
                 ['title' => get_string('delete')]
             );
 
-            $nameraw = $category->name;
-
-            $filtermanager = filter_manager::instance();
-            $context = context_system::instance();
-
-            $name = $filtermanager->filter_text($nameraw, $context);
-
             // Filtering dividers out.
             if ($category->presentation === 'divider') {
                 $categorydata[] = [
@@ -174,11 +162,7 @@ if ($hassiteconfig) {
             'action' => 'export',
             'sesskey' => sesskey(),
         ]);
-        $importurl = new moodle_url('/admin/settings.php', [
-            'section' => 'tiny_styles_admin',
-            'action'  => 'import',
-            'sesskey' => sesskey(),
-        ]);
+        $importurl = new moodle_url('/lib/editor/tiny/plugins/styles/import.php');
 
         $templatecontext = [
             'categories'     => $categorydata,

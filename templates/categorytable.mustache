@@ -12,36 +12,19 @@
       <a href="{{createcaturl}}" class="btn btn-primary me-2">
           {{createcategory}}
       </a>
+      <a href="{{importurl}}" class="btn btn-secondary me-2">
+          {{#str}} importdata, tiny_styles {{/str}}
+      </a>
       <a href="{{exporturl}}" class="btn btn-secondary me-2">
           {{exportlabel}}
       </a>
-      <button type="button" id="uploadjson" class="btn btn-secondary me-2" data-sesskey="{{sesskey}}">
-          {{#str}} importdata, tiny_styles {{/str}}
-      </button>
-      <form id="importform" style="margin-bottom: 20px;">
-          <input type="hidden" name="sesskey" value="{{sesskey}}">
-          <label for="importfile" class="me-2">
-            {{#str}} selectjsonfile, tiny_styles {{/str}}
-          <span
-            tabindex="0"
-            class="help-icon"
-            role="button"
-            aria-label="{{#str}} jsonfilehelp, tiny_styles {{/str}}"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="{{#str}} jsonfilehelp, tiny_styles {{/str}}">
-            <i class="fa fa-question-circle" aria-hidden="true"></i>
-          </span>
-          </label>
-          <input type="file" name="importfile" id="importfile" accept=".json" required/>
-      </form>
   </div>
   </p>
   <tbody>
   {{#categories}}
     <tr>
-      <td>{{{name}}}</td>
-      <td>{{{description}}}</td>
+      <td class="text-truncate" style="max-width: 200px;" data-toggle="tooltip" title="{{name}}">{{name}}</td>
+      <td class="text-truncate" style="max-width: 350px;" data-toggle="tooltip" title="{{description}}">{{description}}</td>
       <td>{{presentation}}</td>
       <td>
         <a href="#" class="toggle-enable"
