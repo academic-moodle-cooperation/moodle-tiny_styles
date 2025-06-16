@@ -77,5 +77,8 @@ export const init = () => {
         if (initialIcon && initialIcon.length > 0) {
             buttonIconName.textContent = initialIcon;
         }
+        else{
+            buttonIconName.textContent = "icondefault.svg";
+        }
     }
 };
