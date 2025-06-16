@@ -17,9 +17,10 @@
 /**
  * Class for handling the import of categories and styles.
  *
- * @package     tiny_styles
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace tiny_styles;

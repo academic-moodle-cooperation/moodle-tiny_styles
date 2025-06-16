@@ -14,16 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace tiny_styles\privacy;
-
 /**
  * Privacy API implementation for the Font case plugin.
  *
- * @package     tiny_styles
- * @category    privacy
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace tiny_styles\privacy;
+
 class provider implements \core_privacy\local\metadata\null_provider {
 
     /**

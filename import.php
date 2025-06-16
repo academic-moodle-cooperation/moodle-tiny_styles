@@ -13,13 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
-
+ 
 /**
  * File picker for JSON importing.
  *
- * @package     tiny_styles
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../../../../config.php');
@@ -99,4 +100,18 @@ else if ($data = $mform->get_data()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('importdata', 'tiny_styles'));
 $mform->display();
+//separate window for exporting import examples 
+?>
+<div class="mt-4 p-3 border rounded">
+    <h5><?php echo get_string('examplefiles_heading', 'tiny_styles'); ?></h5>
+    <p class="text-muted"><?php echo get_string('examplefiles_description', 'tiny_styles'); ?></p>
+
+    <form method="post" action="exportexamples.php" class="d-flex align-items-center gap-2">
+        <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>">
+        <span class="form-text"><?php echo get_string('examplefiles_label', 'tiny_styles'); ?></span>
+        <button type="submit" class="btn btn-secondary"><?php echo get_string('download_button', 'tiny_styles'); ?></button>
+    </form>
+</div>
+
+<?php
 echo $OUTPUT->footer();

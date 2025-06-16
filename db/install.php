@@ -17,9 +17,10 @@
 /**
  * Post-install script for some default values for tiny_styles
  *
- * @package     tiny_styles
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -60,6 +61,7 @@ function xmldb_tiny_styles_install() {
         $cat->timemodified = time();
         $boxencatid = $DB->insert_record('tiny_styles_categories', $cat);
 
+        // These two categories can be uncommented in future-dev. if a default UNI-Vorlagen cat. is implemented.
         // Divider
         $cat = new stdClass();
         $cat->name         = '-------';
@@ -71,7 +73,7 @@ function xmldb_tiny_styles_install() {
         $cat->sortorder    = 3;
         $cat->timecreated  = time();
         $cat->timemodified = time();
-        $dividercatid = $DB->insert_record('tiny_styles_categories', $cat);
+        // $dividercatid = $DB->insert_record('tiny_styles_categories', $cat);
 
         // "Uni-Vorlagen" category
         $cat = new stdClass();
@@ -84,7 +86,7 @@ function xmldb_tiny_styles_install() {
         $cat->sortorder    = 4;
         $cat->timecreated  = time();
         $cat->timemodified = time();
-        $unicatid = $DB->insert_record('tiny_styles_categories', $cat);
+        // $unicatid = $DB->insert_record('tiny_styles_categories', $cat);
     }
 
     // Default badge and alerts bootstrap elements.

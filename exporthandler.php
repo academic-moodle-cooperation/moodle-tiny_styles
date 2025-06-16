@@ -17,53 +17,16 @@
 /**
  * Handles exporting the categories and styles.
  *
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../../../../config.php');
 require_login();
 require_sesskey();
 require_capability('moodle/site:config', context_system::instance());
-
-// categories and elements in one query for CSV.
-$sqlcsv = "SELECT c.id, c.name, c.symbol, c.presentation, c.sortorder AS catsort,
-                  e.id AS elemid, e.name AS elemname, e.type, e.cssclasses, e.custom,
-                  ce.sortorder AS cesort
-           FROM {tiny_styles_categories} c
-           LEFT JOIN {tiny_styles_cat_elements} ce ON ce.categoryid = c.id
-           LEFT JOIN {tiny_styles_elements} e ON e.id = ce.elementid
-           ORDER BY c.sortorder, ce.sortorder";
-
-$recordset = $DB->get_recordset_sql($sqlcsv);
-
-//temporary file
-$csvtemp = tmpfile();
-$csvheader = [
-    'Category ID', 'Category Name', 'Category Symbol', 'Category Presentation',
-    'Element ID', 'Element Name', 'Element Type', 'Element CSS Classes', 'Element Custom'
-];
-fputcsv($csvtemp, $csvheader);
-
-foreach ($recordset as $record) {
-    $row = [
-        $record->id,
-        $record->name,
-        $record->symbol,
-        $record->presentation,
-        $record->elemid,
-        $record->elemname,
-        $record->type,
-        $record->cssclasses,
-        $record->custom
-    ];
-    fputcsv($csvtemp, $row);
-}
-$recordset->close();
-
-rewind($csvtemp);
-$csvcontent = stream_get_contents($csvtemp);
-fclose($csvtemp);
 
 // table fetch
 $categories = $DB->get_records('tiny_styles_categories');
@@ -110,32 +73,9 @@ $exportdata = [
 ];
 $jsoncontent = json_encode($exportdata, JSON_PRETTY_PRINT);
 
-// ZIP json and csv
-if (!class_exists('ZipArchive')) {
-    print_error('ZipArchive not available on this server.');
-}
-
-$zip = new ZipArchive();
-$zipfilename = tempnam(sys_get_temp_dir(), 'export') . '.zip';
-if ($zip->open($zipfilename, ZipArchive::CREATE) !== TRUE) {
-    print_error('Cannot create a zip file for export.');
-}
-
-$zip->addFromString('tiny_styles_export.csv', $csvcontent);
-$zip->addFromString('tiny_styles_export.json', $jsoncontent);
-$examplefile = __DIR__ . '/json/example.json';
-$readme = __DIR__ . '/json/instructions.md';
-if (file_exists($examplefile)) {
-    $zip->addFile($examplefile, 'example.json');
-}
-if (file_exists($readme)) {
-    $zip->addFile($readme, 'instructions.md');
-}
-$zip->close();
-
-header('Content-Type: application/zip');
-header('Content-Disposition: attachment; filename="tiny_styles_export.zip"');
-header('Content-Length: ' . filesize($zipfilename));
-readfile($zipfilename);
-unlink($zipfilename);
+// Export as JSON file directly
+header('Content-Type: application/json');
+header('Content-Disposition: attachment; filename="tiny_styles_export.json"');
+header('Content-Length: ' . strlen($jsoncontent));
+echo $jsoncontent;
 exit;

@@ -1,26 +1,26 @@
 <?php
-// Diese Datei ist Teil von Moodle - https://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
-// Moodle ist freie Software: Sie können sie weiterverbreiten und/oder modifizieren
-// unter den Bedingungen der GNU General Public License, veröffentlicht von
-// der Free Software Foundation, entweder Version 3 der Lizenz oder
-// (nach Ihrer Wahl) einer späteren Version.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// Moodle wird in der Hoffnung verbreitet, dass es nützlich ist,
-// jedoch OHNE JEGLICHE GEWÄHRLEISTUNG; sogar ohne die implizite Gewährleistung der
-// MARKTGÄNGIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die
-// GNU General Public License für weitere Details.
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// Sie sollten eine Kopie der GNU General Public License zusammen mit Moodle erhalten haben.
-// Falls nicht, siehe <https://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin-Strings werden hier definiert.
+ * Plugin strings are defined here.
  *
- * @package     tiny_styles
- * @category    string
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 oder später
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -166,3 +166,8 @@ $string['importsuccess'] = 'Stildatei erfolgreich importiert.';
 $string['importfailed'] = 'Fehler beim Importieren der Konfiguration aus der Datei.';
 $string['invalidjson'] = 'Die Datei enthält ungültige JSON-Daten.';
 $string['importjsonfile_help'] = 'Laden Sie eine JSON-Datei hoch, die die Stilkonfigurationen enthält.';
+
+$string['examplefiles_heading'] = 'Beispielfiles herunterladen';
+$string['examplefiles_description'] = 'Laden Sie Beispiel-JSON-Dateien und Anleitungen herunter, um das Importformat besser zu verstehen.';
+$string['examplefiles_label'] = 'Beispielfiles herunterladen';
+$string['download_button'] = 'Herunterladen';

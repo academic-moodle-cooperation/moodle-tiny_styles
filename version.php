@@ -17,15 +17,16 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     tiny_styles
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tiny_styles';
 $plugin->release = 'v4.5.0-r1';
-$plugin->version = 2025051500;
+$plugin->version = 2025061600;
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_BETA;

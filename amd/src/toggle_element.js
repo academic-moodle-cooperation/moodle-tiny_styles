@@ -16,10 +16,13 @@
 /**
  * Enables toggling the elements enabled/disabled seamlessly.
  *
- * @category    admin
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 define([], function() {
     /**
      * Toggle the visibility icon based on new state

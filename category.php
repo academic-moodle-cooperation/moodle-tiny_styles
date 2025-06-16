@@ -17,10 +17,10 @@
 /**
  * Plugin administration: category editing and creation
  *
- * @package     tiny_styles
- * @category    admin
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../../../../config.php');
@@ -115,7 +115,7 @@ class category_form extends moodleform {
                 <label for="open-icon-popup">' . get_string('selecticon', 'tiny_styles') . '</label>
             </div>
             <div class="col-md-9">
-                <button type="button" id="open-icon-popup" class="btn btn-outline-dark"
+                <button type="button" id="open-icon-popup" class="btn btn-outline-primary"
         style="padding: 7px 14px; font-size: 15px;">
                     <span id="button-icon-name">' . get_string('selecticon', 'tiny_styles') . '</span>
                 </button>

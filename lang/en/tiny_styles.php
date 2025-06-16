@@ -17,10 +17,10 @@
 /**
  * Plugin strings are defined here.
  *
- * @package     tiny_styles
- * @category    string
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -160,3 +160,9 @@ $string['importsuccess'] = 'Styling file imported successfully.';
 $string['importfailed'] = 'Failed to import configuration from file.';
 $string['invalidjson'] = 'The file contains invalid JSON data.';
 $string['importjsonfile_help'] = 'Upload one JSON file containing the style configurations.';
+
+
+$string['examplefiles_heading'] = 'Download Example Files';
+$string['examplefiles_description'] = 'Download example JSON files and instructions to help you understand the import format.';
+$string['examplefiles_label'] = 'Download example files';
+$string['download_button'] = 'Download';

@@ -14,11 +14,12 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Commands for the editor
- *
- * @module      tiny_styles/commands
- * @copyright   2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Commands for the editor.
+ * 
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import {getButtonImage} from 'editor_tiny/utils';
