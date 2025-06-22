@@ -105,13 +105,16 @@ function buildCategoryItems(editor, categories, icons) {
             const symbolraw = cat.symbol ? cat.symbol : '';
             const symbolname = symbolraw.replace('.svg', '').trim();
 
+            // redundant check?
             if (icons[symbolname]) {
                 caticon = icons[symbolname];
-            } else if (cat.name === 'Labels'){
-                caticon = icons.label;
-            } else if (cat.name === 'Boxes'){
-                caticon = icons.box;
-            }
+            } 
+            /**else if (cat.name === 'Labels'){
+           *     caticon = icons.label;
+            *} else if (cat.name === 'Boxes'){
+             *   caticon = icons.box;
+            *}
+            */
             items.push({
                 type: 'nestedmenuitem',
                 icon: caticon,
@@ -295,16 +298,16 @@ export const getSetup = async () => {
     ] = await Promise.all([
         fetchCategories(),
         getButtonImage('icon', 'tiny_styles'),
-        getButtonImage('iconlabel', 'tiny_styles'),
-        getButtonImage('iconbox', 'tiny_styles'),
-        getButtonImage('icondefault', 'tiny_styles'),
+        getButtonImage('label', 'tiny_styles'),
+        getButtonImage('box', 'tiny_styles'),
+        getButtonImage('default', 'tiny_styles'),
         getString('menuitem_styles', 'tiny_styles'),
         getButtonImage('preview', 'tiny_styles'),
-        getButtonImage('apply', 'tiny_styles'),
+        getButtonImage('paint', 'tiny_styles'),
         getButtonImage('check', 'tiny_styles'),
         getButtonImage('graduate', 'tiny_styles'),
         getButtonImage('laptop', 'tiny_styles'),
-        getButtonImage('magnifying', 'tiny_styles'),
+        getButtonImage('magnify', 'tiny_styles'),
         getButtonImage('pen', 'tiny_styles'),
         getButtonImage('school', 'tiny_styles'),
         getButtonImage('square', 'tiny_styles'),
@@ -343,11 +346,11 @@ export const getSetup = async () => {
             box: 'boxIcon',
             default: 'defaultIcon',
             preview: 'previewIcon',
-            apply: 'applyIcon',
+            paint: 'applyIcon',
             check: 'checkIcon',
             graduate: 'graduateIcon',
             laptop: 'laptopIcon',
-            magnifying: 'magnifyingIcon',
+            magnify: 'magnifyingIcon',
             pen: 'penIcon',
             school: 'schoolIcon',
             square: 'squareIcon',

@@ -166,3 +166,6 @@ $string['examplefiles_heading'] = 'Download Example Files';
 $string['examplefiles_description'] = 'Download example JSON files and instructions to help you understand the import format.';
 $string['examplefiles_label'] = 'Download example files';
 $string['download_button'] = 'Download';
+
+$string['searchplaceholder'] = 'Search';
+$string['noiconsfound'] = 'No icons found';

@@ -40,7 +40,7 @@ function xmldb_tiny_styles_install() {
         $cat->name         = 'Labels';
         $cat->description  = 'Design Elements directly in Text';
         $cat->showdesc     = 'helptext';
-        $cat->symbol       = 'fa fa-tag';
+        $cat->symbol       = 'label.svg';
         $cat->presentation = 'submenu';
         $cat->enabled      = 1;
         $cat->sortorder    = 1;
@@ -53,7 +53,7 @@ function xmldb_tiny_styles_install() {
         $cat->name         = 'Boxes';
         $cat->description  = 'Format paragraphs';
         $cat->showdesc     = 'never';
-        $cat->symbol       = 'fa fa-cube';
+        $cat->symbol       = 'box.svg';
         $cat->presentation = 'submenu';
         $cat->enabled      = 1;
         $cat->sortorder    = 2;
@@ -61,7 +61,8 @@ function xmldb_tiny_styles_install() {
         $cat->timemodified = time();
         $boxencatid = $DB->insert_record('tiny_styles_categories', $cat);
 
-        // These two categories can be uncommented in future-dev. if a default UNI-Vorlagen cat. is implemented.
+        // These two categories can be uncommented in future development,
+        // if a default UNI-Vorlagen category is implemented.
         // Divider
         $cat = new stdClass();
         $cat->name         = '-------';
@@ -80,7 +81,7 @@ function xmldb_tiny_styles_install() {
         $cat->name         = 'Uni-Vorlagen';
         $cat->description  = 'Vorlagen im Corporate Design der Uni';
         $cat->showdesc     = 'tooltip';
-        $cat->symbol       = 'fa fa-university';
+        $cat->symbol       = 'school.svg';
         $cat->presentation = 'inline';
         $cat->enabled      = 1;
         $cat->sortorder    = 4;
