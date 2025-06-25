@@ -19,7 +19,7 @@
  *
  * @package tiny_styles
  * @author Karri Pajarinen
- * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -127,8 +127,10 @@ class category_form extends moodleform {
             border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); 
             z-index:1000; overflow:hidden; padding:0; margin-top:5px;">';
 
-        $iconpopuphtml .= '<div style="padding:20px; border-bottom:1px solid #eee;">
+        $iconpopuphtml .= '<div style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
             <h4 style="margin:0;">' . get_string('selectanicon', 'tiny_styles') . '</h4>
+            <button type="button" id="clear-search-btn" class="btn btn-secondary btn-sm">'
+            . get_string('clear', 'core') . '</button>
             </div>';
 
         $iconpopuphtml .= '<div id="icon-grid-container" style="max-height:300px; overflow-y:auto; padding:20px;">

@@ -19,13 +19,13 @@
  *
  * @package tiny_styles
  * @author Karri Pajarinen
- * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'TinyMCE-Gestaltungsvorlagen';
+$string['pluginname'] = 'TinyMCE Styles';
 $string['privacy:metadata'] = 'Font case does not store any personal data';
 
 // Main menu item
@@ -169,3 +169,7 @@ $string['download_button'] = 'Download';
 
 $string['searchplaceholder'] = 'Search';
 $string['noiconsfound'] = 'No icons found';
+
+$string['examplefile'] = 'Example file';
+$string['instructions_toggle'] = 'Instructions on how to prepare an import configuration file.';
+$string['instructions_heading'] = 'Instructions for the import form fillout (example.json)';

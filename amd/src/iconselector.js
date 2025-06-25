@@ -18,7 +18,7 @@
  *
  * @package tiny_styles
  * @author Karri Pajarinen
- * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -36,6 +36,8 @@ export const init = () => {
     const selectedIconInput = document.querySelector('input[name="selectedicon"]');
     const iconGrid = document.getElementById('icon-grid');
     const noIconsFound = document.getElementById('no-icons-found');
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+
     
     // Places popup relative to search container
     const positionPopup = () => {
@@ -192,6 +194,21 @@ export const init = () => {
         });
     }
     
+    // Clear search
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+            // Clear the search input
+            if (iconSearchInput) {
+                iconSearchInput.value = '';
+            }
+            filterIcons('');
+            // Focus back on the search
+            if (iconSearchInput) {
+                iconSearchInput.focus();
+            }
+        });
+    }
+
     // Handle icon selection from grid
     const iconGridItems = document.querySelectorAll('.icon-grid-item');
     iconGridItems.forEach(item => {

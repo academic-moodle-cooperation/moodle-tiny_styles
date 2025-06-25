@@ -19,7 +19,7 @@
  *
  * @package tiny_styles
  * @author Karri Pajarinen
- * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -38,6 +38,22 @@ $PAGE->set_title(get_string('importdata', 'tiny_styles'));
 
 use core\notification;
 use tiny_styles\importhandler;
+
+if (optional_param('download_example', false, PARAM_BOOL)) {
+    require_sesskey();
+    
+    $examplefile = __DIR__ . '/json/example.json';
+    if (file_exists($examplefile)) {
+        $content = file_get_contents($examplefile);
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="example.json"');
+        header('Content-Length: ' . strlen($content));
+        echo $content;
+        exit;
+    } else {
+        notification::error('Example file not found');
+    }
+}
 
 /**
  * Standard filepicker
@@ -99,19 +115,110 @@ else if ($data = $mform->get_data()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('importdata', 'tiny_styles'));
-$mform->display();
-//separate window for exporting import examples 
+$downloadurl = new moodle_url($PAGE->url, ['download_example' => 1, 'sesskey' => sesskey()]);
 ?>
-<div class="mt-4 p-3 border rounded">
-    <h5><?php echo get_string('examplefiles_heading', 'tiny_styles'); ?></h5>
-    <p class="text-muted"><?php echo get_string('examplefiles_description', 'tiny_styles'); ?></p>
+<div class="mt-3 mb-4 p-3 border rounded">
+    <div class="row align-items-center">
+        <div class="col-md-3">
+            <label class="form-label mb-0"><?php echo get_string('examplefile', 'tiny_styles'); ?></label>
+        </div>
+        <div class="col-md-9">
+            <a href="<?php echo $downloadurl->out(); ?>" class="btn btn-link p-0">
+                example.json
+            </a>
+            <details class="mt-2">
+                <summary style="cursor: pointer;"><?php echo get_string('instructions_toggle', 'tiny_styles'); ?></summary>
+                <div class="mt-2 p-2 bg-light border rounded">
+                    <p><strong><?php echo get_string('instructions_heading', 'tiny_styles'); ?></strong></p>
+                    <p>
+                    <h3>Structure</h3>
+<p>
+    The <code>example.json</code> is structured into a category array, where each category contains an element array. 
+    This is the format which any JSON file imported should follow.
+</p>
 
-    <form method="post" action="exportexamples.php" class="d-flex align-items-center gap-2">
-        <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>">
-        <span class="form-text"><?php echo get_string('examplefiles_label', 'tiny_styles'); ?></span>
-        <button type="submit" class="btn btn-secondary"><?php echo get_string('download_button', 'tiny_styles'); ?></button>
-    </form>
+<p>Visualized:</p>
+<pre><code>Categories: [ category_1, category_2 ... category_n ]
+
+category_1: [ element_a, element_b ... element_n ]
+category_2: [ element_x, element_y ...
+→ with the elements carrying the styling information
+</code></pre>
+
+<h3>How to use the JSON</h3>
+<p>
+    The example JSON can be easily used for editing directly and expanded by copying it.
+    <br><strong>Note:</strong> The user should follow correct JSON syntax and formatting for the file to work properly.
+</p>
+
+<h4>How to fill out the <em>example.json</em>:</h4>
+<p>(See below for further explanations of <code>enabled</code>, <code>type</code>, etc.)</p>
+
+<pre><code>"categories": [
+    {
+        "name": "Enter a minimum 3 characters long name here.",
+        "description": "Write a short category description here.",
+        "showdesc": "pick one of the following: helptext/tooltip/never",
+        "presentation": "pick one of the following: submenu/inline/divider",
+        "enabled": 1,
+        "elements": [
+            {
+                "name": "enter a descriptive name here",
+                "type": "pick either inline or block",
+                "cssclasses": "a valid css styling alert alert-danger",
+                "enabled": 1,
+                "custom": 0
+            },
+            ... next elements ...
+        ]
+    },
+    ... possible to add more categories ...
+]</code></pre>
+
+<h3>Explanations</h3>
+<p>The naming and description fields are self-explanatory.</p>
+
+<strong>The other fields are:</strong>
+
+<h5>Category:</h5>
+<ul>
+    <li><strong>showdesc:</strong> how the description is shown to users, or if at all</li>
+    <li><strong>presentation:</strong> how elements are displayed in the editor (submenu / inline / divider)</li>
+    <li><strong>enabled:</strong> either <code>1</code> (enabled) or <code>0</code> (disabled), default: <code>0</code></li>
+</ul>
+
+<h5>Element:</h5>
+<ul>
+    <li><strong>type:</strong> <code>inline</code> or <code>block</code><br>
+        <em>inline is for styling short text or words<br>
+        block is for paragraphs or larger text blocks</em>
+    </li>
+    <li><strong>cssclasses:</strong> CSS styling for the text<br>
+        <em>This can be Bootstrap classes or inline CSS, eg. <code>color: red; font-weight: bold;</code></em>
+    </li>
+    <li><strong>enabled:</strong> same logic as category</li>
+    <li><strong>custom:</strong> <code>1</code> if using custom CSS inline code</li>
+</ul>
+
+<hr>
+
+<h3>Good to Know</h3>
+<ul>
+    <li>
+        Duplicate categories can be imported multiple times. This avoids accidental deletions or edits.
+        <br><strong>Suggestion:</strong> Use the example JSON as the basis for imports to prevent duplicates.
+    </li>
+    <li>All fields can be edited later via Moodle admin pages.</li>
+    <li>Currently, icon selection must be done manually through the Moodle admin category editor.</li>
+    <li>See the full exported JSON for more examples and detailed usage.</li>
+</ul>
+</p>
+                </div>
+            </details>
+        </div>
+    </div>
 </div>
 
 <?php
+$mform->display();
 echo $OUTPUT->footer();

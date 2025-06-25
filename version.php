@@ -19,7 +19,7 @@
  *
  * @package tiny_styles
  * @author Karri Pajarinen
- * @copyright 2025 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tiny_styles';
 $plugin->release = 'v4.5.0-r1';
-$plugin->version = 2025061600;
+$plugin->version = 2025062500;
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_BETA;
