@@ -151,11 +151,6 @@ $string['importfailed'] = 'Failed to import configuration from file.';
 $string['invalidjson'] = 'The file contains invalid JSON data.';
 $string['importjsonfile_help'] = 'Upload a JSON file containing the style configurations.';
 
-$string['examplefiles_heading'] = 'Download Example Files';
-$string['examplefiles_description'] = 'Download example JSON files and instructions to help you understand the import format.';
-$string['examplefiles_label'] = 'Download example files';
-$string['download_button'] = 'Download';
-
 $string['searchplaceholder'] = 'Search';
 $string['noiconsfound'] = 'No icons found';
 

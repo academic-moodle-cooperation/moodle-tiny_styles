@@ -155,11 +155,6 @@ $string['importfailed'] = 'Fehler beim Importieren der Konfiguration aus der Dat
 $string['invalidjson'] = 'Die Datei enthält ungültige JSON-Daten.';
 $string['importjsonfile_help'] = 'Laden Sie eine JSON-Datei hoch, die Gestaltungsvorlagen-Konfigurationen enthält.';
 
-$string['examplefiles_heading'] = 'Beispielfiles herunterladen';
-$string['examplefiles_description'] = 'Laden Sie Beispiel-JSON-Dateien und Anleitungen herunter, um das Importformat besser zu verstehen.';
-$string['examplefiles_label'] = 'Beispielfiles herunterladen';
-$string['download_button'] = 'Herunterladen';
-
 $string['searchplaceholder'] = 'Suchen';
 $string['noiconsfound'] = 'Keine Symbole gefunden';
 
