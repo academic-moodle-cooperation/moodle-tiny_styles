@@ -1,125 +1,85 @@
-# TinyMCE-Gestaltungsvorlagen - Tiny Styles 
+TinyMCE Styles
+==============================================
 
-#### A plugin for the TinyMCE text editor to enable bootstrap styling.
+This file is part of the tiny_styles plugin for Moodle - <http://moodle.org/>
 
-Gives **User** the ability to select text in the editor and add a bootstrap style of their choosing from the format tab menu, or alternatively from the toolbar menu *(FA Icon)*. 
+*Author:*    Karri Pajarinen
 
-Default style options are
+*Copyright:* [Academic Moodle Cooperation](http://www.academic-moodle-cooperation.org)
+
+*License:*   [GNU GPL v3 or later](http://www.gnu.org/copyleft/gpl.html)
+
+
+Description
+-----------
+
+The purpose of this TinyMCE plugin is to let users apply predefined bootstrap classes or custom CSS classes to block or inline text.
+
+Default styles are:
 - Boxes (bootstrap class: 'alert')
 - Labels (bootstrap class: 'badge')
 
-Admin/Settings site enables the creation for new categories and style options, and the ability to edit existing categories and styles.
-- Currently the icon selection feature is not enabled. The program will add a default icon for any created category.  
 
-## Current version ##
+Usage
+-------
 
-### Database ###
-
-
-**Three tables**
-
-Categories, Elements, and a bridging table for category elements
-
-For a detailed structure see: 
-[Database details](Documentation/database.md)
-
-***Possible expansion:** A new table for svg icons for user to select from and the tinyMCE editor to use.*
-
------
-
-### Admin pages ###
-
-**Fully implemented for usage:**
-
-- Create/Edit element (see section: [Suggested improvements](#suggested-improvements))
-
-**Functional, but missing features:**
-
-- Create/Edit category
-
-   **Missing features:**
-  - Icon selection (category)
-
-------
-### Editor ###
-
-Functional, but requires changes
- 
-Currently user has to clear formatting manually from the menu, before applying a new style due to the text selection logic of TinyMCE
-
-***Possible fix:*** 
-- Taking steps up in the text selection to expand 'view area' for selected text, then removing styling. 
-- Alternatively a solution could be modifying the TinyMCE built-in method:
-    
-   ```
-   editor.Formatter()
-   ```    
----
-### Next planned updates: ###
-
-**Admin:**
-- Icon selection for category
-
-**Editor:**
-- Text wrapping logic improvements
-- Dynamically loaded icons
-- Preview for styles
-
-**General improvements:**
-- Refactoring
-- Code optimization
-
------
-
-### Suggested improvements ###
-
-**Create/Edit element**
-- Button layout for a pleasing look and usability
-
-## Default installing options
-
-Make sure to set up the plugin under: 
-
-```
-    {your/moodle/dirroot}/lib/editor/tiny/plugins/styles
-```
+A teacher wants to organise a course more clearly. For this purpose, she formats the content in a standardised way by
+selecting a text in the TinyMCE view and choosing a suitable style out of the predefined list.
+For example, she marks additional notes on a topic with the style 'Blue box'.
 
 
-#### Installing via uploaded ZIP file ####
+Installation
+------------
 
-1. Log in to your Moodle site as an admin and go to _Site administration >
-   Plugins > Install plugins_.
-2. Upload the ZIP file with the plugin code. You should only be prompted to add
-   extra details if your plugin type is not automatically detected.
-3. Check the plugin validation report and finish the installation.
+* Copy the module code directly to the lib/editor/tiny/plugins/styles directory.
 
-## Installing manually ##
+* Log into Moodle as administrator.
 
-The plugin can be also installed by putting the contents of this directory to
+* Open the administration area (http://your-moodle-site/admin) to start the installation
+  automatically.
 
-    {your/moodle/dirroot}/lib/editor/tiny/plugins/styles
 
-Afterwards, log in to your Moodle site as an admin and go to _Site administration >
-Notifications_ to complete the installation.
+Privacy API
+-------------
 
-Alternatively, you can run
+The plugin fully implements the Moodle Privacy API.
 
-    $ php admin/cli/upgrade.php
 
-to complete the installation from the command line.
+Documentation
+-------------
 
-## License ##
+You can find a documentation for the plugin on the [AMC website](https://academic-moodle-cooperation.org/tiny_styles/)
 
-Creator: 2025 Karri Pajarinen <pajarinenk66@univie.ac.at>
 
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any later
-version.
+Bug Reports / Support
+---------------------
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+We try our best to deliver bug-free plugins, but we can not test the plugin for every platform,
+database, PHP and Moodle version. If you find any bug please report it on
+[GitHub](https://github.com/academic-moodle-cooperation/moodle-tiny_styles/issues). Please
+provide a detailed bug description, including the plugin and Moodle version and, if applicable, a
+screenshot.
 
-You should have received a copy of the GNU General Public License along with
-this program.  If not, see <https://www.gnu.org/licenses/>.
+You may also file a request for enhancement on GitHub. If we consider the request generally useful
+and if it can be implemented with reasonable effort we might implement it in a future version.
+
+You may also post general questions on the plugin on GitHub, but note that we do not have the
+resources to provide detailed support.
+
+
+License
+-------
+
+This plugin is free software: you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+The plugin is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License with Moodle. If not, see
+<http://www.gnu.org/licenses/>.
+
+
+Good luck and have fun!

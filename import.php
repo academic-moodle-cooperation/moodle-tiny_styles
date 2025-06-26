@@ -74,6 +74,8 @@ class local_import_form extends moodleform {
             ]
         );
 
+        $mform->addRule('jsonfile', null, 'required', null, 'client');
+
         $mform->addHelpButton('jsonfile', 'importjsonfile', 'tiny_styles');
 
         $this->add_action_buttons(true, get_string('import', 'tiny_styles'));
@@ -130,89 +132,33 @@ $downloadurl = new moodle_url($PAGE->url, ['download_example' => 1, 'sesskey' =>
                 <summary style="cursor: pointer;"><?php echo get_string('instructions_toggle', 'tiny_styles'); ?></summary>
                 <div class="mt-2 p-2 bg-light border rounded">
                     <p><strong><?php echo get_string('instructions_heading', 'tiny_styles'); ?></strong></p>
-                    <p>
-                    <h3>Structure</h3>
-<p>
-    The <code>example.json</code> is structured into a category array, where each category contains an element array. 
-    This is the format which any JSON file imported should follow.
-</p>
 
-<p>Visualized:</p>
-<pre><code>Categories: [ category_1, category_2 ... category_n ]
+                    <h3><?php echo get_string('instr_structure_heading', 'tiny_styles'); ?></h3>
+                    <p><?php echo get_string('instr_structure_text', 'tiny_styles'); ?></p>
+                    
+                    <p><strong><?php echo get_string('instr_visualized_label', 'tiny_styles'); ?></strong></p>
+                    <pre><code><?php echo get_string('instr_visualized_code', 'tiny_styles'); ?></code></pre>
+                    
+                    <h3><?php echo get_string('instr_usage_heading', 'tiny_styles'); ?></h3>
+                    <p><?php echo get_string('instr_usage_text', 'tiny_styles'); ?></p>
+                    
+                    <h4><?php echo get_string('instr_fill_heading', 'tiny_styles'); ?></h4>
+                    <p><?php echo get_string('instr_fill_note', 'tiny_styles'); ?></p>
+                    <pre><code><?php echo get_string('instr_fill_code', 'tiny_styles'); ?></code></pre>
+                    
+                    <h3><?php echo get_string('instr_expl_heading', 'tiny_styles'); ?></h3>
+                    <p><?php echo get_string('instr_expl_intro', 'tiny_styles'); ?></p>
+                    <p><strong><?php echo get_string('instr_fields_title', 'tiny_styles'); ?></strong></p>
+                    
+                    <h5><?php echo get_string('instr_cat_heading', 'tiny_styles'); ?></h5>
+                    <?php echo get_string('instr_cat_list', 'tiny_styles'); ?>
 
-category_1: [ element_a, element_b ... element_n ]
-category_2: [ element_x, element_y ...
-→ with the elements carrying the styling information
-</code></pre>
+                    <h5><?php echo get_string('instr_elem_heading', 'tiny_styles'); ?></h5>
+                    <?php echo get_string('instr_elem_list', 'tiny_styles'); ?>
+                    <hr>
+                    <h3><?php echo get_string('instr_good_heading', 'tiny_styles'); ?></h3>
+                    <?php echo get_string('instr_good_list', 'tiny_styles'); ?>
 
-<h3>How to use the JSON</h3>
-<p>
-    The example JSON can be easily used for editing directly and expanded by copying it.
-    <br><strong>Note:</strong> The user should follow correct JSON syntax and formatting for the file to work properly.
-</p>
-
-<h4>How to fill out the <em>example.json</em>:</h4>
-<p>(See below for further explanations of <code>enabled</code>, <code>type</code>, etc.)</p>
-
-<pre><code>"categories": [
-    {
-        "name": "Enter a minimum 3 characters long name here.",
-        "description": "Write a short category description here.",
-        "showdesc": "pick one of the following: helptext/tooltip/never",
-        "presentation": "pick one of the following: submenu/inline/divider",
-        "enabled": 1,
-        "elements": [
-            {
-                "name": "enter a descriptive name here",
-                "type": "pick either inline or block",
-                "cssclasses": "a valid css styling alert alert-danger",
-                "enabled": 1,
-                "custom": 0
-            },
-            ... next elements ...
-        ]
-    },
-    ... possible to add more categories ...
-]</code></pre>
-
-<h3>Explanations</h3>
-<p>The naming and description fields are self-explanatory.</p>
-
-<strong>The other fields are:</strong>
-
-<h5>Category:</h5>
-<ul>
-    <li><strong>showdesc:</strong> how the description is shown to users, or if at all</li>
-    <li><strong>presentation:</strong> how elements are displayed in the editor (submenu / inline / divider)</li>
-    <li><strong>enabled:</strong> either <code>1</code> (enabled) or <code>0</code> (disabled), default: <code>0</code></li>
-</ul>
-
-<h5>Element:</h5>
-<ul>
-    <li><strong>type:</strong> <code>inline</code> or <code>block</code><br>
-        <em>inline is for styling short text or words<br>
-        block is for paragraphs or larger text blocks</em>
-    </li>
-    <li><strong>cssclasses:</strong> CSS styling for the text<br>
-        <em>This can be Bootstrap classes or inline CSS, eg. <code>color: red; font-weight: bold;</code></em>
-    </li>
-    <li><strong>enabled:</strong> same logic as category</li>
-    <li><strong>custom:</strong> <code>1</code> if using custom CSS inline code</li>
-</ul>
-
-<hr>
-
-<h3>Good to Know</h3>
-<ul>
-    <li>
-        Duplicate categories can be imported multiple times. This avoids accidental deletions or edits.
-        <br><strong>Suggestion:</strong> Use the example JSON as the basis for imports to prevent duplicates.
-    </li>
-    <li>All fields can be edited later via Moodle admin pages.</li>
-    <li>Currently, icon selection must be done manually through the Moodle admin category editor.</li>
-    <li>See the full exported JSON for more examples and detailed usage.</li>
-</ul>
-</p>
                 </div>
             </details>
         </div>

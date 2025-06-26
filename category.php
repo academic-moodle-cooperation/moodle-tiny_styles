@@ -200,7 +200,7 @@ class category_form extends moodleform {
             $presentationoptions,
             ['size' => 1, 'style' => 'width: 300px;']
         );
-        $mform->addHelpButton('presentation', 'presentationhelp', 'tiny_styles');
+        $mform->addHelpButton('presentation', 'presentationtype', 'tiny_styles');
 
         // Hidden $id field for edit form.
         $mform->addElement('hidden', 'id');

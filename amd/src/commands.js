@@ -105,16 +105,9 @@ function buildCategoryItems(editor, categories, icons) {
             const symbolraw = cat.symbol ? cat.symbol : '';
             const symbolname = symbolraw.replace('.svg', '').trim();
 
-            // redundant check?
             if (icons[symbolname]) {
                 caticon = icons[symbolname];
-            } 
-            /**else if (cat.name === 'Labels'){
-           *     caticon = icons.label;
-            *} else if (cat.name === 'Boxes'){
-             *   caticon = icons.box;
-            *}
-            */
+            }           
             items.push({
                 type: 'nestedmenuitem',
                 icon: caticon,

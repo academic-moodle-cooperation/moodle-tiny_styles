@@ -133,7 +133,7 @@ class element_form extends moodleform {
         );
         $mform->setType('cssclasses', PARAM_TEXT);
         $mform->addRule('cssclasses', null, 'required', null, 'client');
-        $mform->addHelpButton('cssclasses', 'cssclasseshelp', 'tiny_styles');
+        $mform->addHelpButton('cssclasses', 'bootstrapclass', 'tiny_styles');
 
         $mform->addElement(
             'textarea',
