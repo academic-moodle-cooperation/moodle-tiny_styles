@@ -119,7 +119,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('importdata', 'tiny_styles'));
 $downloadurl = new moodle_url($PAGE->url, ['download_example' => 1, 'sesskey' => sesskey()]);
 ?>
-<div class="mt-3 mb-4 p-3 border rounded">
+<div style="margin-bottom: 20px;">
     <div class="row align-items-center">
         <div class="col-md-3">
             <label class="form-label mb-0"><?php echo get_string('examplefile', 'tiny_styles'); ?></label>
