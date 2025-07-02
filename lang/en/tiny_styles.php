@@ -153,6 +153,7 @@ $string['importjsonfile_help'] = 'Upload a JSON file containing the style config
 
 $string['searchplaceholder'] = 'Search';
 $string['noiconsfound'] = 'No icons found';
+$string['clearsearch'] = "Clear";
 
 $string['examplefile'] = 'Example file';
 $string['instructions_toggle'] = 'Instructions on how to prepare an import configuration file.';

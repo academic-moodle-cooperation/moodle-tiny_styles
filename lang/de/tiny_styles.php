@@ -157,6 +157,7 @@ $string['importjsonfile_help'] = 'Laden Sie eine JSON-Datei hoch, die Gestaltung
 
 $string['searchplaceholder'] = 'Suchen';
 $string['noiconsfound'] = 'Keine Symbole gefunden';
+$string['clearsearch'] = "Löschen";
 
 $string['instr_structure_heading'] = 'Struktur';
 $string['instr_structure_text'] = 'Die Datei example.json ist in ein Kategorie-Array unterteilt, wobei jede Kategorie ein Element-Array enthält. Dieses Format muss jede importierte JSON-Datei einhalten.';

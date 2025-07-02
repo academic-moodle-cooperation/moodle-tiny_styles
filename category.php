@@ -130,7 +130,7 @@ class category_form extends moodleform {
         $iconpopuphtml .= '<div style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
             <h4 style="margin:0;">' . get_string('selectanicon', 'tiny_styles') . '</h4>
             <button type="button" id="clear-search-btn" class="btn btn-secondary btn-sm">'
-            . get_string('clear', 'core') . '</button>
+            . get_string('clearsearch', 'tiny_styles') . '</button>
             </div>';
 
         $iconpopuphtml .= '<div id="icon-grid-container" style="max-height:300px; overflow-y:auto; padding:20px;">
