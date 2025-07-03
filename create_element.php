@@ -1,4 +1,6 @@
 <?php
+
+use Dom\Text;
 // This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -92,19 +94,6 @@ class element_form extends moodleform {
         $mform->setDefault('categoryid', 'catid');
         $mform->addHelpButton('categoryid', 'categoryhelp', 'tiny_styles');
 
-        $typeoptions = [
-            'inline' => 'Inline',
-            'block'  => 'Block',
-        ];
-        $mform->addElement(
-            'select', 'type',
-            get_string('type', 'tiny_styles'),
-            $typeoptions,
-            ['size' => 1, 'style' => 'width: 400px;']
-        );
-        $mform->setType('type', PARAM_ALPHA);
-        $mform->addHelpButton('type', 'typehelp', 'tiny_styles');
-
         // CSS classes
         $elements = $DB->get_fieldset_sql("
             SELECT cssclasses
@@ -118,7 +107,7 @@ class element_form extends moodleform {
         ");
 
         $elements = array_merge(
-            ['Manual style sheet'],
+            ['Manual style'],
             $elements
         );
 
@@ -134,6 +123,19 @@ class element_form extends moodleform {
         $mform->setType('cssclasses', PARAM_TEXT);
         $mform->addRule('cssclasses', null, 'required', null, 'client');
         $mform->addHelpButton('cssclasses', 'bootstrapclass', 'tiny_styles');
+
+        $typeoptions = [
+            'inline' => 'Inline',
+            'block'  => 'Block',
+        ];
+        $mform->addElement(
+            'select', 'type',
+            get_string('type', 'tiny_styles'),
+            $typeoptions,
+            ['size' => 1, 'style' => 'width: 400px;']
+        );
+        $mform->setType('type', PARAM_ALPHA);
+        $mform->addHelpButton('type', 'typehelp', 'tiny_styles');
 
         $mform->addElement(
             'textarea',
@@ -151,8 +153,9 @@ class element_form extends moodleform {
         $mform->setDefault('manualconfig', '');
         $mform->addRule('manualconfig', get_string('maximumchars', '', 2048), 'maxlength', 2048, 'client');
 
-        // Manual configuration hidden unless "Manual style sheet" selected.
-        $mform->hideIf('manualconfig', 'cssclasses', 'neq', 'Manual style sheet');
+        // Manual configuration hidden unless "Manual style" selected.
+        $mform->hideIf('manualconfig', 'cssclasses', 'neq', 'Manual style');
+        $mform->hideIf('type', 'cssclasses', 'neq', 'Manual style');
 
         $mform->addElement(
             'static',
@@ -160,7 +163,7 @@ class element_form extends moodleform {
             '',
             get_string('manualdefault', 'tiny_styles')
         );
-        $mform->hideIf('manualconfig_help', 'cssclasses', 'neq', 'Manual style sheet');
+        $mform->hideIf('manualconfig_help', 'cssclasses', 'neq', 'Manual style');
 
         // Hidden fields
         $mform->addElement('hidden', 'id');
@@ -180,24 +183,22 @@ class element_form extends moodleform {
             'submit',
             'submitbutton',
             get_string('savechanges'),
-            ['class'=>'btn-primary me-2']
         );
 
         $buttons[] = $mform->createElement(
             'button',
             'previewstyle',
             get_string('preview', 'tiny_styles'),
-            ['id' => 'btn-preview-element', 'class'=>'btn-danger me-2']
+            ['id' => 'btn-preview-element']
         );
 
         $buttons[] = $mform->createElement(
             'cancel',
             'cancel',
             get_string('cancel'),
-            ['class'=>'btn-secondary']
         );
 
-        $mform->addGroup($buttons, 'actionar', '', [''], false);
+        $mform->addGroup($buttons, 'actionar', '', [' '], false);
 
     }
 
@@ -235,16 +236,21 @@ if ($data = $mform->get_data()) {
         $data->manualconfig = '';
     }
 
-    if($data->cssclasses == 'Manual style sheet') {
+    if($data->cssclasses == 'Manual style') {
         $record->cssclasses = $data->manualconfig;
-        $record->custom = 1;
+        $record->custom     = 1;
+        $record->type       = $data->type;
     } else {
         $record->cssclasses = $data->cssclasses;
         $record->custom = 0;
+        if (strpos($record->cssclasses, 'alert') !== false) {
+            $record->type = 'block';
+        } else {
+            $record->type = 'inline';
+        }
     }
 
     $record->name       = $data->name;
-    $record->type       = $data->type;
     $record->timemodified = time();
 
     if ($data->action === 'edit' && !empty($data->id)) {
@@ -314,9 +320,9 @@ if ($action === 'edit' && $id > 0) {
         $formdata->action      = 'edit';
         $formdata->name        = $element->name;
         $formdata->type        = $element->type;
-
+        
         if ($element->custom === '1') {
-            $formdata->cssclasses = 'Manual style sheet';
+            $formdata->cssclasses = 'Manual style';
             $formdata->manualconfig = $element->cssclasses;
         } else {
             $formdata->cssclasses  = $element->cssclasses;
@@ -353,20 +359,57 @@ $PAGE->requires->js_call_amd(
     ['#btn-preview-element']
 );
 
-//  Checks if selected class contains 'alert' => switches style type to Block
 $PAGE->requires->js_amd_inline("
-require(['jquery'], function($) {
+// Vanilla JS solution that mimics the jQuery pattern very closely
+require([], function() {
+    // Define our function exactly like in the jQuery version
     function checkForAlertClass() {
-        var selectedClass = $('#id_cssclasses').val();
+        var selectedClass = document.getElementById('id_cssclasses').value;
         if (selectedClass && selectedClass.indexOf('alert') !== -1) {
-            $('#id_type').val('block');
+            document.getElementById('id_type').value = 'block';
+        }
+        if (selectedClass && selectedClass.indexOf('badge') !== -1) {
+            document.getElementById('id_type').value = 'inline';
         }
     }
-    $(document).ready(function() {    
-        // Run whenever the cssclasses field changes
-        $('#id_cssclasses').on('change', function() {
+    
+    // This simulates $(document).ready()
+    function docReady(fn) {
+        // If document is already loaded, run the function now
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(fn, 1); // Slight delay to ensure DOM is fully available
+            return;
+        }
+        
+        // Otherwise, wait for DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', fn);
+    }
+    
+    // This is our equivalent to $(document).ready(function() {...})
+    docReady(function() {
+        // Get the element
+        var cssClassesField = document.getElementById('id_cssclasses');
+        
+        if (cssClassesField) {
+            // Add the change event listener - equivalent to $('#id_cssclasses').on('change', ...)
+            cssClassesField.addEventListener('change', function() {
+                checkForAlertClass();
+            });
+            
+            // Run once immediately after DOM is ready
             checkForAlertClass();
-        });
+        } else {
+            // If the element wasn't found, try again after a short delay
+            setTimeout(function() {
+                cssClassesField = document.getElementById('id_cssclasses');
+                if (cssClassesField) {
+                    cssClassesField.addEventListener('change', function() {
+                        checkForAlertClass();
+                    });
+                    checkForAlertClass();
+                }
+            }, 100);
+        }
     });
 });
 ");

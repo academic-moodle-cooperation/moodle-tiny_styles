@@ -112,7 +112,7 @@ export const init = () => {
         const typeVal = typeField.value;
         let cssVal = cssClassesField.value;
 
-        if (cssVal === 'Manual style sheet' && manualConfigField) {
+        if (cssVal === 'Manual style' && manualConfigField) {
             cssVal = manualConfigField.value;
         }
 
