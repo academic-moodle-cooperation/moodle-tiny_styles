@@ -121,49 +121,283 @@ function buildCategoryItems(editor, categories, icons) {
     return items;
 }
 
-
 /**
- * Helper method for stripping the selected text.
- * Recursively removes the 'class' attribute from all elements.
- *
- * @param {HTMLElement} root - The element to process.
- */
-function stripText(root) {
-    if (root.nodeType === Node.ELEMENT_NODE) {
-        root.removeAttribute('class');
-        Array.from(root.childNodes).forEach(stripText);
-    }
-}
-
-/**
- * Applies a bootstrap style to the selected text.
- *
- * @param {Object} editor - TinyMCE editor instance.
- * @param {Object} styleDef - Object containing the style definition.
- *   @param {string} styleDef.className - The CSS class/style to apply.
- *   @param {boolean} styleDef.block - Whether the style is a block element.
- *   @param {boolean} styleDef.custom - Whether the style is custom.
- *   @param {string} styleDef.id - A name identifier for the custom style.
+ * Applies a bootstrap or custom style to the selected text.
+ * 
+ * @param {Object} editor TinyMCE editor instance.
+ * @param {Object} styleDef Object containing the style definition.
+ * @param {string} styleDef.className The CSS class or custom CSS to apply.
+ * @param {boolean} styleDef.block Whether the style is a block-level element.
+ * @param {boolean} styleDef.custom Whether the style uses custom CSS properties.
+ * @param {string} styleDef.id A unique identifier for the style.
  */
 function applyStyle(editor, styleDef) {
     const { className, block, custom, id } = styleDef;
 
     const selectedHtml = editor.selection.getContent({ format: 'html' });
     if (!selectedHtml.trim()) {
-        // PreviewElement.showPreview(id, className, block ? 'block' : 'inline');
         return;
     }
 
+    const selectedNode = editor.selection.getNode();
+    
+    if (block) {
+        removeExistingStylesOfType(editor, true, selectedNode);
+        return applyBlockStyle(editor, styleDef, selectedNode);
+    }
+    
+    const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
+        return isStyledInlineElement(node);
+    });
+    
+    if (styledSpanParent) {
+        const selectedText = editor.selection.getContent({ format: 'text' });
+        const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
+        
+        const normalizedSelectedText = normalizeText(selectedText);
+        const normalizedSpanText = normalizeText(spanTextContent);
+        
+        // Check if selecting the entire span content
+        if (normalizedSelectedText === normalizedSpanText || 
+            selectedText.length === spanTextContent.length) {
+                        
+            // Replace the entire span with new styling
+            const newWrapper = document.createElement('span');
+            
+            if (custom) {
+                newWrapper.style.cssText = className;
+                newWrapper.style.setProperty('--custom-style-id', id);
+            } else {
+                newWrapper.className = className;
+            }
+            
+            // Original span's text content to preserve formatting
+            newWrapper.textContent = spanTextContent;
+            
+            editor.dom.replace(newWrapper, styledSpanParent);
+            
+            // Add space after the new span and position cursor after the space
+            const spaceNode = document.createTextNode('\u00A0');
+            editor.dom.insertAfter(spaceNode, newWrapper);
+            const range = editor.dom.createRng();
+            range.setStartAfter(spaceNode);
+            range.setEndAfter(spaceNode);
+            editor.selection.setRng(range);
+            
+            editor.focus();
+            return;
+        } 
+    }
+    
+    // Normal inline styling
+    removeExistingStylesOfType(editor, false, selectedNode, styledSpanParent);
+    const cleanSelectedHtml = editor.selection.getContent({ format: 'html' });
+    return applyInlineStyle(editor, styleDef, cleanSelectedHtml);
+}
+
+/**
+ * Normalizes text content for consistent comparison.
+ * 
+ * @param {string} text The text to normalize.
+ * @returns {string} The normalized text.
+ */
+function normalizeText(text) {
+    return text.trim().replace(/\s+/g, ' ');
+}
+
+/**
+ * Removes existing styles of the specified type from the selection.
+ * 
+ * @param {Object} editor TinyMCE editor instance.
+ * @param {boolean} isBlockStyle Whether to remove block styles (true) or inline styles (false).
+ * @param {Node} selectedNode The currently selected DOM node.
+ * @param {Node} styledSpanParent The parent styled span element.
+ */
+function removeExistingStylesOfType(editor, isBlockStyle, selectedNode, styledSpanParent) {
+    const selection = editor.selection;
+    
+    // Passed selectedNode if available
+    const node = selectedNode || selection.getNode();
+    
+    if (isBlockStyle) {
+        const blockParent = editor.dom.getParent(node, function(node) {
+            return isStyledBlockElement(node);
+        });
+        
+        if (blockParent) {
+            removeStyleFromElement(editor, blockParent);
+        }
+    } else {
+        // Passed styledSpanParent if available
+        const spanParent = styledSpanParent || editor.dom.getParent(node, function(node) {
+            return isStyledInlineElement(node);
+        });
+        
+        if (spanParent) {
+            const selectedText = selection.getContent({ format: 'text' });
+            const spanTextContent = spanParent.textContent || spanParent.innerText;
+            
+            if (normalizeText(selectedText) === normalizeText(spanTextContent)) {
+                removeStyleFromElement(editor, spanParent);
+            } else {
+                // Only part of the span is selected
+                const selectedHtml = selection.getContent({ format: 'html' });
+                
+                // A temporary container to clean the selected content
+                const container = document.createElement('div');
+                container.innerHTML = selectedHtml;
+                
+                // Remove any styled spans from the selected content
+                const styledSpans = container.querySelectorAll('span');
+                styledSpans.forEach(span => {
+                    if (isStyledInlineElement(span)) {
+                        while (span.firstChild) {
+                            span.parentNode.insertBefore(span.firstChild, span);
+                        }
+                        span.remove();
+                    }
+                });
+                
+                selection.setContent(container.innerHTML);
+            }
+        } else {
+            // No styled span parent, checks if selected HTML contains styled spans
+            const selectedHtml = selection.getContent({ format: 'html' });
+            
+            if (selectedHtml.includes('<span')) {
+                const container = document.createElement('div');
+                container.innerHTML = selectedHtml;
+                
+                const styledSpans = container.querySelectorAll('span');
+                styledSpans.forEach(span => {
+                    if (isStyledInlineElement(span)) {
+                        while (span.firstChild) {
+                            span.parentNode.insertBefore(span.firstChild, span);
+                        }
+                        span.remove();
+                    }
+                });
+                
+                selection.setContent(container.innerHTML);
+            }
+        }
+    }
+}
+
+/**
+ * Checks if a DOM node is a styled block element.
+ * 
+ * @param {Node} node The DOM node to check.
+ * @returns {boolean} True if the node is a styled block element.
+ */
+function isStyledBlockElement(node) {
+    if (!node || !node.tagName) return false;
+
+    const blockTags = ['DIV', 'P', 'SECTION', 'ARTICLE', 'ASIDE'];
+    if (!blockTags.includes(node.tagName.toUpperCase())) return false;
+    
+    return node.className || 
+           (node.style && node.style.getPropertyValue('--custom-style-id'));
+}
+
+/**
+ * Checks if a DOM node is a styled inline element.
+ * 
+ * @param {Node} node The DOM node to check.
+ * @returns {boolean} True if the node is a styled inline element.
+ */
+function isStyledInlineElement(node) {
+    if (!node || node.tagName !== 'SPAN') return false;
+    
+    return node.className || 
+           (node.style && node.style.getPropertyValue('--custom-style-id'));
+}
+
+/**
+ * Removes styling from a specific DOM element.
+ * 
+ * @param {Object} editor TinyMCE editor instance.
+ * @param {Element} element The DOM element to remove styling from.
+ */
+function removeStyleFromElement(editor, element) {
+    if (element.className || (element.style && element.style.getPropertyValue('--custom-style-id'))) {
+        if (element.tagName === 'P') {
+            element.className = '';
+            element.style.cssText = '';
+        } else {
+            while (element.firstChild) {
+                editor.dom.insertBefore(element.firstChild, element);
+            }
+            editor.dom.remove(element);
+        }
+    }
+}
+
+/**
+ * Applies block type styling to the selected content.
+ * 
+ * @param {Object} editor TinyMCE editor instance.
+ * @param {Object} styleDef Object containing the style definition.
+ * @param {Node} selectedNode The currently selected DOM node.
+ */
+function applyBlockStyle(editor, styleDef, selectedNode) {
+    const { className, custom, id } = styleDef;
+    
+    const paragraph = editor.dom.getParent(selectedNode, 'p');
+    
+    if (paragraph) {
+        if (custom) {
+            paragraph.style.cssText = className;
+            paragraph.style.setProperty('--custom-style-id', id);
+        } else {
+            paragraph.className = className;
+        }
+        
+        const newParagraph = editor.dom.create('p', {}, '');
+        editor.dom.insertAfter(newParagraph, paragraph);
+        editor.selection.setCursorLocation(newParagraph, 0);
+        
+    } else {
+        const selectedHtml = editor.selection.getContent({ format: 'html' });
+        const newWrapper = document.createElement('div');
+        
+        if (custom) {
+            newWrapper.style.cssText = className;
+            newWrapper.style.setProperty('--custom-style-id', id);
+        } else {
+            newWrapper.className = className;
+        }
+        
+        newWrapper.innerHTML = selectedHtml;
+        editor.selection.setContent(newWrapper.outerHTML);
+        
+        const newParagraph = editor.dom.create('p', {}, '');
+        editor.dom.insertAfter(newParagraph, newWrapper);
+        editor.selection.setCursorLocation(newParagraph, 0);
+    }
+    
+    editor.focus();
+}
+
+/**
+ * Applies inline type styling to the selected HTML content.
+ * Creates a new span element with the specified styling and positions cursor afterward.
+ * 
+ * @param {Object} editor TinyMCE editor instance.
+ * @param {Object} styleDef Object containing the style definition.
+ * @param {string} selectedHtml The HTML content to apply styling to.
+ */
+function applyInlineStyle(editor, styleDef, selectedHtml) {
+    const { className, custom, id } = styleDef;
+    
     const container = document.createElement('div');
     container.innerHTML = selectedHtml;
     Array.from(container.childNodes).forEach(stripText);
 
-    const newTag = block ? 'div' : 'span';
-    const newWrapper = document.createElement(newTag);
-
+    const newWrapper = document.createElement('span');
+    
     if (custom) {
         newWrapper.style.cssText = className;
-        // CUstom style identifier as a CSS custom property.
         newWrapper.style.setProperty('--custom-style-id', id);
     } else {
         newWrapper.className = className;
@@ -173,30 +407,36 @@ function applyStyle(editor, styleDef) {
         newWrapper.appendChild(container.firstChild);
     }
 
-    // Temp identification for block styles to find them.
-    if (block) {
-        newWrapper.setAttribute('data-temp-style', 'true');
-    }
-
-    // Styled content pushed into the selected part.
-    editor.selection.setContent(newWrapper.outerHTML);
-
-    // A new paragraph for block styles.
-    if (block) {
-        // Find by temp id.
-        const insertedBlock = editor.dom.select('[data-temp-style="true"]')[0];
-        if (insertedBlock) {
-            editor.dom.setAttrib(insertedBlock, 'data-temp-style', null);
-
-            const newParagraph = editor.dom.create('p', {}, '');
-            editor.dom.insertAfter(newParagraph, insertedBlock);
-            editor.selection.setCursorLocation(newParagraph, 0);
+    newWrapper.setAttribute('data-temp-inline-style', 'true');
+    editor.selection.setContent(newWrapper.outerHTML + '&nbsp;');
+    
+    const insertedSpan = editor.dom.select('[data-temp-inline-style="true"]')[0];
+    if (insertedSpan) {
+        editor.dom.setAttrib(insertedSpan, 'data-temp-inline-style', null);
+        
+        const nextNode = insertedSpan.nextSibling;
+        if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
+            const range = editor.dom.createRng();
+            range.setStart(nextNode, 1);
+            range.setEnd(nextNode, 1);
+            editor.selection.setRng(range);
         }
     }
     editor.focus();
-
 }
 
+/**
+ * Recursively removes class attributes from DOM elements.
+ * Helper function to clean existing styling from content.
+ * 
+ * @param {Node} root The root element to process.
+ */
+function stripText(root) {
+    if (root.nodeType === Node.ELEMENT_NODE) {
+        root.removeAttribute('class');
+        Array.from(root.childNodes).forEach(stripText);
+    }
+}
 
 /**
  * Asynchronous function to scan the custom styles for updates/deletions.
@@ -244,7 +484,7 @@ export async function editCustomStyles(editor) {
             editor.dom.setAttrib(element, 'style', minimalCss);
             editor.dom.setAttrib(element, 'data-mce-style', minimalCss);
 
-            // todo: or delete styling completely?
+            // todo: delete styling completely?
             // editor.dom.removeAttrib(element, 'style');
             // editor.dom.removeAttrib(element, 'data-mce-style');
 

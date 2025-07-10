@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Plugin access is defined here.
  *
  * @package tiny_styles
  * @author Karri Pajarinen
@@ -25,8 +25,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tiny_styles';
-$plugin->release = 'v5.0.0-r2';
-$plugin->version = 2025071001;
-$plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_BETA;
+$capabilities = array(
+    'tiny/styles:use' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+        ),
+        'clonepermissionsfrom' => 'moodle/course:view'
+    )
+);
