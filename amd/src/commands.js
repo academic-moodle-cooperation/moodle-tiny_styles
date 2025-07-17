@@ -117,6 +117,19 @@ function buildCategoryItems(editor, categories, icons) {
             });
         }
     });
+    
+    /**
+     * // Add a separator and remove style button
+     * items.push({ type: 'separator' });
+     * items.push({
+     *     type: 'menuitem',
+     *     text: 'Clear Styling',
+     *     icon: icons['remove'],
+     *     onAction: () => {
+     *         clearStyling(editor);
+     *     }
+     * });
+     */
 
     return items;
 }
@@ -143,7 +156,7 @@ function applyStyle(editor, styleDef) {
     
     if (block) {
         removeExistingStylesOfType(editor, true, selectedNode);
-        return applyBlockStyle(editor, styleDef, selectedNode);
+        return applyBlockStyle(editor, styleDef);
     }
     
     const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
@@ -321,6 +334,8 @@ function isStyledInlineElement(node) {
  */
 function removeStyleFromElement(editor, element) {
     if (element.className || (element.style && element.style.getPropertyValue('--custom-style-id'))) {
+
+        // todo: testaa ilman ifelse
         if (element.tagName === 'P') {
             element.className = '';
             element.style.cssText = '';
@@ -338,42 +353,53 @@ function removeStyleFromElement(editor, element) {
  * 
  * @param {Object} editor TinyMCE editor instance.
  * @param {Object} styleDef Object containing the style definition.
- * @param {Node} selectedNode The currently selected DOM node.
  */
-function applyBlockStyle(editor, styleDef, selectedNode) {
+function applyBlockStyle(editor, styleDef) {
     const { className, custom, id } = styleDef;
+    const selection = editor.selection;
+    const targetBlockTypes = [
+                            'P', 'DIV', 'H1', 
+                            'H2', 'H3', 'H4',
+                            'H5', 'H6', 'BLOCKQUOTE',
+                            'PRE', 'SECTION',
+                            'ARTICLE', 'ASIDE'
+                        ]
+    const selectedBlocks = selection.getSelectedBlocks();
     
-    const paragraph = editor.dom.getParent(selectedNode, 'p');
+    const targetBlocks = selectedBlocks.filter(block => 
+        targetBlockTypes.includes(block.tagName)
+    );
     
-    if (paragraph) {
+    // Extract text content from each block preserving any inline formatting
+    const textContents = targetBlocks.map(block => {
+        return block.innerHTML.trim();
+    }).filter(content => content.length > 0);
+    
+    if (textContents.length > 0) {
+        // Keeps structure of combined content with <br> separators
+        const combinedContent = textContents.join('<br><br>');
+        const newParagraph = editor.dom.create('p', {}, combinedContent);
+        
+        // Apply styling to the new paragraph
         if (custom) {
-            paragraph.style.cssText = className;
-            paragraph.style.setProperty('--custom-style-id', id);
+            newParagraph.style.cssText = className;
+            newParagraph.style.setProperty('--custom-style-id', id);
         } else {
-            paragraph.className = className;
+            newParagraph.className = className;
         }
         
-        const newParagraph = editor.dom.create('p', {}, '');
-        editor.dom.insertAfter(newParagraph, paragraph);
-        editor.selection.setCursorLocation(newParagraph, 0);
+        // Replace the selected blocks
+        const firstBlock = targetBlocks[0];
+        editor.dom.insertAfter(newParagraph, firstBlock);
         
-    } else {
-        const selectedHtml = editor.selection.getContent({ format: 'html' });
-        const newWrapper = document.createElement('div');
+        targetBlocks.forEach(block => {
+            editor.dom.remove(block);
+        });
         
-        if (custom) {
-            newWrapper.style.cssText = className;
-            newWrapper.style.setProperty('--custom-style-id', id);
-        } else {
-            newWrapper.className = className;
-        }
-        
-        newWrapper.innerHTML = selectedHtml;
-        editor.selection.setContent(newWrapper.outerHTML);
-        
-        const newParagraph = editor.dom.create('p', {}, '');
-        editor.dom.insertAfter(newParagraph, newWrapper);
-        editor.selection.setCursorLocation(newParagraph, 0);
+        // A new paragraph after to avoid continuous styling
+        const nextParagraph = editor.dom.create('p', {}, '');
+        editor.dom.insertAfter(nextParagraph, newParagraph);
+        selection.setCursorLocation(nextParagraph, 0);
     }
     
     editor.focus();
@@ -436,6 +462,96 @@ function stripText(root) {
         root.removeAttribute('class');
         Array.from(root.childNodes).forEach(stripText);
     }
+}
+
+/**
+ * Clears styling from the selected text or current cursor position.
+ * Uses the exact same logic as applyStyle() but replaces styled elements with plain text.
+ * 
+ * @param {Object} editor TinyMCE editor instance.
+ * @returns {boolean} True if styling was removed, false if no styling was found.
+ */
+function clearStyling(editor) {
+    const selectedNode = editor.selection.getNode();
+    
+    // FIRST PRIORITY: Check for inline styling
+    const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
+        return isStyledInlineElement(node);
+    });
+    
+    if (styledSpanParent) {
+        // Found inline styling - remove it and stop here
+        const selectedText = editor.selection.getContent({ format: 'text' });
+        const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
+        
+        const normalizedSelectedText = normalizeText(selectedText);
+        const normalizedSpanText = normalizeText(spanTextContent);
+        
+        // Check if selecting the entire span content
+        if (normalizedSelectedText === normalizedSpanText || 
+            selectedText.length === spanTextContent.length) {
+            
+            // Remove the entire styled span - replace with plain text
+            const textNode = document.createTextNode(spanTextContent);
+            editor.dom.replace(textNode, styledSpanParent);
+            
+            // Position cursor after the text
+            const range = editor.dom.createRng();
+            range.setStartAfter(textNode);
+            range.setEndAfter(textNode);
+            editor.selection.setRng(range);
+            
+        } else {
+            // Partial selection - remove styling from selected content only
+            removeExistingStylesOfType(editor, false, selectedNode, styledSpanParent);
+        }
+        
+        editor.focus();
+        return true;
+    }
+    
+    // Also check if selected content contains styled spans (for cases where no parent span)
+    const selectedHtml = editor.selection.getContent({ format: 'html' });
+    if (selectedHtml && selectedHtml.includes('<span')) {
+        const container = document.createElement('div');
+        container.innerHTML = selectedHtml;
+        
+        const styledSpans = container.querySelectorAll('span');
+        let foundStyledSpan = false;
+        
+        styledSpans.forEach(span => {
+            // Check for both bootstrap classes and custom styles
+            if (span.className || (span.style && span.style.getPropertyValue('--custom-style-id'))) {
+                foundStyledSpan = true;
+                // Remove the span but keep its content
+                while (span.firstChild) {
+                    span.parentNode.insertBefore(span.firstChild, span);
+                }
+                span.remove();
+            }
+        });
+        
+        if (foundStyledSpan) {
+            editor.selection.setContent(container.innerHTML);
+            editor.focus();
+            return true;
+        }
+    }
+    
+    // SECOND PRIORITY: Check for block styling only if no inline styling was found
+    const blockParent = editor.dom.getParent(selectedNode, function(node) {
+        return isStyledBlockElement(node);
+    });
+    
+    if (blockParent) {
+        // Remove block styling
+        removeStyleFromElement(editor, blockParent);
+        editor.focus();
+        return true;
+    }
+    
+    // No styling found
+    return false;
 }
 
 /**
@@ -528,6 +644,7 @@ export const getSetup = async () => {
         downloadImage,
         bookImage,
         folderImage,
+        removeImage,
     ] = await Promise.all([
         fetchCategories(),
         getButtonImage('icon', 'tiny_styles'),
@@ -550,6 +667,7 @@ export const getSetup = async () => {
         getButtonImage('download', 'tiny_styles'),
         getButtonImage('book', 'tiny_styles'),
         getButtonImage('folder', 'tiny_styles'),
+        getButtonImage('remove', 'tiny_styles'),
     ]);
 
     return (editor) => {
@@ -573,6 +691,7 @@ export const getSetup = async () => {
         editor.ui.registry.addIcon('downloadIcon', downloadImage.html);
         editor.ui.registry.addIcon('bookIcon', bookImage.html);
         editor.ui.registry.addIcon('folderIcon', folderImage.html);
+        editor.ui.registry.addIcon('removeIcon', removeImage.html);
 
         const icons = {
             label: 'labelIcon',
@@ -593,6 +712,7 @@ export const getSetup = async () => {
             download: 'downloadIcon',
             book: 'bookIcon',
             folder: 'folderIcon',
+            remove: 'removeIcon',
         };
 
         editor.ui.registry.addMenuButton('tiny_styles_button', {
