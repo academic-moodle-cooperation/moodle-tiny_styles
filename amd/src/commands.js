@@ -384,6 +384,13 @@ function stripText(root) {
     }
 }
 
+/**
+ * Clears styling from the selected text or current cursor position.
+ * Uses TinyMCE's built-in formatting system for reliable style removal.
+ *
+ * @param {Object} editor TinyMCE editor instance.
+ * @returns {boolean} True if styling was removed, false if no styling was found.
+ */
 function clearStyling(editor) {
     const selection = editor.selection;
     const selectedNode = selection.getNode();
@@ -418,11 +425,11 @@ function clearStyling(editor) {
         }
     }
     
+    // Replace the styled span with plain text
     if (styledSpanParent) {
         const textContent = styledSpanParent.textContent || styledSpanParent.innerText;        
         const textNode = document.createTextNode(textContent);
         
-        // Replace the styled span with plain text
         editor.dom.replace(textNode, styledSpanParent);
         
         // Position cursor after the text
