@@ -141,7 +141,7 @@ class category_form extends moodleform {
         if (is_dir($iconpath)) {
             $files = scandir($iconpath);
             foreach ($files as $file) {
-                if ($file === '.' || $file === '..' || $file === 'icon.svg') {
+                if ($file === '.' || $file === '..' || $file === 'icon.svg' || $file === 'remove.svg') {
                     continue;
                 }
                 $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));

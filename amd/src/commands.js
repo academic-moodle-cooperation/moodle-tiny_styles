@@ -118,19 +118,17 @@ function buildCategoryItems(editor, categories, icons) {
         }
     });
     
-    /**
-     * // Add a separator and remove style button
-     * items.push({ type: 'separator' });
-     * items.push({
-     *     type: 'menuitem',
-     *     text: 'Clear Styling',
-     *     icon: icons['remove'],
-     *     onAction: () => {
-     *         clearStyling(editor);
-     *     }
-     * });
-     */
+    // A separator and remove style button
+    items.push({ type: 'separator' });
+    items.push({
+        type: 'menuitem',
+        text: 'Clear Styling',
+        icon: icons['remove'],
 
+        onAction: () => {
+           clearStyling(editor);
+        }
+    });
     return items;
 }
 
@@ -155,7 +153,6 @@ function applyStyle(editor, styleDef) {
     const selectedNode = editor.selection.getNode();
     
     if (block) {
-        removeExistingStylesOfType(editor, true, selectedNode);
         return applyBlockStyle(editor, styleDef);
     }
     
@@ -203,7 +200,6 @@ function applyStyle(editor, styleDef) {
     }
     
     // Normal inline styling
-    removeExistingStylesOfType(editor, false, selectedNode, styledSpanParent);
     const cleanSelectedHtml = editor.selection.getContent({ format: 'html' });
     return applyInlineStyle(editor, styleDef, cleanSelectedHtml);
 }
@@ -218,103 +214,30 @@ function normalizeText(text) {
     return text.trim().replace(/\s+/g, ' ');
 }
 
-/**
- * Removes existing styles of the specified type from the selection.
- * 
- * @param {Object} editor TinyMCE editor instance.
- * @param {boolean} isBlockStyle Whether to remove block styles (true) or inline styles (false).
- * @param {Node} selectedNode The currently selected DOM node.
- * @param {Node} styledSpanParent The parent styled span element.
- */
-function removeExistingStylesOfType(editor, isBlockStyle, selectedNode, styledSpanParent) {
-    const selection = editor.selection;
-    
-    // Passed selectedNode if available
-    const node = selectedNode || selection.getNode();
-    
-    if (isBlockStyle) {
-        const blockParent = editor.dom.getParent(node, function(node) {
-            return isStyledBlockElement(node);
-        });
-        
-        if (blockParent) {
-            removeStyleFromElement(editor, blockParent);
-        }
-    } else {
-        // Passed styledSpanParent if available
-        const spanParent = styledSpanParent || editor.dom.getParent(node, function(node) {
-            return isStyledInlineElement(node);
-        });
-        
-        if (spanParent) {
-            const selectedText = selection.getContent({ format: 'text' });
-            const spanTextContent = spanParent.textContent || spanParent.innerText;
-            
-            if (normalizeText(selectedText) === normalizeText(spanTextContent)) {
-                removeStyleFromElement(editor, spanParent);
-            } else {
-                // Only part of the span is selected
-                const selectedHtml = selection.getContent({ format: 'html' });
-                
-                // A temporary container to clean the selected content
-                const container = document.createElement('div');
-                container.innerHTML = selectedHtml;
-                
-                // Remove any styled spans from the selected content
-                const styledSpans = container.querySelectorAll('span');
-                styledSpans.forEach(span => {
-                    if (isStyledInlineElement(span)) {
-                        while (span.firstChild) {
-                            span.parentNode.insertBefore(span.firstChild, span);
-                        }
-                        span.remove();
-                    }
-                });
-                
-                selection.setContent(container.innerHTML);
-            }
-        } else {
-            // No styled span parent, checks if selected HTML contains styled spans
-            const selectedHtml = selection.getContent({ format: 'html' });
-            
-            if (selectedHtml.includes('<span')) {
-                const container = document.createElement('div');
-                container.innerHTML = selectedHtml;
-                
-                const styledSpans = container.querySelectorAll('span');
-                styledSpans.forEach(span => {
-                    if (isStyledInlineElement(span)) {
-                        while (span.firstChild) {
-                            span.parentNode.insertBefore(span.firstChild, span);
-                        }
-                        span.remove();
-                    }
-                });
-                
-                selection.setContent(container.innerHTML);
-            }
-        }
-    }
-}
-
-/**
- * Checks if a DOM node is a styled block element.
- * 
- * @param {Node} node The DOM node to check.
- * @returns {boolean} True if the node is a styled block element.
- */
 function isStyledBlockElement(node) {
     if (!node || !node.tagName) return false;
 
     const blockTags = ['DIV', 'P', 'SECTION', 'ARTICLE', 'ASIDE'];
     if (!blockTags.includes(node.tagName.toUpperCase())) return false;
     
-    return node.className || 
-           (node.style && node.style.getPropertyValue('--custom-style-id'));
+    // Check className
+    if (node.className) return true;
+    
+    // Check style property
+    if (node.style && node.style.getPropertyValue('--custom-style-id')) return true;
+    
+    // Check data-mce-style attribute for custom style ID
+    if (node.getAttribute && node.getAttribute('data-mce-style')) {
+        const dataMceStyle = node.getAttribute('data-mce-style');
+        if (dataMceStyle.includes('--custom-style-id')) return true;
+    }
+    
+    return false;
 }
 
 /**
  * Checks if a DOM node is a styled inline element.
+ * Now also checks data-mce-style attribute for custom style IDs.
  * 
  * @param {Node} node The DOM node to check.
  * @returns {boolean} True if the node is a styled inline element.
@@ -322,30 +245,19 @@ function isStyledBlockElement(node) {
 function isStyledInlineElement(node) {
     if (!node || node.tagName !== 'SPAN') return false;
     
-    return node.className || 
-           (node.style && node.style.getPropertyValue('--custom-style-id'));
-}
-
-/**
- * Removes styling from a specific DOM element.
- * 
- * @param {Object} editor TinyMCE editor instance.
- * @param {Element} element The DOM element to remove styling from.
- */
-function removeStyleFromElement(editor, element) {
-    if (element.className || (element.style && element.style.getPropertyValue('--custom-style-id'))) {
-
-        // todo: testaa ilman ifelse
-        if (element.tagName === 'P') {
-            element.className = '';
-            element.style.cssText = '';
-        } else {
-            while (element.firstChild) {
-                editor.dom.insertBefore(element.firstChild, element);
-            }
-            editor.dom.remove(element);
-        }
+    // Check className
+    if (node.className) return true;
+    
+    // Check style property
+    if (node.style && node.style.getPropertyValue('--custom-style-id')) return true;
+    
+    // Check data-mce-style attribute for custom style ID
+    if (node.getAttribute && node.getAttribute('data-mce-style')) {
+        const dataMceStyle = node.getAttribute('data-mce-style');
+        if (dataMceStyle.includes('--custom-style-id')) return true;
     }
+    
+    return false;
 }
 
 /**
@@ -460,99 +372,111 @@ function applyInlineStyle(editor, styleDef, selectedHtml) {
 function stripText(root) {
     if (root.nodeType === Node.ELEMENT_NODE) {
         root.removeAttribute('class');
+        
+        // Also remove custom styles
+        if (root.style) {
+            root.style.cssText = '';
+        }
+        root.removeAttribute('style');
+        root.removeAttribute('data-mce-style');
+        
         Array.from(root.childNodes).forEach(stripText);
     }
 }
 
-/**
- * Clears styling from the selected text or current cursor position.
- * Uses the exact same logic as applyStyle() but replaces styled elements with plain text.
- * 
- * @param {Object} editor TinyMCE editor instance.
- * @returns {boolean} True if styling was removed, false if no styling was found.
- */
 function clearStyling(editor) {
-    const selectedNode = editor.selection.getNode();
+    const selection = editor.selection;
+    const selectedNode = selection.getNode();
     
-    // FIRST PRIORITY: Check for inline styling
-    const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
-        return isStyledInlineElement(node);
-    });
+    // Inline styling spans
+    let styledSpanParent = null;
+
+    // Selected node itself is a styled span
+    if (selectedNode && selectedNode.tagName === 'SPAN' && isStyledInlineElement(selectedNode)) {
+        styledSpanParent = selectedNode;
+    } else {
+        // Cursor is inside a styled span
+        styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
+            const isStyled = isStyledInlineElement(node);
+            return isStyled;
+        });
+    }
+
+    // Cursor is positioned inside a styled span
+    if (!styledSpanParent) {
+        const range = selection.getRng();
+        if (range && range.startContainer) {
+            // Range start container is inside a styled span
+            const spanParent = editor.dom.getParent(range.startContainer, function(node) {
+                const isStyled = isStyledInlineElement(node);
+                return isStyled;
+            });        
+            if (spanParent) {
+                styledSpanParent = spanParent;
+            }
+
+        }
+    }
     
     if (styledSpanParent) {
-        // Found inline styling - remove it and stop here
-        const selectedText = editor.selection.getContent({ format: 'text' });
-        const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
+        const textContent = styledSpanParent.textContent || styledSpanParent.innerText;        
+        const textNode = document.createTextNode(textContent);
         
-        const normalizedSelectedText = normalizeText(selectedText);
-        const normalizedSpanText = normalizeText(spanTextContent);
+        // Replace the styled span with plain text
+        editor.dom.replace(textNode, styledSpanParent);
         
-        // Check if selecting the entire span content
-        if (normalizedSelectedText === normalizedSpanText || 
-            selectedText.length === spanTextContent.length) {
-            
-            // Remove the entire styled span - replace with plain text
-            const textNode = document.createTextNode(spanTextContent);
-            editor.dom.replace(textNode, styledSpanParent);
-            
-            // Position cursor after the text
-            const range = editor.dom.createRng();
-            range.setStartAfter(textNode);
-            range.setEndAfter(textNode);
-            editor.selection.setRng(range);
-            
-        } else {
-            // Partial selection - remove styling from selected content only
-            removeExistingStylesOfType(editor, false, selectedNode, styledSpanParent);
-        }
+        // Position cursor after the text
+        const range = editor.dom.createRng();
+        range.setStartAfter(textNode);
+        range.setEndAfter(textNode);
+        selection.setRng(range);
         
         editor.focus();
         return true;
     }
     
-    // Also check if selected content contains styled spans (for cases where no parent span)
-    const selectedHtml = editor.selection.getContent({ format: 'html' });
-    if (selectedHtml && selectedHtml.includes('<span')) {
-        const container = document.createElement('div');
-        container.innerHTML = selectedHtml;
-        
-        const styledSpans = container.querySelectorAll('span');
-        let foundStyledSpan = false;
-        
-        styledSpans.forEach(span => {
-            // Check for both bootstrap classes and custom styles
-            if (span.className || (span.style && span.style.getPropertyValue('--custom-style-id'))) {
-                foundStyledSpan = true;
-                // Remove the span but keep its content
-                while (span.firstChild) {
-                    span.parentNode.insertBefore(span.firstChild, span);
-                }
-                span.remove();
-            }
-        });
-        
-        if (foundStyledSpan) {
-            editor.selection.setContent(container.innerHTML);
-            editor.focus();
-            return true;
-        }
-    }
-    
-    // SECOND PRIORITY: Check for block styling only if no inline styling was found
+    // Block styling paragraphs
     const blockParent = editor.dom.getParent(selectedNode, function(node) {
-        return isStyledBlockElement(node);
+        const isStyled = isStyledBlockElement(node);
+        return isStyled;
     });
-    
+        
     if (blockParent) {
-        // Remove block styling
-        removeStyleFromElement(editor, blockParent);
+        const innerHTML = blockParent.innerHTML;
+        
+        // Check if content contains <br><br> - split into separate paragraphs
+        if (innerHTML.includes('<br><br>')) {
+            const parts = innerHTML.split('<br><br>');
+            
+            // First clean paragraph and additional paragraphs for remaining parts
+            const firstParagraph = editor.dom.create('p', {}, parts[0]);
+            editor.dom.insertAfter(firstParagraph, blockParent);
+            
+            let currentParagraph = firstParagraph;
+            for (let i = 1; i < parts.length; i++) {
+                const newParagraph = editor.dom.create('p', {}, parts[i]);
+                editor.dom.insertAfter(newParagraph, currentParagraph);
+                currentParagraph = newParagraph;
+            }
+            
+            //  Remove the original styled block
+            editor.dom.remove(blockParent);
+            
+            // Position cursor in the first paragraph
+            selection.setCursorLocation(firstParagraph, 0);
+        } else {
+            // Create one clean paragraph
+            const cleanParagraph = editor.dom.create('p', {}, innerHTML);
+            editor.dom.insertAfter(cleanParagraph, blockParent);
+            editor.dom.remove(blockParent);
+            selection.setCursorLocation(cleanParagraph, 0);
+        }   
         editor.focus();
         return true;
     }
-    
-    // No styling found
     return false;
 }
+
 
 /**
  * Asynchronous function to scan the custom styles for updates/deletions.
