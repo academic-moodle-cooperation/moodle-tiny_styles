@@ -161,42 +161,33 @@ function applyStyle(editor, styleDef) {
     });
     
     if (styledSpanParent) {
-        const selectedText = editor.selection.getContent({ format: 'text' });
+        // Fix in testing
         const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
-        
-        const normalizedSelectedText = normalizeText(selectedText);
-        const normalizedSpanText = normalizeText(spanTextContent);
-        
-        // Check if selecting the entire span content
-        if (normalizedSelectedText === normalizedSpanText || 
-            selectedText.length === spanTextContent.length) {
                         
-            // Replace the entire span with new styling
-            const newWrapper = document.createElement('span');
+        // Replace the entire span with new styling
+        const newWrapper = document.createElement('span');        
             
-            if (custom) {
-                newWrapper.style.cssText = className;
-                newWrapper.style.setProperty('--custom-style-id', id);
-            } else {
-                newWrapper.className = className;
-            }
+        if (custom) {
+            newWrapper.style.cssText = className;
+            newWrapper.style.setProperty('--custom-style-id', id);
+        } else {
+            newWrapper.className = className;
+        }
             
-            // Original span's text content to preserve formatting
-            newWrapper.textContent = spanTextContent;
-            
-            editor.dom.replace(newWrapper, styledSpanParent);
-            
-            // Add space after the new span and position cursor after the space
-            const spaceNode = document.createTextNode('\u00A0');
-            editor.dom.insertAfter(spaceNode, newWrapper);
-            const range = editor.dom.createRng();
-            range.setStartAfter(spaceNode);
-            range.setEndAfter(spaceNode);
-            editor.selection.setRng(range);
-            
-            editor.focus();
-            return;
-        } 
+        // Original span's text content to preserve formatting
+        newWrapper.textContent = spanTextContent;
+        editor.dom.replace(newWrapper, styledSpanParent);
+
+        // Space after the new span and position cursor after the space
+        const spaceNode = document.createTextNode('\u00A0');
+        editor.dom.insertAfter(spaceNode, newWrapper);
+        const range = editor.dom.createRng();
+        range.setStartAfter(spaceNode);
+        range.setEndAfter(spaceNode);
+        editor.selection.setRng(range);
+
+        editor.focus();
+        return;
     }
     
     // Normal inline styling
