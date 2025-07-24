@@ -139,6 +139,7 @@ $string['selectedicon'] = 'Ausgewähltes Symbol';
 $string['selecticon'] = 'Symbol';
 $string['selectjsonfile'] = 'JSON-Datei zum Importieren auswählen:';
 $string['showaction'] = 'Anzeigen';
+$string['styles:use'] = 'TinyMCE benutzerdefinierte Stile verwenden';
 $string['submenu'] = 'Untermenü';
 $string['submit'] = 'Absenden';
 $string['tiny_styles_admin'] = 'TinyMCE-Gestaltungsvorlagen';
