@@ -161,7 +161,6 @@ function applyStyle(editor, styleDef) {
     });
     
     if (styledSpanParent) {
-        // Fix in testing
         const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
                         
         // Replace the entire span with new styling
