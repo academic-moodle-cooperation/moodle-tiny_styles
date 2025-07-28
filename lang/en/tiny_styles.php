@@ -109,7 +109,7 @@ $string['invalidjsonstructure'] = 'Invalid JSON structure. The file must contain
 $string['jsonfilehelp'] = 'For ensuring the correct JSON format you can export current categories and use the JSON file structure as a template.';
 $string['labels'] = 'Labels';
 $string['manualconfig'] = 'Manual configuration';
-$string['manualdefault'] = 'Please enter a valid inline CSS code. Example: <code>color: red; font-weight: bold;</code><br>Learn more about inline styles <a href="https://www.freecodecamp.org/news/inline-style-in-html/" target="_blank" rel="noopener">here</a>.';
+$string['manualdefault'] = 'Please enter a valid inline CSS code. Example: <code>color: red; font-weight: bold;</code>';
 $string['menuitem_styles'] = 'Styles';
 $string['movedown'] = 'Move down';
 $string['moveup'] = 'Move up';

@@ -146,7 +146,7 @@ function applyStyle(editor, styleDef) {
     const { className, block, custom, id } = styleDef;
 
     const selectedHtml = editor.selection.getContent({ format: 'html' });
-    if (!selectedHtml.trim()) {
+    if (!selectedHtml.trim() && !block) {
         return;
     }
 

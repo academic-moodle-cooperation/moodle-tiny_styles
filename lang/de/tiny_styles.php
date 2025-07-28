@@ -112,7 +112,7 @@ $string['invalidjsonstructure'] = 'Ungültige JSON-Struktur. Die Datei muss Kate
 $string['jsonfilehelp'] = 'Um das korrekte JSON-Format sicherzustellen, können Sie die aktuellen Kategorien exportieren und die JSON-Dateistruktur als Vorlage verwenden.';
 $string['labels'] = 'Label';
 $string['manualconfig'] = 'Manuelle Konfiguration';
-$string['manualdefault'] = 'Bitte geben Sie gültigen Inline-CSS-Code ein. Beispiel: <code>color: red; font-weight: bold;</code><br>Mehr über Inline-Stile erfahren Sie <a href="https://www.freecodecamp.org/news/inline-style-in-html/" target="_blank" rel="noopener">hier</a>.';
+$string['manualdefault'] = 'Bitte geben Sie gültigen Inline-CSS-Code ein. Beispiel: <code>color: red; font-weight: bold;</code>';
 $string['menuitem_styles'] = 'Gestaltungsvorlagen';
 $string['movedown'] = 'Runter';
 $string['moveup'] = 'Hoch';
