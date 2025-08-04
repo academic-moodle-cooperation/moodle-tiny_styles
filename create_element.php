@@ -77,8 +77,8 @@ class element_form extends moodleform {
 
         // todo: remove the divider more efficiently by a conditional query
         foreach ($categories as $id => $name) {
-            $presentation = $DB->get_field('tiny_styles_categories', 'presentation', ['id' => $id]);
-            if ($presentation === 'divider') {
+            $menumode = $DB->get_field('tiny_styles_categories', 'menumode', ['id' => $id]);
+            if ($menumode === 'divider') {
                 unset($categories[$id]);
             }
         }
@@ -101,17 +101,19 @@ class element_form extends moodleform {
                 SELECT cssclasses
                 FROM {tiny_styles_elements}
                 GROUP BY cssclasses
-                ORDER BY cssclasses ASC
-                LIMIT 17
+                ORDER BY id ASC
+                LIMIT 16
             ) sub
         ");
 
-        $elements = array_merge(
-            ['Manual style'],
-            $elements
-        );
-
-        $cssoptions = array_combine($elements, $elements);
+        $cssoptions = [
+            'Manual style' => 'Manual style',
+            '' => ''
+        ];
+        
+        foreach ($elements as $element) {
+            $cssoptions[$element] = $element;
+        }
 
         $mform->addElement(
             'select',
@@ -125,8 +127,8 @@ class element_form extends moodleform {
         $mform->addHelpButton('cssclasses', 'bootstrapclass', 'tiny_styles');
 
         $typeoptions = [
-            'inline' => 'Inline',
-            'block'  => 'Block',
+            'inline' => get_string('type:inline', 'tiny_styles'),
+            'block'  => get_string('type:paragraph', 'tiny_styles'),
         ];
         $mform->addElement(
             'select', 'type',

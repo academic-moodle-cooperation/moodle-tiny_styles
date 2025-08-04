@@ -41,7 +41,7 @@ function xmldb_tiny_styles_install() {
         $cat->description  = 'Design Elements directly in Text';
         $cat->showdesc     = 'helptext';
         $cat->symbol       = 'label.svg';
-        $cat->presentation = 'submenu';
+        $cat->menumode = 'submenu';
         $cat->enabled      = 1;
         $cat->sortorder    = 1;
         $cat->timecreated  = time();
@@ -54,7 +54,7 @@ function xmldb_tiny_styles_install() {
         $cat->description  = 'Format paragraphs';
         $cat->showdesc     = 'never';
         $cat->symbol       = 'box.svg';
-        $cat->presentation = 'submenu';
+        $cat->menumode = 'submenu';
         $cat->enabled      = 1;
         $cat->sortorder    = 2;
         $cat->timecreated  = time();
@@ -69,7 +69,7 @@ function xmldb_tiny_styles_install() {
         $cat->description  = '';
         $cat->showdesc     = 'never';
         $cat->symbol       = '';
-        $cat->presentation = 'divider';
+        $cat->menumode = 'divider';
         $cat->enabled      = 1;
         $cat->sortorder    = 3;
         $cat->timecreated  = time();
@@ -82,7 +82,7 @@ function xmldb_tiny_styles_install() {
         $cat->description  = 'Vorlagen im Corporate Design der Uni';
         $cat->showdesc     = 'tooltip';
         $cat->symbol       = 'school.svg';
-        $cat->presentation = 'inline';
+        $cat->menumode = 'inline';
         $cat->enabled      = 1;
         $cat->sortorder    = 4;
         $cat->timecreated  = time();
@@ -187,7 +187,7 @@ function xmldb_tiny_styles_install() {
                 'name'       => 'Divider Link',
                 'type'       => '',
                 'cssclasses' => '',
-                'sortorder'  => 16,
+                'sortorder'  => 17,
             ],
         ];
 

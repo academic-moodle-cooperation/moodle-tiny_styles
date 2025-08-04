@@ -58,7 +58,7 @@ class importhandler {
                 $catObj->description  = $catarr['description']  ?? '';
                 $catObj->showdesc     = $catarr['showdesc']     ?? 'never';
                 $catObj->symbol       = '';
-                $catObj->presentation = $catarr['presentation'] ?? 'submenu';
+                $catObj->menumode = $catarr['menumode'] ?? 'submenu';
                 $catObj->enabled      = $catarr['enabled']      ?? 0;
                 $catObj->timecreated  = time();
                 $catObj->timemodified = time();

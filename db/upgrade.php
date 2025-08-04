@@ -68,6 +68,17 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         upgrade_plugin_savepoint(true, 2025041500, 'tiny', 'styles');
     }
 
+    if ($oldversion < 2025073002) {
+        $table = new xmldb_table('tiny_styles_categories');
+        $field = new xmldb_field('presentation', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'submenu');
+    
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'menumode');
+        }
+    
+    upgrade_plugin_savepoint(true, 2025073002, 'tiny', 'styles');
+}
+
     return true;
 }
 

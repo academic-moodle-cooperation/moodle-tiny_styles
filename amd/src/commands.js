@@ -57,13 +57,13 @@ function buildCategoryItems(editor, categories, icons) {
     const items = [];
 
     categories.forEach((cat) => {
-        if (cat.presentation === 'divider') {
+        if (cat.menumode === 'divider') {
             items.push({ type: 'separator' });
             return;
         }
 
-        // Inline presentation type
-        if (cat.presentation === 'inline' && Array.isArray(cat.elements)) {
+        // Inline menumode type
+        if (cat.menumode === 'inline' && Array.isArray(cat.elements)) {
             cat.elements.forEach((elem) => {
                 items.push({
                     type: 'menuitem',

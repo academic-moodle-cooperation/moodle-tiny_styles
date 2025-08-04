@@ -28,7 +28,7 @@ The example json can be easily used for editing it directly, and expanded by cop
     "name": "Enter a minimum 3 characters long name here.",
     "description": "Write a short category description here.",
     "showdesc": "pick one of the following: helptext/tooltip/never",
-    "presentation": "pick one of the following: submenu/inline/divider",
+    "menumode": "pick one of the following: submenu/inline/divider",
     "enabled": 1,
     "elements": [
         {
@@ -51,7 +51,7 @@ The naming and description should be self-explanatory.
 
 Category:
 - showdesc: how the description is shown for the users, or if at all
-- presentation: how the elements are displayed in the editor. Under a submenu, or directly in the menu. 
+- menumode: how the elements are displayed in the editor. Under a submenu, or directly in the menu. 
   - *Or is this category a divider (no elements should be added)*
 - enabled: either enabled: 1 or disabled: 0, suggested default disabled => 0.
 ----

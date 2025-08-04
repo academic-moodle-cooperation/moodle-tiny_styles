@@ -41,7 +41,7 @@ foreach ($categories as $cat) {
         'name'        => $cat->name,
         'description' => $cat->description,
         'showdesc'    => $cat->showdesc,
-        'presentation'=> $cat->presentation,
+        'menumode'=> $cat->menumode,
         'enabled'     => $cat->enabled,
         'elements'    => []
     ];

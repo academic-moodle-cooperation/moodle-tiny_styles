@@ -188,19 +188,19 @@ class category_form extends moodleform {
         // Add popup HTML to form
         $mform->addElement('html', $iconpopuphtml);
 
-        $presentationoptions = [
+        $menumodeoptions = [
             'submenu' => get_string('submenu', 'tiny_styles'),
             'inline'  => get_string('inline', 'tiny_styles'),
             'divider' => get_string('divider', 'tiny_styles'),
         ];
         $mform->addElement(
             'select',
-            'presentation',
-            get_string('presentationtype', 'tiny_styles'),
-            $presentationoptions,
+            'menumode',
+            get_string('menumodetype', 'tiny_styles'),
+            $menumodeoptions,
             ['size' => 1, 'style' => 'width: 300px;']
         );
-        $mform->addHelpButton('presentation', 'presentationtype', 'tiny_styles');
+        $mform->addHelpButton('menumode', 'menumodetype', 'tiny_styles');
 
         // Hidden $id field for edit form.
         $mform->addElement('hidden', 'id');
@@ -249,7 +249,7 @@ if ($data = $mform->get_data()) {
     $record->description  = $data->description;
     $record->showdesc     = 'null';//$data->showdesc;
     $record->symbol       = $data->selectedicon;
-    $record->presentation = $data->presentation;
+    $record->menumode = $data->menumode;
     $record->timemodified = time();
 
     
@@ -294,7 +294,7 @@ if ($action === 'edit' && $id > 0) {
         $formdata->description  = $category->description;
         // $formdata->showdesc     = $category->showdesc;  // removed for not being implemented in editor.
         $formdata->selectedicon = $category->symbol;
-        $formdata->presentation = $category->presentation;
+        $formdata->menumode = $category->menumode;
 
         $mform->set_data($formdata);
     } else {

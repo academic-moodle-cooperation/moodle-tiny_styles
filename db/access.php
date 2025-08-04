@@ -28,8 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = array(
     'tiny/styles:use' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
+            'guest' => CAP_PREVENT,
             'user' => CAP_ALLOW,
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
@@ -37,6 +38,5 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
             'coursecreator' => CAP_ALLOW,
         ),
-        'clonepermissionsfrom' => 'moodle/course:view'
     )
 );

@@ -117,13 +117,13 @@ if ($hassiteconfig) {
             );
 
             // Filtering dividers out.
-            if ($category->presentation === 'divider') {
+            if ($category->menumode === 'divider') {
                 $categorydata[] = [
                     'id' => $category->id,
                     'enabled' => $category->enabled,
                     'name' => $category->name,
                     'description' => $category->description,
-                    'presentation' => $category->presentation,
+                    'menumode' => $category->menumode,
                     'elementsurl' => '#',
                     'elementsiconstyle' => 'color: gray; pointer-events: none;',
                     'moveupiconhtml'  => $moveupiconhtml,
@@ -139,7 +139,7 @@ if ($hassiteconfig) {
                     'enabled' => $category->enabled,
                     'name' => $category->name,
                     'description' => $category->description,
-                    'presentation' => $category->presentation,
+                    'menumode' => $category->menumode,
                     'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                         'catid' => $category->id,
                     ]))->out(false),

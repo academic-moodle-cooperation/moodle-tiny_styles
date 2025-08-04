@@ -62,7 +62,7 @@ class local_import_form extends moodleform {
     public function definition() {
         global $CFG;
         $mform = $this->_form;
-
+        $maxbytes = $CFG->maxbytes;
         $mform->addElement(
             'filepicker',
             'jsonfile',
