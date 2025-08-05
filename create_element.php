@@ -101,7 +101,7 @@ class element_form extends moodleform {
                 SELECT cssclasses
                 FROM {tiny_styles_elements}
                 GROUP BY cssclasses
-                ORDER BY id ASC
+                ORDER BY MIN(id) ASC
                 LIMIT 16
             ) sub
         ");
