@@ -71,7 +71,6 @@ class category_form extends moodleform {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
 
-
         $mform->addElement(
             'textarea',
             'description',
@@ -88,12 +87,14 @@ class category_form extends moodleform {
         $mform->addRule('description', get_string('maximumchars', '', 400), 'maxlength', 400, 'client');
 
         // Description field stored in DB as "showdesc".
+        // Removed for not being implemented in editor side.
+        /*
         $descdisplayoptions = [
             'never'    => 'Never',
             'helptext' => 'Help text',
             'tooltip'  => 'Tooltip'
         ];
-        
+        */
         /**
          * Removed for not being implemented in editor side.
          *
@@ -137,7 +138,7 @@ class category_form extends moodleform {
             <div id="icon-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap:10px;">';
 
         // Icons and names for the popup
-        $iconNames = [];
+        $iconnames = [];
         if (is_dir($iconpath)) {
             $files = scandir($iconpath);
             foreach ($files as $file) {
@@ -146,7 +147,7 @@ class category_form extends moodleform {
                 }
                 $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
                 if ($ext === 'svg') {
-                    $iconNames[] = $file;
+                    $iconnames[] = $file;
                     $iconurl = $iconurlbase . '/' . $file;
                     $iconname = pathinfo($file, PATHINFO_FILENAME);
             
@@ -215,7 +216,7 @@ class category_form extends moodleform {
         $mform->setType('selectedicon', PARAM_TEXT);
 
         // Add available icon names as a data attribute for JavaScript validation
-        $mform->addElement('html', '<script>window.availableIcons = ' . json_encode($iconNames) . ';</script>');
+        $mform->addElement('html', '<script>window.availableIcons = ' . json_encode($iconnames) . ';</script>');
 
 
         $this->add_action_buttons(true, get_string('savechanges'));
@@ -225,7 +226,7 @@ class category_form extends moodleform {
      * TODO: validation
      * eg. name must be at least 3 chars
      */
-    public function validation($data, $files) {
+    public function validation($data) {
         $errors = [];
         if (strlen(trim($data['name'])) < 3) {
             $errors['name'] = get_string('errorname', 'tiny_styles');

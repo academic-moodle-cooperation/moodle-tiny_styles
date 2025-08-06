@@ -28,12 +28,12 @@ require_login();
 require_sesskey();
 require_capability('moodle/site:config', context_system::instance());
 
-// table fetch
+// Table fetch.
 $categories = $DB->get_records('tiny_styles_categories');
 $elements = $DB->get_records('tiny_styles_elements');
 $cat_elements = $DB->get_records('tiny_styles_cat_elements');
 
-// associative array, each key is a category id
+// Associative array, each key is a category id.
 $exportcategories = [];
 foreach ($categories as $cat) {
     $exportcategories[$cat->id] = [
@@ -47,17 +47,17 @@ foreach ($categories as $cat) {
     ];
 }
 
-// each element to its category based on cat_elements
+// Each element to its category based on cat_elements.
 foreach ($cat_elements as $ce) {
     $categoryid = $ce->categoryid;
     $elementid  = $ce->elementid;
 
-    // the bridging references a non-existent category or element
+    // The bridging references a non-existent category or element.
     if (!isset($exportcategories[$categoryid]) || !isset($elements[$elementid])) {
         continue;
     }
 
-    // adds element data to the category elements array
+    // Adds element data to the category elements array.
     $exportcategories[$categoryid]['elements'][] = [
         'id'        => $elements[$elementid]->id,
         'name'      => $elements[$elementid]->name,
@@ -67,13 +67,13 @@ foreach ($cat_elements as $ce) {
     ];
 }
 
-// clean json
+// Clean json.
 $exportdata = [
     'categories' => array_values($exportcategories)
 ];
 $jsoncontent = json_encode($exportdata, JSON_PRETTY_PRINT);
 
-// Export as JSON file directly
+// Export as JSON file directly.
 header('Content-Type: application/json');
 header('Content-Disposition: attachment; filename="tiny_styles_export.json"');
 header('Content-Length: ' . strlen($jsoncontent));

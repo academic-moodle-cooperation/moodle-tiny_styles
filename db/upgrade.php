@@ -25,6 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Applies necessary db updates with newer versions.
+ * 
+ * @param mixed $oldversion Previously installed plugin version.
+ * @return bool
+ */
 function xmldb_tiny_styles_upgrade($oldversion = 0) {
     global $DB;
 
@@ -75,9 +81,8 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         if ($dbman->field_exists($table, $field)) {
             $dbman->rename_field($table, $field, 'menumode');
         }
-    
-    upgrade_plugin_savepoint(true, 2025073002, 'tiny', 'styles');
-}
+        upgrade_plugin_savepoint(true, 2025073002, 'tiny', 'styles');
+    }
 
     return true;
 }

@@ -205,7 +205,7 @@ class element_form extends moodleform {
     }
 
     // todo: expand validation
-    public function validation($data, $files) {
+    public function validation($data) {
         $errors = array();
 
         if (strlen(trim($data['name'])) < 3) {
@@ -362,9 +362,8 @@ $PAGE->requires->js_call_amd(
 );
 
 $PAGE->requires->js_amd_inline("
-// Vanilla JS solution that mimics the jQuery pattern very closely
+// Vanilla JS solution that mimics jQuery pattern very closely
 require([], function() {
-    // Define our function exactly like in the jQuery version
     function checkForAlertClass() {
         var selectedClass = document.getElementById('id_cssclasses').value;
         if (selectedClass && selectedClass.indexOf('alert') !== -1) {
@@ -375,9 +374,9 @@ require([], function() {
         }
     }
     
-    // This simulates $(document).ready()
+    // $(document).ready()
     function docReady(fn) {
-        // If document is already loaded, run the function now
+        // If document is already loaded, run the function
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             setTimeout(fn, 1); // Slight delay to ensure DOM is fully available
             return;
@@ -387,21 +386,19 @@ require([], function() {
         document.addEventListener('DOMContentLoaded', fn);
     }
     
-    // This is our equivalent to $(document).ready(function() {...})
+    // Equivalent to $(document).ready(function() {...})
     docReady(function() {
-        // Get the element
         var cssClassesField = document.getElementById('id_cssclasses');
         
         if (cssClassesField) {
-            // Add the change event listener - equivalent to $('#id_cssclasses').on('change', ...)
             cssClassesField.addEventListener('change', function() {
                 checkForAlertClass();
             });
             
-            // Run once immediately after DOM is ready
+            // Run immediately after DOM is ready
             checkForAlertClass();
         } else {
-            // If the element wasn't found, try again after a short delay
+            // If the element wasn't found, run again after a short delay
             setTimeout(function() {
                 cssClassesField = document.getElementById('id_cssclasses');
                 if (cssClassesField) {

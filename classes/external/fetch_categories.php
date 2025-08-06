@@ -37,6 +37,9 @@ use external_iterator;
 use stdClass;
 use context_system;
 
+/**
+* Fetches and returns all enabled categories and associated elements.
+*/
 class fetch_categories extends external_api {
 
     /**
@@ -99,6 +102,10 @@ class fetch_categories extends external_api {
         return $results;
     }
 
+    /**
+     * Defines the structure of the data returned by the external function.
+     * @return external_multiple_structure
+     */
     public static function execute_returns() {
         return new external_multiple_structure(
             new external_single_structure([

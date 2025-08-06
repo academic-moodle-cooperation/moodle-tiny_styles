@@ -25,6 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Used to move a category up in the database.
+ * 
+ * @param int $catid Unique Category ID.
+ * @return void
+ */
 function move_category_up(int $catid): void {
     global $DB;
 
@@ -49,6 +55,12 @@ function move_category_up(int $catid): void {
     }
 }
 
+/**
+ * Used to move a category down in the database.
+ * 
+ * @param int $catid Unique Category ID.
+ * @return void
+ */
 function move_category_down(int $catid): void {
     global $DB;
     $cat = $DB->get_record('tiny_styles_categories', ['id' => $catid], '*', MUST_EXIST);
@@ -71,6 +83,13 @@ function move_category_down(int $catid): void {
         $DB->update_record('tiny_styles_categories', $below);
     }
 }
+
+/**
+ * Used to move an element up in the database.
+ * 
+ * @param int $catid Unique Elemnet ID.
+ * @return void
+ */
 function move_element_up(int $catid, int $elementid): void {
     global $DB;
 
@@ -104,6 +123,13 @@ function move_element_up(int $catid, int $elementid): void {
     }
 }
 
+
+/**
+ * Used to move an element down in the database.
+ * 
+ * @param int $catid Unique Element ID.
+ * @return void
+ */
 function move_element_down(int $catid, int $elementid): void {
     global $DB;
 

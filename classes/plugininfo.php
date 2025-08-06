@@ -24,11 +24,15 @@
  */
 
 namespace tiny_styles;
+defined('MOODLE_INTERNAL') || die();
 
 use context;
 use editor_tiny\plugin;
 use editor_tiny\plugin_with_configuration;
 
+/**
+ * Summary of plugininfo
+ */
 class plugininfo extends plugin implements plugin_with_configuration {
 
     public static function get_plugin_configuration_for_context(
@@ -38,8 +42,6 @@ class plugininfo extends plugin implements plugin_with_configuration {
         ?\editor_tiny\editor $editor = null
     ): array {
         return [
-            // Your values go here.
-            // These will be mapped to a namespaced EditorOption in Tiny.
             'property' => 'TODO Calculate your values here',
         ];
     }

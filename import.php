@@ -56,7 +56,7 @@ if (optional_param('download_example', false, PARAM_BOOL)) {
 }
 
 /**
- * Standard filepicker
+ * Standard moodle filepicker
  */
 class local_import_form extends moodleform {
     public function definition() {

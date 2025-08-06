@@ -22,19 +22,9 @@
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Log errors to a file
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/error_log.txt');
+defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../../../../../config.php');
-
-// Log initial access
-error_log('AJAX request received at: ' . date('Y-m-d H:i:s'));
 
 try {
     require_login();
@@ -45,14 +35,9 @@ try {
     $context = context_system::instance();
     require_capability('moodle/site:config', $context);
 
-    // Log raw input
     $rawInput = file_get_contents('php://input');
-    error_log('Raw input: ' . $rawInput);
 
     $data = json_decode($rawInput, true);
-
-    // Log parsed data
-    error_log('Parsed data: ' . print_r($data, true));
 
     if (!isset($data['elementid'], $data['categoryid'], $data['direction'])) {
         throw new moodle_exception('Missing required parameters: ' .
@@ -64,9 +49,6 @@ try {
     $elementid = (int)$data['elementid'];
     $categoryid = (int)$data['categoryid'];
     $direction = $data['direction'];
-
-    // Log parsed values
-    error_log("ElementID: $elementid, CategoryID: $categoryid, Direction: $direction");
 
     if (!in_array($direction, ['up', 'down'])) {
         throw new moodle_exception('Invalid direction: ' . $direction);
@@ -90,8 +72,6 @@ try {
         'elementid' => $elementid
     ], '*', MUST_EXIST);
 
-    error_log("Current record found: " . print_r($current, true));
-
     // Find the neighbor element (the one above or below)
     $params = ['catid' => $categoryid, 'sort' => $current->sortorder];
     if ($direction === 'up') {
@@ -108,16 +88,11 @@ try {
           ORDER BY sortorder ASC";
     }
 
-    error_log("SQL query: $sql");
-    error_log("Params: " . print_r($params, true));
-
     $neighbors = $DB->get_records_sql($sql, $params, 0, 1);
-    error_log("Neighbors found: " . print_r($neighbors, true));
 
     if (empty($neighbors)) {
         // No neighbors found, nothing to swap
         $response = ['status' => 'success', 'message' => 'No change required (no neighbor found)'];
-        error_log("Response: " . json_encode($response));
         echo json_encode($response);
         exit;
     }
@@ -129,9 +104,6 @@ try {
     $temp = $current->sortorder;
     $current->sortorder = $neighbor->sortorder;
     $neighbor->sortorder = $temp;
-
-    error_log("Updating records - Current ID: {$current->id}, New sortorder: {$current->sortorder}");
-    error_log("Updating records - Neighbor ID: {$neighbor->id}, New sortorder: {$neighbor->sortorder}");
 
     // Save changes to database
     $DB->update_record('tiny_styles_cat_elements', $current);
@@ -146,7 +118,6 @@ try {
         ]
     ];
 
-    error_log("Success response: " . json_encode($response));
     echo json_encode($response);
 
 } catch (Throwable $e) {
@@ -157,8 +128,6 @@ try {
         'line' => $e->getLine(),
         'trace' => $e->getTraceAsString()
     ];
-
-    error_log("Error occurred: " . print_r($errorInfo, true));
 
     http_response_code(500);
     echo json_encode($errorInfo);
