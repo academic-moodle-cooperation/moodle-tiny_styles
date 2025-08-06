@@ -297,8 +297,8 @@ if ($action === 'edit' && $id > 0) {
         $formdata->action       = 'edit';
         $formdata->name         = $category->name;
         $formdata->description  = $category->description;
-        // $formdata->showdesc     = $category->showdesc; 
-        // removed for not being implemented in editor.
+        // $formdata->showdesc     = $category->showdesc;
+        // Removed for not being implemented in editor.
         $formdata->selectedicon = $category->symbol;
         $formdata->menumode = $category->menumode;
 
