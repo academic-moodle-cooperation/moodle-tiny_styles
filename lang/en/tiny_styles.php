@@ -96,7 +96,6 @@ $string['instr_good_heading'] = 'Good to know';
 $string['instr_good_list'] = '<ul> <li>Categories can be imported multiple times. This avoids accidental deletions or edits.<br><strong>Suggestion:</strong> Use the example file as the basis for imports to prevent duplicates.</li> <li>All fields can be edited later via Moodle admin pages.</li> <li>Currently, icon selection must be done manually through the Moodle admin category editor.</li> </ul>';
 $string['instr_structure_heading'] = 'Structure';
 $string['instr_structure_text'] = 'The example.json is structured into a category array, where each category contains an element array. This is the format which any JSON file imported should follow.';
-$string['instr_structure_text'] = 'The example.json is structured into a category array, where each category contains an element array. This is the format which any JSON file imported should follow.';
 $string['instr_usage_heading'] = 'How to use the JSON';
 $string['instr_usage_text'] = 'The example JSON file can be easily used for editing directly and expanded by copying it.';
 $string['instr_visualized_code'] = "Categories: [ category_1, category_2 ... category_n ]\n\ncategory_1: [ element_a, element_b ... element_n ]\ncategory_2: [ element_x, element_y ...\n→ with the elements carrying the styling information";

@@ -24,7 +24,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-//Declares the available web service functions for integration with Moodle's external API.
+// Declares the available web service functions for integration with Moodle's external API.
 $functions = [
   'tiny_styles_fetch_categories' => [
       'classname' => 'tiny_styles\external\fetch_categories',

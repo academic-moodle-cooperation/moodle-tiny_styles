@@ -69,7 +69,7 @@ foreach ($catelements as $ce) {
 
 // Clean json.
 $exportdata = [
-    'categories' => array_values($exportcategories,)
+    'categories' => array_values($exportcategories),
 ];
 $jsoncontent = json_encode($exportdata, JSON_PRETTY_PRINT);
 

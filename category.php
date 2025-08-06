@@ -70,7 +70,7 @@ class category_form extends moodleform {
             'text',
             'name',
             get_string('name'),
-            ['size' => 1, 'style' => 'width: 400px;', 'maxlength' => 100,],
+            ['size' => 1, 'style' => 'width: 400px;', 'maxlength' => 100],
         );
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
@@ -102,7 +102,7 @@ class category_form extends moodleform {
         */
         // Removed for not being implemented in editor side.
         /*
-         * 
+         *
          *
          * $mform->addElement(
          * 'select',
@@ -129,10 +129,10 @@ class category_form extends moodleform {
         $iconpath = $CFG->dirroot . '/lib/editor/tiny/plugins/styles/pix';
         $iconurlbase = $CFG->wwwroot . '/lib/editor/tiny/plugins/styles/pix';
 
-        $iconpopuphtml = '<div id="icon-popup" style="display:none; position:absolute; top:100%; left:0; 
-            width:400px; max: height 450px; background-color:#fff; 
-            border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); 
-            z-index:1000; overflow:hidden; padding:0; margin-top:5px;">';
+        $iconpopuphtml = '<div id="icon-popup" style="display:none; position:absolute; top:100%; left:0;
+        width:400px; max: height 450px; background-color:#fff;
+        border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15);
+        z-index:1000; overflow:hidden; padding:0; margin-top:5px;">';
 
         $iconpopuphtml .= '<div style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
             <h4 style="margin:0;">' . get_string('selectanicon', 'tiny_styles') . '</h4>
@@ -162,7 +162,7 @@ class category_form extends moodleform {
                         style="cursor:pointer; display:flex; flex-direction:column; align-items:center;
                         justify-content:center; padding:12px; border-radius:12px;"
                         title="' . s($iconname) . '">';
-                    
+
                     $iconpopuphtml .= '<img src="' . $iconurl . '" alt="' . s($file) . '"
                         style="width:24px; height:24px; display:block; margin: 0 auto;" />';
                     $iconpopuphtml .= '<div style="font-size:0.75em; margin-top:4px;
@@ -253,13 +253,12 @@ if ($data = $mform->get_data()) {
     $record = new stdClass();
     $record->name         = $data->name;
     $record->description  = $data->description;
-    $record->showdesc     = 'null';//$data->showdesc;
+    $record->showdesc     = 'null';
     $record->symbol       = $data->selectedicon;
     $record->menumode = $data->menumode;
     $record->timemodified = time();
 
-    
-    //  UPDATE of existing category 
+    // UPDATE of existing category
     if ($data->action === 'edit' && !empty($data->id)) {
         if ($old = $DB->get_record('tiny_styles_categories', ['id' => $data->id], '*', MUST_EXIST)) {
             $record->id          = $old->id;
@@ -298,7 +297,8 @@ if ($action === 'edit' && $id > 0) {
         $formdata->action       = 'edit';
         $formdata->name         = $category->name;
         $formdata->description  = $category->description;
-        // $formdata->showdesc     = $category->showdesc;  // removed for not being implemented in editor.
+        // $formdata->showdesc     = $category->showdesc; 
+        // removed for not being implemented in editor.
         $formdata->selectedicon = $category->symbol;
         $formdata->menumode = $category->menumode;
 

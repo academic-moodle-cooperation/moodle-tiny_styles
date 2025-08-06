@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
- 
+
 /**
  * File picker for JSON importing.
  *
@@ -41,7 +41,7 @@ use tiny_styles\importhandler;
 
 if (optional_param('download_example', false, PARAM_BOOL)) {
     require_sesskey();
-    
+
     $examplefile = __DIR__ . '/json/example.json';
     if (file_exists($examplefile)) {
         $content = file_get_contents($examplefile);
@@ -185,7 +185,7 @@ $downloadurl = new moodle_url($PAGE->url, ['download_example' => 1, 'sesskey' =>
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
- 
+
 /**
  * Repeated for the AMC pipeline
  *

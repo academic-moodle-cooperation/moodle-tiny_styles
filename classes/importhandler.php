@@ -93,7 +93,7 @@ class importhandler {
                     $elemobj->enabled = $elemarr['enabled'] ?? 0;
                     $elemobj->custom = $elemarr['custom'] ?? 1;
                     $elemobj->timecreated = time();
-                    $elemobj->timemodified= time();
+                    $elemobj->timemodified = time();
 
                     $maxelemorder = $DB->get_field_sql(
                         "SELECT MAX(sortorder) FROM {tiny_styles_elements}"

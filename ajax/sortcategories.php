@@ -97,7 +97,7 @@ try {
         'debug' => [
             'current' => $current->id . ' (now ' . $current->sortorder . ')',
             'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')',
-        ]
+        ],
     ];
 
     echo json_encode($response);
