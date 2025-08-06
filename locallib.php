@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Used to move a category up in the database.
- * 
+ *
  * @param int $catid Unique Category ID.
  * @return void
  */
@@ -57,7 +57,7 @@ function move_category_up(int $catid): void {
 
 /**
  * Used to move a category down in the database.
- * 
+ *
  * @param int $catid Unique Category ID.
  * @return void
  */
@@ -86,7 +86,7 @@ function move_category_down(int $catid): void {
 
 /**
  * Used to move an element up in the database.
- * 
+ *
  * @param int $catid Unique Elemnet ID.
  * @return void
  */
@@ -94,9 +94,9 @@ function move_element_up(int $catid, int $elementid): void {
     global $DB;
 
     // Retrieve the current element's bridging record.
-    $catElem = $DB->get_record('tiny_styles_cat_elements', [
+    $catelem = $DB->get_record('tiny_styles_cat_elements', [
         'categoryid' => $catid,
-        'elementid'  => $elementid
+        'elementid'  => $elementid,
     ], '*', MUST_EXIST);
 
     // Find the neighbor with a lower sort order (the one immediately above).
@@ -107,18 +107,18 @@ function move_element_up(int $catid, int $elementid): void {
           ORDER BY sortorder DESC";
     $params = [
         'catid'    => $catid,
-        'currsort' => $catElem->sortorder
+        'currsort' => $catelem->sortorder,
     ];
     $neighbors = $DB->get_records_sql($sql, $params, 0, 1);
     $above = reset($neighbors);
 
     // If an above neighbor exists, swap their sort orders.
     if ($above) {
-        $oldsort = $catElem->sortorder;
-        $catElem->sortorder = $above->sortorder;
+        $oldsort = $catelem->sortorder;
+        $catelem->sortorder = $above->sortorder;
         $above->sortorder = $oldsort;
 
-        $DB->update_record('tiny_styles_cat_elements', $catElem);
+        $DB->update_record('tiny_styles_cat_elements', $catelem);
         $DB->update_record('tiny_styles_cat_elements', $above);
     }
 }
@@ -126,7 +126,7 @@ function move_element_up(int $catid, int $elementid): void {
 
 /**
  * Used to move an element down in the database.
- * 
+ *
  * @param int $catid Unique Element ID.
  * @return void
  */
@@ -134,9 +134,9 @@ function move_element_down(int $catid, int $elementid): void {
     global $DB;
 
     // Retrieve the current element's bridging record.
-    $catElem = $DB->get_record('tiny_styles_cat_elements', [
+    $catelem = $DB->get_record('tiny_styles_cat_elements', [
         'categoryid' => $catid,
-        'elementid'  => $elementid
+        'elementid'  => $elementid,
     ], '*', MUST_EXIST);
 
     // Find the neighbor with a higher sort order (the one immediately below).
@@ -147,18 +147,18 @@ function move_element_down(int $catid, int $elementid): void {
           ORDER BY sortorder ASC";
     $params = [
         'catid'    => $catid,
-        'currsort' => $catElem->sortorder
+        'currsort' => $catelem->sortorder,
     ];
     $neighbors = $DB->get_records_sql($sql, $params, 0, 1);
     $below = reset($neighbors);
 
     // If a below neighbor exists, swap their sort orders.
     if ($below) {
-        $oldsort = $catElem->sortorder;
-        $catElem->sortorder = $below->sortorder;
+        $oldsort = $catelem->sortorder;
+        $catelem->sortorder = $below->sortorder;
         $below->sortorder = $oldsort;
 
-        $DB->update_record('tiny_styles_cat_elements', $catElem);
+        $DB->update_record('tiny_styles_cat_elements', $catelem);
         $DB->update_record('tiny_styles_cat_elements', $below);
     }
 }

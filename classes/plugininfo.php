@@ -31,10 +31,18 @@ use editor_tiny\plugin;
 use editor_tiny\plugin_with_configuration;
 
 /**
- * Summary of plugininfo
+ * Crude plugininfo class
  */
 class plugininfo extends plugin implements plugin_with_configuration {
 
+    /**
+     * Pluging info.
+     * @param \context $context
+     * @param array $options
+     * @param array $fpoptions
+     * @param mixed $editor
+     * @return array{property: string}
+     */
     public static function get_plugin_configuration_for_context(
         context $context,
         array $options,

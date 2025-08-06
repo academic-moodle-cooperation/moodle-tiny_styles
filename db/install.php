@@ -23,18 +23,18 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Custom installation logic
- * 
  */
 function xmldb_tiny_styles_install() {
     global $DB;
 
     // Adding default categories.
     if (!$DB->record_exists('tiny_styles_categories', array())) {
-        
+
         // Labels.
         $cat = new stdClass();
         $cat->name         = 'Labels';
@@ -128,12 +128,14 @@ function xmldb_tiny_styles_install() {
                 'type'       => 'inline',
                 'cssclasses' => 'badge bg-info text-dark',
                 'sortorder'  => 6,
-            ],[
+            ],
+            [
                 'name'       => 'Dark Label',
                 'type'       => 'inline',
                 'cssclasses' => 'badge bg-dark text-white',
                 'sortorder'  => 7,
-            ],[
+            ],
+            [
                 'name'       => 'Light Label',
                 'type'       => 'inline',
                 'cssclasses' => 'badge bg-light text-dark',
@@ -144,22 +146,26 @@ function xmldb_tiny_styles_install() {
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-info',
                 'sortorder'  => 9,
-            ],[
+            ],
+            [
                 'name'       => 'Yellow Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-warning',
                 'sortorder'  => 10,
-            ],[
+            ],
+            [
                 'name'       => 'Red Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-danger',
                 'sortorder'  => 11,
-            ],[
+            ],
+            [
                 'name'       => 'Green Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-success',
                 'sortorder'  => 12,
-            ],[
+            ],
+            [
                 'name'       => 'Dark Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-dark',
@@ -193,13 +199,13 @@ function xmldb_tiny_styles_install() {
 
         foreach ($elements as $key => $data) {
             $elem = new stdClass();
-            $elem->name        = $data['name'];
-            $elem->type        = $data['type'];
-            $elem->cssclasses  = $data['cssclasses'];
-            $elem->enabled     = 1;
-            $elem->sortorder   = $data['sortorder'];
+            $elem->name = $data['name'];
+            $elem->type = $data['type'];
+            $elem->cssclasses = $data['cssclasses'];
+            $elem->enabled = 1;
+            $elem->sortorder = $data['sortorder'];
             $elem->timecreated = time();
-            $elem->timemodified= time();
+            $elem->timemodified = time();
             $elements[$key]['id'] = $DB->insert_record('tiny_styles_elements', $elem);
         }
     }

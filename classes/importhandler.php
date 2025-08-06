@@ -53,24 +53,24 @@ class importhandler {
 
             // Process categories
             foreach ($data['categories'] as $catarr) {
-                $catObj = new \stdClass();
-                $catObj->name         = $catarr['name']         ?? 'no name';
-                $catObj->description  = $catarr['description']  ?? '';
-                $catObj->showdesc     = $catarr['showdesc']     ?? 'never';
-                $catObj->symbol       = '';
-                $catObj->menumode = $catarr['menumode'] ?? 'submenu';
-                $catObj->enabled      = $catarr['enabled']      ?? 0;
-                $catObj->timecreated  = time();
-                $catObj->timemodified = time();
+                $catobj = new \stdClass();
+                $catobj->name = $catarr['name'] ?? 'no name';
+                $catobj->description = $catarr['description'] ?? '';
+                $catobj->showdesc = $catarr['showdesc'] ?? 'never';
+                $catobj->symbol = '';
+                $catobj->menumode = $catarr['menumode'] ?? 'submenu';
+                $catobj->enabled = $catarr['enabled'] ?? 0;
+                $catobj->timecreated = time();
+                $catobj->timemodified = time();
 
                 // Category sortorder from DB.
                 $maxcatorder = $DB->get_field_sql(
                     "SELECT MAX(sortorder) FROM {tiny_styles_categories}"
                 );
-                $catObj->sortorder = ($maxcatorder === null ? 0 : $maxcatorder) + 1;
-                $catObj->id = $DB->insert_record('tiny_styles_categories', $catObj);
+                $catobj->sortorder = ($maxcatorder === null ? 0 : $maxcatorder) + 1;
+                $catobj->id = $DB->insert_record('tiny_styles_categories', $catobj);
 
-                $catmapping[$catObj->name] = $catObj->id;
+                $catmapping[$catobj->name] = $catobj->id;
             }
 
             // Process elements for each category
@@ -86,30 +86,30 @@ class importhandler {
                 $newcatid = $catmapping[$catname];
 
                 foreach ($catarr['elements'] as $elemarr) {
-                    $elemObj = new \stdClass();
-                    $elemObj->name        = $elemarr['name']        ?? 'no name';
-                    $elemObj->type        = $elemarr['type']        ?? 'inline';
-                    $elemObj->cssclasses  = $elemarr['cssclasses']  ?? '';
-                    $elemObj->enabled     = $elemarr['enabled']     ?? 0;
-                    $elemObj->custom      = $elemarr['custom']      ?? 1;
-                    $elemObj->timecreated = time();
-                    $elemObj->timemodified= time();
+                    $elemobj = new \stdClass();
+                    $elemobj->name = $elemarr['name'] ?? 'no name';
+                    $elemobj->type = $elemarr['type'] ?? 'inline';
+                    $elemobj->cssclasses = $elemarr['cssclasses'] ?? '';
+                    $elemobj->enabled = $elemarr['enabled'] ?? 0;
+                    $elemobj->custom = $elemarr['custom'] ?? 1;
+                    $elemobj->timecreated = time();
+                    $elemobj->timemodified= time();
 
                     $maxelemorder = $DB->get_field_sql(
                         "SELECT MAX(sortorder) FROM {tiny_styles_elements}"
                     );
-                    $elemObj->sortorder = ($maxelemorder === null ? 0 : $maxelemorder) + 1;
-                    $elemObj->id = $DB->insert_record('tiny_styles_elements', $elemObj);
+                    $elemobj->sortorder = ($maxelemorder === null ? 0 : $maxelemorder) + 1;
+                    $elemobj->id = $DB->insert_record('tiny_styles_elements', $elemobj);
 
                     $bridgeparams = [
                         'categoryid' => $newcatid,
-                        'elementid'  => $elemObj->id
+                        'elementid'  => $elemobj->id,
                     ];
                     if (!$DB->record_exists('tiny_styles_cat_elements', $bridgeparams)) {
                         $bridge = new \stdClass();
-                        $bridge->categoryid   = $newcatid;
-                        $bridge->elementid    = $elemObj->id;
-                        $bridge->enabled      = 1;
+                        $bridge->categoryid = $newcatid;
+                        $bridge->elementid = $elemobj->id;
+                        $bridge->enabled = 1;
                         // Next highest in bridging table.
                         $maxbridgesort = $DB->get_field_sql(
                             "SELECT MAX(sortorder)
@@ -117,8 +117,8 @@ class importhandler {
                               WHERE categoryid = ?",
                             [$newcatid]
                         );
-                        $bridge->sortorder    = ($maxbridgesort === null ? 0 : $maxbridgesort) + 1;
-                        $bridge->timecreated  = time();
+                        $bridge->sortorder = ($maxbridgesort === null ? 0 : $maxbridgesort) + 1;
+                        $bridge->timecreated = time();
                         $bridge->timemodified = time();
 
                         $DB->insert_record('tiny_styles_cat_elements', $bridge);

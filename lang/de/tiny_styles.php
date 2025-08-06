@@ -147,7 +147,7 @@ $string['tiny_styles_admin'] = 'TinyMCE-Gestaltungsvorlagen';
 $string['tiny_styles_button'] = 'Gestaltungsvorlagen';
 $string['type'] = 'Anzeigeart';
 $string['typehelp'] = 'Anzeigeart';
-$string['typehelp_help'] = 'Wählen Sie aus, wie die Gestaltungsvorlage auf Text angewandt werden soll:<ul><li><strong>Inline</strong>: für Wörter oder kurze Texte</li><li><strong>Block</strong>: für Absätze oder längere Texte</li></ul>';$string['type:inline'] = 'Inline';
+$string['typehelp_help'] = 'Wählen Sie aus, wie die Gestaltungsvorlage auf Text angewandt werden soll:<ul><li><strong>Inline</strong>: für Wörter oder kurze Texte</li><li><strong>Block</strong>: für Absätze oder längere Texte</li></ul>';
 $string['type:paragraph'] = 'Block';
 $string['type:inline']  = 'Inline';
 $string['view'] = 'Ansehen';

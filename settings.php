@@ -83,7 +83,7 @@ if ($hassiteconfig) {
                     'data-action' => 'moveup',
                     'data-id' => $category->id,
                     'title' => get_string('moveup'),
-                    'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+                    'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;',
                 ]
             );
 
@@ -95,7 +95,7 @@ if ($hassiteconfig) {
                     'data-action' => 'movedown',
                     'data-id' => $category->id,
                     'title' => get_string('movedown'),
-                    'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+                    'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;',
                 ]
             );
 
@@ -103,7 +103,7 @@ if ($hassiteconfig) {
                 'section' => 'tiny_styles_admin',
                 'action'  => 'delete',
                 'id'      => $category->id,
-                'sesskey' => sesskey()
+                'sesskey' => sesskey(),
             ]);
 
             $confirmstring = get_string('confirmdeletecategory', 'tiny_styles');
@@ -127,9 +127,9 @@ if ($hassiteconfig) {
                     'elementsurl' => '#',
                     'elementsiconstyle' => 'color: gray; pointer-events: none;',
                     'moveupiconhtml'  => $moveupiconhtml,
-                    'movedowniconhtml'=> $movedowniconhtml,
+                    'movedowniconhtml' => $movedowniconhtml,
                     'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-                        'action' => 'edit', 'id' => $category->id
+                        'action' => 'edit', 'id' => $category->id,
                     ]))->out(false),
                     'deleteiconhtml' => $deleteiconhtml,
                 ];
@@ -144,10 +144,10 @@ if ($hassiteconfig) {
                         'catid' => $category->id,
                     ]))->out(false),
                     'elementsiconstyle' => '',
-                    'moveupiconhtml'  => $moveupiconhtml,
-                    'movedowniconhtml'=> $movedowniconhtml,
+                    'moveupiconhtml' => $moveupiconhtml,
+                    'movedowniconhtml' => $movedowniconhtml,
                     'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-                        'action' => 'edit', 'id' => $category->id
+                        'action' => 'edit', 'id' => $category->id,
                     ]))->out(false),
                     'deleteiconhtml' => $deleteiconhtml,
                 ];

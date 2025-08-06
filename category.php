@@ -36,9 +36,9 @@ $PAGE->set_pagelayout('admin');
 $action = optional_param('action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
-$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php',[
+$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
     'action' => $action,
-    'id' => $id
+    'id' => $id,
 ]));
 
 // Dynamic naming for the site.
@@ -56,6 +56,11 @@ require_once($CFG->libdir . '/formslib.php');
  * Form for creating/editing category.
  */
 class category_form extends moodleform {
+
+    /**
+     * Defines the moodle form.
+     * @return void
+     */
     public function definition() {
         $mform = $this->_form;
 
@@ -65,7 +70,7 @@ class category_form extends moodleform {
             'text',
             'name',
             get_string('name'),
-            ['size' => 1, 'style' => 'width: 400px;', 'maxlength' => 100,]
+            ['size' => 1, 'style' => 'width: 400px;', 'maxlength' => 100,],
         );
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
@@ -95,8 +100,9 @@ class category_form extends moodleform {
             'tooltip'  => 'Tooltip'
         ];
         */
-        /**
-         * Removed for not being implemented in editor side.
+        // Removed for not being implemented in editor side.
+        /*
+         * 
          *
          * $mform->addElement(
          * 'select',
@@ -150,10 +156,10 @@ class category_form extends moodleform {
                     $iconnames[] = $file;
                     $iconurl = $iconurlbase . '/' . $file;
                     $iconname = pathinfo($file, PATHINFO_FILENAME);
-            
-                    $iconpopuphtml .= '<div class="icon-grid-item" data-icon="' . s($file) . '" 
+
+                    $iconpopuphtml .= '<div class="icon-grid-item" data-icon="' . s($file) . '"
                         data-icon-name="' . s($iconname) . '"
-                        style="cursor:pointer; display:flex; flex-direction:column; align-items:center; 
+                        style="cursor:pointer; display:flex; flex-direction:column; align-items:center;
                         justify-content:center; padding:12px; border-radius:12px;"
                         title="' . s($iconname) . '">';
                     
@@ -218,7 +224,6 @@ class category_form extends moodleform {
         // Add available icon names as a data attribute for JavaScript validation
         $mform->addElement('html', '<script>window.availableIcons = ' . json_encode($iconnames) . ';</script>');
 
-
         $this->add_action_buttons(true, get_string('savechanges'));
     }
 
@@ -263,7 +268,7 @@ if ($data = $mform->get_data()) {
             $record->timecreated = $old->timecreated;
 
             $DB->update_record('tiny_styles_categories', $record);
-            redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']), 'Category updated!', 2);
+            redirect(new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']), 'Category updated!', 2);
         }
         // todo: edit this
         print_error('Invalid category ID');
@@ -272,12 +277,12 @@ if ($data = $mform->get_data()) {
         $maxsort = $DB->get_field_sql("SELECT MAX(sortorder)
                                  FROM {tiny_styles_categories}");
         $record->enabled     = 0;
-        $record->sortorder   = $maxsort+1;
+        $record->sortorder   = $maxsort + 1;
         $record->timecreated = time();
         $newid = $DB->insert_record('tiny_styles_categories', $record);
         redirect(new moodle_url(
             '/admin/settings.php',
-            ['section'=>'tiny_styles_admin']),
+            ['section' => 'tiny_styles_admin']),
             get_string('category_saved', 'tiny_styles'), 2
         );
     }
@@ -287,7 +292,7 @@ if ($data = $mform->get_data()) {
 // Get the category from db and set row to form data.
 if ($action === 'edit' && $id > 0) {
     global $DB;
-    if ($category = $DB->get_record('tiny_styles_categories', ['id'=>$id], '*', MUST_EXIST)) {
+    if ($category = $DB->get_record('tiny_styles_categories', ['id' => $id], '*', MUST_EXIST)) {
         $formdata = new stdClass();
         $formdata->id           = $category->id;
         $formdata->action       = 'edit';
