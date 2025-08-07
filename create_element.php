@@ -80,7 +80,7 @@ class element_form extends moodleform {
         $categories = $DB->get_records_menu('tiny_styles_categories', null, 'sortorder ASC', 'id,name');
 
         // TODO: remove the divider more efficiently by a conditional query.
-        foreach ($categories as $id => $name) { 
+        foreach ($categories as $id => $name) {
             $menumode = $DB->get_field('tiny_styles_categories', 'menumode', ['id' => $id]);
             if ($menumode === 'divider') {
                 unset($categories[$id]);
