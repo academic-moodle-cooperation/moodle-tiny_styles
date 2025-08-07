@@ -113,7 +113,7 @@ if ($hassiteconfig) {
                 $deleteurl,
                 new pix_icon('t/delete', get_string('delete')),
                 new confirm_action($confirmstring),
-                ['title' => get_string('delete')]
+                ['title' => get_string('delete')],
             );
 
             // Filtering dividers out.
@@ -127,9 +127,9 @@ if ($hassiteconfig) {
                     'elementsurl' => '#',
                     'elementsiconstyle' => 'color: gray; pointer-events: none;',
                     'moveupiconhtml'  => $moveupiconhtml,
-                    'movedowniconhtml' => $movedowniconhtml,
+                    'movedowniconhtml'=> $movedowniconhtml,
                     'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-                        'action' => 'edit', 'id' => $category->id,
+                        'action' => 'edit', 'id' => $category->id
                     ]))->out(false),
                     'deleteiconhtml' => $deleteiconhtml,
                 ];
@@ -144,10 +144,10 @@ if ($hassiteconfig) {
                         'catid' => $category->id,
                     ]))->out(false),
                     'elementsiconstyle' => '',
-                    'moveupiconhtml' => $moveupiconhtml,
-                    'movedowniconhtml' => $movedowniconhtml,
+                    'moveupiconhtml'  => $moveupiconhtml,
+                    'movedowniconhtml'=> $movedowniconhtml,
                     'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-                        'action' => 'edit', 'id' => $category->id,
+                        'action' => 'edit', 'id' => $category->id
                     ]))->out(false),
                     'deleteiconhtml' => $deleteiconhtml,
                 ];

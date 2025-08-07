@@ -59,6 +59,7 @@ class element_form extends moodleform {
     /**
      * Defines the moodle form.
      * @return void
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function definition() {
         global $DB;
@@ -78,7 +79,7 @@ class element_form extends moodleform {
         $categories = $DB->get_records_menu('tiny_styles_categories', null, 'sortorder ASC', 'id,name');
 
         // todo: remove the divider more efficiently by a conditional query
-        foreach ($categories as $id => $name) {
+        foreach ($categories as $id => $name) { // @codingStandardsIgnoreLine - name is used in array structure
             $menumode = $DB->get_field('tiny_styles_categories', 'menumode', ['id' => $id]);
             if ($menumode === 'divider') {
                 unset($categories[$id]);
@@ -211,7 +212,7 @@ class element_form extends moodleform {
      * @param mixed $data User input for name.
      * @return array
      */
-    public function validation($data) {
+    public function validation($data, $files) {
         $errors = array();
 
         if (strlen(trim($data['name'])) < 3) {

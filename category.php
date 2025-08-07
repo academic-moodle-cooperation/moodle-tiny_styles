@@ -60,6 +60,7 @@ class category_form extends moodleform {
     /**
      * Defines the moodle form.
      * @return void
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function definition() {
         $mform = $this->_form;
@@ -92,7 +93,7 @@ class category_form extends moodleform {
         $mform->addRule('description', get_string('maximumchars', '', 400), 'maxlength', 400, 'client');
 
         // Description field stored in DB as "showdesc".
-        // Removed for not being implemented in editor side.
+        // Commented out for not being implemented in editor side.
         /*
         $descdisplayoptions = [
             'never'    => 'Never',
@@ -100,7 +101,7 @@ class category_form extends moodleform {
             'tooltip'  => 'Tooltip'
         ];
         */
-        // Removed for not being implemented in editor side.
+        // Commented out for not being implemented in editor side.
         /*
          *
          *
@@ -231,7 +232,7 @@ class category_form extends moodleform {
      * TODO: validation
      * eg. name must be at least 3 chars
      */
-    public function validation($data) {
+    public function validation($data, $files) {
         $errors = [];
         if (strlen(trim($data['name'])) < 3) {
             $errors['name'] = get_string('errorname', 'tiny_styles');
