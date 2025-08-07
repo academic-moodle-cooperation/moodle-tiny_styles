@@ -22,6 +22,7 @@
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+// phpcs:disable moodle.Commenting.MissingDocblock
 
 require_once(__DIR__ . '/../../../../../config.php');
 require_login();
@@ -65,7 +66,7 @@ class element_form extends moodleform {
         global $DB;
         $mform = $this->_form;
 
-        // Name
+        // Name.
         $mform->addElement(
             'text',
             'name',
@@ -79,7 +80,7 @@ class element_form extends moodleform {
         $categories = $DB->get_records_menu('tiny_styles_categories', null, 'sortorder ASC', 'id,name');
 
         // TODO: remove the divider more efficiently by a conditional query.
-        foreach ($categories as $id => $name) { // @codingStandardsIgnoreLine Name is used in array structure.
+        foreach ($categories as $id => $name) { // @codingStandardsIgnoreLine
             $menumode = $DB->get_field('tiny_styles_categories', 'menumode', ['id' => $id]);
             if ($menumode === 'divider') {
                 unset($categories[$id]);
