@@ -25,15 +25,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'tiny/styles:use' => array(
+$capabilities = [
+    'tiny/styles:use' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
+        'archetypes' => [
             'user' => CAP_ALLOW,
-        ),
-    ),
-);
+        ],
+    ],
+];
 
 /*
 $capabilities = array(

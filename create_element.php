@@ -214,7 +214,7 @@ class element_form extends moodleform {
      * @return array
      */
     public function validation($data, $files) {
-        $errors = array();
+        $errors = [];
 
         if (strlen(trim($data['name'])) < 3) {
             $errors['name'] = get_string('error_nametooshort', 'tiny_styles');
@@ -277,7 +277,7 @@ if ($data = $mform->get_data()) {
             ])
             )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
         }
-        print_error('invalidelementid', 'tiny_styles');
+        throw new moodle_exception('invalidelementid', 'tiny_styles');
 
     } else {
         // New element addition.
@@ -343,7 +343,7 @@ if ($action === 'edit' && $id > 0) {
 
         $mform->set_data($formdata);
     } else {
-        print_error('invalidelementid', 'tiny_styles');
+        throw new moodle_exception('invalidelementid', 'tiny_styles');
     }
 } else {
     // Create new style element.
