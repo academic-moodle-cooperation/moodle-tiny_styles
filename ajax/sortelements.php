@@ -56,7 +56,7 @@ try {
 
     global $DB;
 
-    // Check if the record exists
+    // Check if the record exists.
     $exists = $DB->record_exists('tiny_styles_cat_elements', [
         'categoryid' => $categoryid,
         'elementid' => $elementid,
@@ -66,13 +66,13 @@ try {
         throw new moodle_exception("No record found for categoryid=$categoryid and elementid=$elementid");
     }
 
-    // Get the current element's bridging record
+    // Get the current element's bridging record.
     $current = $DB->get_record('tiny_styles_cat_elements', [
         'categoryid' => $categoryid,
         'elementid' => $elementid,
     ], '*', MUST_EXIST);
 
-    // Find the neighbor element (the one above or below)
+    // Find the neighbor element (the one above or below).
     $params = ['catid' => $categoryid, 'sort' => $current->sortorder];
     if ($direction === 'up') {
         $sql = "SELECT *
@@ -91,21 +91,21 @@ try {
     $neighbors = $DB->get_records_sql($sql, $params, 0, 1);
 
     if (empty($neighbors)) {
-        // No neighbors found, nothing to swap
+        // No neighbors found, nothing to swap.
         $response = ['status' => 'success', 'message' => 'No change required (no neighbor found)'];
         echo json_encode($response);
         exit;
     }
 
-    // Get the first (and only) record
+    // Get the first (and only) record.
     $neighbor = reset($neighbors);
 
-    // Swap sortorder values
+    // Swap sortorder values.
     $temp = $current->sortorder;
     $current->sortorder = $neighbor->sortorder;
     $neighbor->sortorder = $temp;
 
-    // Save changes to database
+    // Save changes to database.
     $DB->update_record('tiny_styles_cat_elements', $current);
     $DB->update_record('tiny_styles_cat_elements', $neighbor);
 

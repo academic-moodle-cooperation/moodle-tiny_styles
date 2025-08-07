@@ -54,16 +54,16 @@ try {
 
     global $DB;
 
-    // Get the current category record from tiny_styles_categories
+    // Get the current category record from tiny_styles_categories.
     $current = $DB->get_record('tiny_styles_categories', ['id' => $catid], '*', MUST_EXIST);
 
-    // Build SQL query to find neighbor based on action
+    // Build SQL query to find neighbor based on action.
     if ($action === 'moveup') {
         $sql = "SELECT *
                   FROM {tiny_styles_categories}
                  WHERE sortorder < :currsort
               ORDER BY sortorder DESC";
-    } else { // movedown
+    } else {
         $sql = "SELECT *
                   FROM {tiny_styles_categories}
                  WHERE sortorder > :currsort

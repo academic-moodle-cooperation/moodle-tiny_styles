@@ -110,7 +110,7 @@ if ($mform->is_cancelled()) {
         redirect($returnurl);
     }
 
-    // Process the JSON data with importhandler
+    // Process the JSON data with importhandler.
     try {
         importhandler::process($jsondata);
         notification::success(get_string('importsuccess', 'tiny_styles', 'Import successful'));

@@ -176,7 +176,7 @@ if ($action === 'delete' && $id > 0) {
 $bulkmessage = '';
 if (isset($_SESSION['tiny_styles_bulk_message'])) {
     $bulkmessage = $_SESSION['tiny_styles_bulk_message'];
-    unset($_SESSION['tiny_styles_bulk_message']); // Clear the message
+    unset($_SESSION['tiny_styles_bulk_message']);
 }
 
 if (!empty($bulkmessage)) {

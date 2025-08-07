@@ -23,8 +23,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Custom installation logic
  */
@@ -74,7 +72,7 @@ function create_default_categories() {
         $categoryids['boxes'] = $DB->insert_record('tiny_styles_categories', $cat);
 
         // Future categories (commented out for now).
-        create_future_categories();
+        // Uncomment this: create_future_categories();.
     }
 
     return $categoryids;
@@ -88,7 +86,6 @@ function create_future_categories() {
     // if a default UNI-Vorlagen category is implemented.
 
     // Divider category (commented out).
-    /*
     $cat = new stdClass();
     $cat->name = '-------';
     $cat->description = '';
@@ -100,10 +97,8 @@ function create_future_categories() {
     $cat->timecreated = time();
     $cat->timemodified = time();
     $dividercatid = $DB->insert_record('tiny_styles_categories', $cat);
-    */
 
-    // "Uni-Vorlagen" category (commented out).
-    /*
+    // Uni-Vorlagen category (commented out).
     $cat = new stdClass();
     $cat->name = 'Uni-Vorlagen';
     $cat->description = 'Vorlagen im Corporate Design der Uni';
@@ -115,7 +110,7 @@ function create_future_categories() {
     $cat->timecreated = time();
     $cat->timemodified = time();
     $unicatid = $DB->insert_record('tiny_styles_categories', $cat);
-    */
+
 }
 
 /**

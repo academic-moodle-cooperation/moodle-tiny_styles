@@ -25,8 +25,6 @@
 
 namespace tiny_styles;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Handles importing the categories and styles from JSON data.
  */
@@ -43,7 +41,7 @@ class importhandler {
     public static function process(array $data): bool {
         global $DB;
 
-        // Check the import for categories
+        // Check the import for categories.
         if (empty($data['categories']) || !is_array($data['categories'])) {
             throw new \moodle_exception('importjsoncategories', 'tiny_styles');
         }
@@ -52,7 +50,7 @@ class importhandler {
         try {
             $catmapping = [];
 
-            // Process categories
+            // Process categories.
             foreach ($data['categories'] as $catarr) {
                 $catobj = new \stdClass();
                 $catobj->name = $catarr['name'] ?? 'no name';
@@ -74,7 +72,7 @@ class importhandler {
                 $catmapping[$catobj->name] = $catobj->id;
             }
 
-            // Process elements for each category
+            // Process elements for each category.
             foreach ($data['categories'] as $catarr) {
                 if (empty($catarr['elements']) || !is_array($catarr['elements'])) {
                     continue;

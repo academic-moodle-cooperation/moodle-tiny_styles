@@ -103,8 +103,6 @@ class category_form extends moodleform {
         */
         // Commented out for not being implemented in editor side.
         /*
-         *
-         *
          * $mform->addElement(
          * 'select',
          * 'showdesc',
@@ -125,7 +123,7 @@ class category_form extends moodleform {
             </div>
         </div>');
 
-        // The popup with search functionality
+        // The popup with search functionality.
         global $CFG;
         $iconpath = $CFG->dirroot . '/lib/editor/tiny/plugins/styles/pix';
         $iconurlbase = $CFG->wwwroot . '/lib/editor/tiny/plugins/styles/pix';
@@ -144,7 +142,7 @@ class category_form extends moodleform {
         $iconpopuphtml .= '<div id="icon-grid-container" style="max-height:300px; overflow-y:auto; padding:20px;">
             <div id="icon-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap:10px;">';
 
-        // Icons and names for the popup
+        // Icons and names for the popup.
         $iconnames = [];
         if (is_dir($iconpath)) {
             $files = scandir($iconpath);
@@ -185,7 +183,7 @@ class category_form extends moodleform {
             </div>
             </div>';
 
-        // Close button for popup
+        // Close button for popup.
         $iconpopuphtml .= '<div style="padding:15px 20px; border-top:1px solid #eee;
              display:flex; justify-content:center; align-items:center;">
             <button type="button" id="close-icon-popup" class="btn btn-primary">'
@@ -193,7 +191,7 @@ class category_form extends moodleform {
             </div>';
         $iconpopuphtml .= '</div>';
 
-        // Add popup HTML to form
+        // Add popup HTML to form.
         $mform->addElement('html', $iconpopuphtml);
 
         $menumodeoptions = [
@@ -222,15 +220,15 @@ class category_form extends moodleform {
         $mform->addElement('hidden', 'selectedicon', '');
         $mform->setType('selectedicon', PARAM_TEXT);
 
-        // Add available icon names as a data attribute for JavaScript validation
+        // Add available icon names as a data attribute for JavaScript validation.
         $mform->addElement('html', '<script>window.availableIcons = ' . json_encode($iconnames) . ';</script>');
 
         $this->add_action_buttons(true, get_string('savechanges'));
     }
 
     /**
-     * TODO: validation
-     * eg. name must be at least 3 chars
+     * TODO: validation.
+     * Eg. name must be at least 3 chars.
      */
     public function validation($data, $files) {
         $errors = [];
@@ -259,7 +257,7 @@ if ($data = $mform->get_data()) {
     $record->menumode = $data->menumode;
     $record->timemodified = time();
 
-    // UPDATE of existing category
+    // UPDATE of existing category.
     if ($data->action === 'edit' && !empty($data->id)) {
         if ($old = $DB->get_record('tiny_styles_categories', ['id' => $data->id], '*', MUST_EXIST)) {
             $record->id          = $old->id;
@@ -270,10 +268,10 @@ if ($data = $mform->get_data()) {
             $DB->update_record('tiny_styles_categories', $record);
             redirect(new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']), 'Category updated!', 2);
         }
-        // todo: edit this
+        // TODO: edit this.
         print_error('Invalid category ID');
     } else {
-        // CREATE new category
+        // CREATE new category.
         $maxsort = $DB->get_field_sql("SELECT MAX(sortorder)
                                  FROM {tiny_styles_categories}");
         $record->enabled     = 0;
@@ -298,18 +296,18 @@ if ($action === 'edit' && $id > 0) {
         $formdata->action       = 'edit';
         $formdata->name         = $category->name;
         $formdata->description  = $category->description;
-        // $formdata->showdesc     = $category->showdesc;
+        // To uncommment: $formdata->showdesc     = $category->showdesc;.
         // Removed for not being implemented in editor.
         $formdata->selectedicon = $category->symbol;
         $formdata->menumode = $category->menumode;
 
         $mform->set_data($formdata);
     } else {
-        // TODO: edit this
+        // TODO: edit this.
         print_error('Invalid category ID');
     }
 } else {
-    // ensures hidden fields are set
+    // Ensures hidden fields are set.
     $formdata = new stdClass();
     $formdata->id = 0;
     $formdata->action = 'create';

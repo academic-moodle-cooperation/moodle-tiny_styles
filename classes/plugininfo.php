@@ -24,7 +24,6 @@
  */
 
 namespace tiny_styles;
-defined('MOODLE_INTERNAL') || die();
 
 use context;
 use editor_tiny\plugin;

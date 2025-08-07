@@ -25,8 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'TinyMCE-Gestaltungsvorlagen';
-
 $string['actions'] = 'Aktionen';
 $string['back_overview'] = 'Zur Übersicht';
 $string['bootstrapclass'] = 'CSS-Stil / Bootstrap-Klasse';
@@ -115,6 +113,12 @@ $string['labels'] = 'Label';
 $string['manualconfig'] = 'Manueller Stil';
 $string['manualdefault'] = 'Bitte geben Sie hier gültigen CSS-Code ein. Beispiel: <code>color: red; font-weight: bold;</code><br>Technischer Hinweis: Die manuellen Stile werden den ausgewählten HTML-Elementen als <a href="https://developer.mozilla.org/de/docs/Learn_web_development/Core/Styling_basics/Getting_started#inline-styles" target="_blank">Inline-Styles</a> hinzugefügt.';
 $string['menuitem_styles'] = 'Gestaltungsvorlagen';
+$string['menumode'] = 'Menümodus';
+$string['menumodehdr'] = 'Darstellung der Kategorie im Menü';
+$string['menumodehelp'] = 'Darstellung';
+$string['menumodehelp_help'] = 'Wählen Sie aus, ob die Elemente direkt im Menü angezeigt oder in einem Untermenü im Editor organisiert werden sollen. Alternativ können Sie auch eine Trennlinie erstellen, um Kategorien visuell voneinander zu trennen.';
+$string['menumodetype'] = 'Menümodus';
+$string['menumodetype_help'] = '<p>Wählen Sie den Modus aus, wie Elemente im Menü der Gestaltungsvorlagen angezeigt werden sollen:</p><ul><li><strong>Untermenü</strong>: Die Elemente werden als Untermenü mit dem Titel der Kategorie als übergeordnetem Knoten angezeigt.</li><li><strong>Inline</strong>: Die Elemente der Kategorie werden nacheinander direkt im Menü der Gestaltungsvorlagen angezeigt.</li><li><strong>Trennlinie</strong>: Möglichkeit, um Inhalte im Menü durch eine Linie getrennt voneinander anzuzeigen. Es handelt sich hierbei um keine Kategorie, der Elemente hinzugefügt werden können!</li></ul>';
 $string['movedown'] = 'Runter';
 $string['moveup'] = 'Hoch';
 $string['name'] = 'Name';
@@ -124,12 +128,7 @@ $string['noelements'] = 'Keine Elemente gefunden.';
 $string['nofileuploaded'] = 'Es wurde keine Datei hochgeladen.';
 $string['noiconselected'] = 'Keine Elemente ausgewählt';
 $string['noiconsfound'] = 'Keine Symbole gefunden';
-$string['menumode'] = 'Menümodus';
-$string['menumodehdr'] = 'Darstellung der Kategorie im Menü';
-$string['menumodehelp'] = 'Darstellung';
-$string['menumodehelp_help'] = 'Wählen Sie aus, ob die Elemente direkt im Menü angezeigt oder in einem Untermenü im Editor organisiert werden sollen. Alternativ können Sie auch eine Trennlinie erstellen, um Kategorien visuell voneinander zu trennen.';
-$string['menumodetype'] = 'Menümodus';
-$string['menumodetype_help'] = '<p>Wählen Sie den Modus aus, wie Elemente im Menü der Gestaltungsvorlagen angezeigt werden sollen:</p><ul><li><strong>Untermenü</strong>: Die Elemente werden als Untermenü mit dem Titel der Kategorie als übergeordnetem Knoten angezeigt.</li><li><strong>Inline</strong>: Die Elemente der Kategorie werden nacheinander direkt im Menü der Gestaltungsvorlagen angezeigt.</li><li><strong>Trennlinie</strong>: Möglichkeit, um Inhalte im Menü durch eine Linie getrennt voneinander anzuzeigen. Es handelt sich hierbei um keine Kategorie, der Elemente hinzugefügt werden können!</li></ul>';
+$string['pluginname'] = 'TinyMCE-Gestaltungsvorlagen';
 $string['preview'] = 'Vorschau';
 $string['privacy:metadata'] = 'Das Plugin TinyMCE Gestaltungsvorlagen speichert keine personenbezogenen Daten.';
 $string['searchplaceholder'] = 'Suchen';
@@ -146,9 +145,9 @@ $string['submit'] = 'Absenden';
 $string['tiny_styles_admin'] = 'TinyMCE-Gestaltungsvorlagen';
 $string['tiny_styles_button'] = 'Gestaltungsvorlagen';
 $string['type'] = 'Anzeigeart';
+$string['type:inline']  = 'Inline';
+$string['type:paragraph'] = 'Block';
 $string['typehelp'] = 'Anzeigeart';
 $string['typehelp_help'] = 'Wählen Sie aus, wie die Gestaltungsvorlage auf Text angewandt werden soll:<ul><li><strong>Inline</strong>: für Wörter oder kurze Texte</li><li><strong>Block</strong>: für Absätze oder längere Texte</li></ul>';
-$string['type:paragraph'] = 'Block';
-$string['type:inline']  = 'Inline';
 $string['view'] = 'Ansehen';
 $string['withselection'] = 'Mit Auswahl...';

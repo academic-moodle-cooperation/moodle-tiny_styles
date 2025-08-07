@@ -24,7 +24,6 @@
  */
 
 namespace tiny_styles\privacy;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Returns a text explaining that this plugin stores no personal data.

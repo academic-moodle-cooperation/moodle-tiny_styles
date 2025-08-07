@@ -78,8 +78,8 @@ class element_form extends moodleform {
 
         $categories = $DB->get_records_menu('tiny_styles_categories', null, 'sortorder ASC', 'id,name');
 
-        // todo: remove the divider more efficiently by a conditional query
-        foreach ($categories as $id => $name) { // @codingStandardsIgnoreLine - name is used in array structure
+        // TODO: remove the divider more efficiently by a conditional query.
+        foreach ($categories as $id => $name) { // @codingStandardsIgnoreLine Name is used in array structure.
             $menumode = $DB->get_field('tiny_styles_categories', 'menumode', ['id' => $id]);
             if ($menumode === 'divider') {
                 unset($categories[$id]);
@@ -97,7 +97,7 @@ class element_form extends moodleform {
         $mform->setDefault('categoryid', 'catid');
         $mform->addHelpButton('categoryid', 'categoryhelp', 'tiny_styles');
 
-        // CSS classes
+        // CSS classes.
         $elements = $DB->get_fieldset_sql("
             SELECT cssclasses
             FROM (
@@ -170,7 +170,7 @@ class element_form extends moodleform {
         );
         $mform->hideIf('manualconfig_help', 'cssclasses', 'neq', 'Manual style');
 
-        // Hidden fields
+        // Hidden fields.
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 

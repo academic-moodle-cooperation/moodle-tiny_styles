@@ -25,8 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'TinyMCE Styles';
-
 $string['actions'] = 'Actions';
 $string['back_overview'] = 'Back to main';
 $string['bootstrapclass'] = 'CSS style / Bootstrap class';
@@ -111,6 +109,10 @@ $string['labels'] = 'Labels';
 $string['manualconfig'] = 'Manual style';
 $string['manualdefault'] = 'Please enter a valid CSS code here. Example: <code>color: red; font-weight: bold;</code><br>Technical note: The manual styles will be added to the selected HTML elements as <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Getting_started#inline_styles" target="_blank">inline styles</a>.';
 $string['menuitem_styles'] = 'Styles';
+$string['menumode'] = 'Menu mode';
+$string['menumodehdr'] = 'Presentation of category in the menu';
+$string['menumodetype'] = 'Menu mode';
+$string['menumodetype_help'] = '<p>Select the mode how the elements should be displayed in the styles menu:</p><ul><li><strong>Submenu</strong>: The elements are displayed as a submenu with the category\'s title as parent node.</li><li><strong>Inline</strong>: The elements are displayed directly in the styles menu, one after another.</li><li><strong>Divider</strong>: Option to separate menu content using a dividing line. This is not a category to which items can be added!</ul>';
 $string['movedown'] = 'Move down';
 $string['moveup'] = 'Move up';
 $string['name'] = 'Name';
@@ -120,10 +122,7 @@ $string['noelements'] = 'No elements found.';
 $string['nofileuploaded'] = 'No file was uploaded.';
 $string['noiconselected'] = 'No elements selected';
 $string['noiconsfound'] = 'No icons found';
-$string['menumode'] = 'Menu mode';
-$string['menumodehdr'] = 'Presentation of category in the menu';
-$string['menumodetype'] = 'Menu mode';
-$string['menumodetype_help'] = '<p>Select the mode how the elements should be displayed in the styles menu:</p><ul><li><strong>Submenu</strong>: The elements are displayed as a submenu with the category\'s title as parent node.</li><li><strong>Inline</strong>: The elements are displayed directly in the styles menu, one after another.</li><li><strong>Divider</strong>: Option to separate menu content using a dividing line. This is not a category to which items can be added!</ul>';
+$string['pluginname'] = 'TinyMCE Styles';
 $string['preview'] = 'Preview';
 $string['privacy:metadata'] = 'The tiny_styles plugin does not store any personal data.';
 $string['searchplaceholder'] = 'Search';
@@ -140,9 +139,9 @@ $string['submit'] = 'Submit';
 $string['tiny_styles_admin'] = 'Styles';
 $string['tiny_styles_button'] = 'Styles';
 $string['type'] = 'Display Type';
+$string['type:inline'] = 'Inline';
+$string['type:paragraph'] = 'Block';
 $string['typehelp'] = 'Display Type';
 $string['typehelp_help'] = 'Choose how the style should be applied to text:<ul><li><strong>Inline</strong>: for words or short text</li><li><strong>Block</strong>: for paragraphs or larger text blocks</li></ul>';
-$string['type:paragraph'] = 'Block';
-$string['type:inline'] = 'Inline';
 $string['view'] = 'View';
 $string['withselection'] = 'With selected...';
