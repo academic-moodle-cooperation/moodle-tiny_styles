@@ -42,8 +42,8 @@ class plugininfo extends plugin implements plugin_with_configuration {
      * @param array $fpoptions
      * @param mixed $editor
      * @return array{property: string}
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
+    // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
     public static function get_plugin_configuration_for_context(
         context $context,
         array $options,

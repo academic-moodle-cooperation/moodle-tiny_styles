@@ -27,8 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Custom installation logic
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
+// phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Files.LineLength
 function xmldb_tiny_styles_install() {
     global $DB;
 

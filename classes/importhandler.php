@@ -38,9 +38,8 @@ class importhandler {
      * @param array $data The decoded JSON data
      * @return bool True if import was successful
      * @throws \moodle_exception If the JSON format is invalid
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
+    // phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Metrics.NestingLevel
     public static function process(array $data): bool {
         global $DB;
 

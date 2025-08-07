@@ -60,8 +60,8 @@ class category_form extends moodleform {
     /**
      * Defines the moodle form.
      * @return void
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    // phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Metrics.NestingLevel,Generic.Files.LineLength
     public function definition() {
         $mform = $this->_form;
 
