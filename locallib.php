@@ -85,7 +85,8 @@ function move_category_down(int $catid): void {
 /**
  * Used to move an element up in the database.
  *
- * @param int $catid Unique Elemnet ID.
+ * @param int $catid Unique Category ID.
+ * @param int $elementid Unique Element ID.
  * @return void
  */
 function move_element_up(int $catid, int $elementid): void {
@@ -125,7 +126,8 @@ function move_element_up(int $catid, int $elementid): void {
 /**
  * Used to move an element down in the database.
  *
- * @param int $catid Unique Element ID.
+ * @param int $catid Unique Category ID.
+ * @param int $elementid Unique Element ID.
  * @return void
  */
 function move_element_down(int $catid, int $elementid): void {

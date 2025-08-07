@@ -231,6 +231,8 @@ class category_form extends moodleform {
     /**
      * TODO: validation.
      * Eg. name must be at least 3 chars.
+     * @param mixed $data User input for name.
+     * @param mixed $files Required by moodle.
      */
     public function validation($data, $files) {
         $errors = [];
