@@ -23,11 +23,11 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 // phpcs:disable moodle.Commenting.MissingDocblock
+// phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Files.LineLength
 
 /**
  * Custom installation logic
  */
-// phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Files.LineLength
 function xmldb_tiny_styles_install() {
     global $DB;
 
@@ -97,7 +97,7 @@ function create_future_categories() {
     $cat->sortorder = 3;
     $cat->timecreated = time();
     $cat->timemodified = time();
-    $dividercatid = $DB->insert_record('tiny_styles_categories', $cat);
+    // Uncomment: $dividercatid = $DB->insert_record('tiny_styles_categories', $cat);.
 
     // Uni-Vorlagen category (commented out).
     $cat = new stdClass();
@@ -110,7 +110,7 @@ function create_future_categories() {
     $cat->sortorder = 4;
     $cat->timecreated = time();
     $cat->timemodified = time();
-    $unicatid = $DB->insert_record('tiny_styles_categories', $cat);
+    //Uncomment: $unicatid = $DB->insert_record('tiny_styles_categories', $cat);.
 
 }
 

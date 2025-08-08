@@ -23,6 +23,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 // phpcs:disable moodle.Commenting.MissingDocblock
+// phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Metrics.NestingLevel
 
 namespace tiny_styles;
 
@@ -38,7 +39,6 @@ class importhandler {
      * @return bool True if import was successful
      * @throws \moodle_exception If the JSON format is invalid
      */
-    // phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Metrics.NestingLevel
     public static function process(array $data): bool {
         global $DB;
 

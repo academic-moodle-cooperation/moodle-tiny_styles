@@ -23,6 +23,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 // phpcs:disable moodle.Commenting.MissingDocblock
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 
 namespace tiny_styles;
 
@@ -43,7 +44,6 @@ class plugininfo extends plugin implements plugin_with_configuration {
      * @param mixed $editor
      * @return array{property: string}
      */
-    // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
     public static function get_plugin_configuration_for_context(
         context $context,
         array $options,
