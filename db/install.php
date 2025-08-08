@@ -22,13 +22,10 @@
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// phpcs:disable moodle.Commenting.MissingDocblock
-// phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Files.LineLength
 
 /**
  * Custom installation logic
  */
-// PHPMD:suppress UnusedLocalVariable.
 function xmldb_tiny_styles_install() {
     global $DB;
 
