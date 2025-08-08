@@ -16,16 +16,3 @@ workflow:
 include:
   - component: $CI_SERVER_FQDN/amc/moodle/moodle-ci/moodle-plugin-ci@5.0
   - component: $CI_SERVER_FQDN/amc/moodle/moodle-ci/moodle-devil-app@5.0
-
-validate:
-  variables:
-    MUSTACHE_IGNORE_NAMES: 'formstart.mustache,formend.mustache'
-test:postgres:
-  variables:
-    MUSTACHE_IGNORE_NAMES: 'formstart.mustache,formend.mustache'
-test:mysql:
-  variables:
-    MUSTACHE_IGNORE_NAMES: 'formstart.mustache,formend.mustache'
-test:mariadb:
-  variables:
-    MUSTACHE_IGNORE_NAMES: 'formstart.mustache,formend.mustache'
