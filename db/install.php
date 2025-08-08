@@ -23,18 +23,18 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Custom installation logic for the default styles.
- * 
+ *
  */
 function xmldb_tiny_styles_install() {
     global $DB;
 
     // Adding default categories.
-    if (!$DB->record_exists('tiny_styles_categories', array())) {
-        
+    if (!$DB->record_exists('tiny_styles_categories', [])) {
+
         // Labels.
         $cat = new stdClass();
         $cat->name         = 'Labels';
@@ -62,7 +62,7 @@ function xmldb_tiny_styles_install() {
         $boxencatid = $DB->insert_record('tiny_styles_categories', $cat);
 
         // These two categories can be uncommented in future development.
-        // Divider
+        // Divider.
         $cat = new stdClass();
         $cat->name         = '-------';
         $cat->description  = '';
@@ -75,7 +75,7 @@ function xmldb_tiny_styles_install() {
         $cat->timemodified = time();
         // Uncomment: $dividercatid = $DB->insert_record('tiny_styles_categories', $cat);.
 
-        // Uni-Vorlagen category
+        // Uni-Vorlagen category.
         $cat = new stdClass();
         $cat->name         = 'Uni-Vorlagen';
         $cat->description  = 'Vorlagen im Corporate Design der Uni';
@@ -90,7 +90,7 @@ function xmldb_tiny_styles_install() {
     }
 
     // Default badge and alerts bootstrap elements.
-    if (!$DB->record_exists('tiny_styles_elements', array())) {
+    if (!$DB->record_exists('tiny_styles_elements', [])) {
         $elements = [
             [
                 'name'       => 'Blue Label',
@@ -127,12 +127,14 @@ function xmldb_tiny_styles_install() {
                 'type'       => 'inline',
                 'cssclasses' => 'badge bg-info text-dark',
                 'sortorder'  => 6,
-            ],[
+            ],
+            [
                 'name'       => 'Dark Label',
                 'type'       => 'inline',
                 'cssclasses' => 'badge bg-dark text-white',
                 'sortorder'  => 7,
-            ],[
+            ],
+            [
                 'name'       => 'Light Label',
                 'type'       => 'inline',
                 'cssclasses' => 'badge bg-light text-dark',
@@ -143,22 +145,26 @@ function xmldb_tiny_styles_install() {
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-info',
                 'sortorder'  => 9,
-            ],[
+            ],
+            [
                 'name'       => 'Yellow Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-warning',
                 'sortorder'  => 10,
-            ],[
+            ],
+            [
                 'name'       => 'Red Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-danger',
                 'sortorder'  => 11,
-            ],[
+            ],
+            [
                 'name'       => 'Green Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-success',
                 'sortorder'  => 12,
-            ],[
+            ],
+            [
                 'name'       => 'Dark Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-dark',
@@ -198,13 +204,13 @@ function xmldb_tiny_styles_install() {
             $elem->enabled     = 1;
             $elem->sortorder   = $data['sortorder'];
             $elem->timecreated = time();
-            $elem->timemodified= time();
+            $elem->timemodified = time();
             $elements[$key]['id'] = $DB->insert_record('tiny_styles_elements', $elem);
         }
     }
 
     // Bridging table ->tiny_styles_cat_elements in the db.
-    if (!$DB->record_exists('tiny_styles_cat_elements', array())) {
+    if (!$DB->record_exists('tiny_styles_cat_elements', [])) {
         // Elements to categories.
         // One category can have many elements and one element can have many parent categories.
         $links = [
