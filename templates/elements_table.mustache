@@ -23,13 +23,27 @@
     * 
 
     Data attributes required for JS:
-    * 
+    *
 
     Context variables required for this template:
-    * 
+    * heading - Heading text for the page
+    * has_bulk_message - Whether there is a bulk message to display
+    * bulk_message - The bulk message to display
+    * submiturl - URL for form submission
+    * navigateback - Label for back button
+    * createbuttonlabel - Label for create button
+    * createelementurl - URL for creating a new element
+    * elements - Array of element objects
+    * bulkactionslabel - Label for bulk actions
+    * selectdefault - Default option text for bulk actions
+    * showaction - Show action text
+    * hideaction - Hide action text
+    * duplicateaction - Duplicate action text
+    * deleteaction - Delete action text
+    * catid - Category ID 
 }}
 <div class="tiny-elements" id="elements-container" data-catid="{{catid}}">
-    <h3>{{heading}}</h3>
+    {{#heading}}<h3>{{heading}}</h3>{{/heading}}
     {{#has_bulk_message}}
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             {{bulk_message}}
@@ -41,7 +55,7 @@
     <form method="post" action="{{submiturl}}">
         <div class="actions mb-3">
             <div class="mb-2">
-                <button type="submit" class="btn btn-secondary">
+                <button type="submit" class="btn btn-secondary me-2">
                     {{navigateback}}
                 </button>
                 <a href="{{createelementurl}}" class="btn btn-primary">
@@ -99,11 +113,11 @@
     <div class="bulk-actions mt-3 ms-3">
         <label for="bulk-actions-dropdown">{{bulkactionslabel}}</label>
         <select id="bulk-actions-dropdown" class="form-select form-select w-auto d-inline-block align-middle rounded">
-            <option value="">{{selectdefault}}</option>
-            <option value="show">{{showaction}}</option>
-            <option value="hide">{{hideaction}}</option>
-            <option value="duplicate">{{duplicateaction}}</option>
-            <option value="delete">{{deleteaction}}</option>
+             <option value="" label="{{selectdefault}}">{{selectdefault}}</option>
+            <option value="show" label="{{showaction}}">{{showaction}}</option>
+            <option value="hide" label="{{hideaction}}">{{hideaction}}</option>
+            <option value="duplicate" label="{{duplicateaction}}">{{duplicateaction}}</option>
+            <option value="delete" label="{{deleteaction}}">{{deleteaction}}</option>
         </select>
         <div id="bulk-action-warning" class="mt-2 text-danger" style="display: none;">
                 {{#str}} bulkactionmustselect, tiny_styles {{/str}}
