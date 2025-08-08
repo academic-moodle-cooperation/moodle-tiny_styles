@@ -23,7 +23,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 // phpcs:disable moodle.Commenting.MissingDocblock
-// phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Files.LineLength
+// phpcs:disable Generic.Metrics.CyclomaticComplexity,Generic.Files.LineLength,Generic.CodeAnalysis.UnusedFunctionParameter
 
 require_once(__DIR__ . '/../../../../../config.php');
 require_login();
@@ -63,6 +63,7 @@ class category_form extends moodleform {
      * Defines the moodle form.
      * @return void
      */
+    // PHPMD:suppress ExcessiveMethodLength
     public function definition() {
         $mform = $this->_form;
 
@@ -234,6 +235,7 @@ class category_form extends moodleform {
      * @param mixed $data User input for name.
      * @param mixed $files Required by moodle.
      */
+    // PHPMD:suppress UnusedFormalParameter
     public function validation($data, $files) {
         $errors = [];
         if (strlen(trim($data['name'])) < 3) {
