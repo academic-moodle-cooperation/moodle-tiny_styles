@@ -61,7 +61,7 @@ class element_form extends moodleform {
      * Defines the moodle form.
      * @return void
      */
-    // PHPMD:suppress ExcessiveMethodLength
+    // PHPMD:suppress ExcessiveMethodLength.
     public function definition() {
         global $DB;
         $mform = $this->_form;
@@ -214,7 +214,7 @@ class element_form extends moodleform {
      * @param mixed $files Required by moodle.
      * @return array
      */
-    // PHPMD:suppress UnusedLocalVariable
+    // PHPMD:suppress UnusedLocalVariable.
     public function validation($data, $files) {
         $errors = [];
 

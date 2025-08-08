@@ -38,7 +38,7 @@ class importhandler {
      * @return bool True if import was successful
      * @throws \moodle_exception If the JSON format is invalid
      */
-    // PHPMD:suppress CyclomaticComplexity,NPathComplexity
+    // PHPMD:suppress CyclomaticComplexity,NPathComplexity.
     public static function process(array $data): bool {
         global $DB;
 

@@ -43,7 +43,7 @@ class plugininfo extends plugin implements plugin_with_configuration {
      * @param mixed $editor
      * @return array{property: string}
      */
-    // PHPMD:suppress UnusedFormalParameter
+    // PHPMD:suppress UnusedFormalParameter.
     public static function get_plugin_configuration_for_context(
         context $context,
         array $options,

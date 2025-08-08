@@ -28,7 +28,7 @@
 /**
  * Custom installation logic
  */
-// PHPMD:suppress UnusedLocalVariable
+// PHPMD:suppress UnusedLocalVariable.
 function xmldb_tiny_styles_install() {
     global $DB;
 
@@ -82,11 +82,14 @@ function create_default_categories() {
 
 /**
  * Creates future/commented categories for potential development.
+ * These categories can be uncommented in future development,
+ * if a default UNI-Vorlagen category is implemented.
+ * For further development uncomment and edit the following code:
+ * $dividercatid = $DB -> insert_record('tiny_styles_categories', $cat);.
+ * $unicatid = $DB -> insert_record('tiny_styles_categories', $cat);
  */
 function create_future_categories() {
-    // These categories can be uncommented in future development,
-    // if a default UNI-Vorlagen category is implemented.
-
+    
     // Divider category (commented out).
     $cat = new stdClass();
     $cat->name = '-------';
@@ -98,8 +101,7 @@ function create_future_categories() {
     $cat->sortorder = 3;
     $cat->timecreated = time();
     $cat->timemodified = time();
-    // Uncomment: $dividercatid = $DB->insert_record('tiny_styles_categories', $cat);.
-
+    
     // Uni-Vorlagen category (commented out).
     $cat = new stdClass();
     $cat->name = 'Uni-Vorlagen';
@@ -111,7 +113,6 @@ function create_future_categories() {
     $cat->sortorder = 4;
     $cat->timecreated = time();
     $cat->timemodified = time();
-    // Uncomment: $unicatid = $DB->insert_record('tiny_styles_categories', $cat);.
 
 }
 
