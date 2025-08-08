@@ -113,11 +113,11 @@
     <div class="bulk-actions mt-3 ms-3">
         <label for="bulk-actions-dropdown">{{bulkactionslabel}}</label>
         <select id="bulk-actions-dropdown" class="form-select form-select w-auto d-inline-block align-middle rounded">
-             <option value="" label="{{selectdefault}}">{{selectdefault}}</option>
-            <option value="show" label="{{showaction}}">{{showaction}}</option>
-            <option value="hide" label="{{hideaction}}">{{hideaction}}</option>
-            <option value="duplicate" label="{{duplicateaction}}">{{duplicateaction}}</option>
-            <option value="delete" label="{{deleteaction}}">{{deleteaction}}</option>
+            <option value="">{{selectdefault}}</option>
+            <option value="show">{{showaction}}</option>
+            <option value="hide">{{hideaction}}</option>
+            <option value="duplicate">{{duplicateaction}}</option>
+            <option value="delete">{{deleteaction}}</option>
         </select>
         <div id="bulk-action-warning" class="mt-2 text-danger" style="display: none;">
                 {{#str}} bulkactionmustselect, tiny_styles {{/str}}
