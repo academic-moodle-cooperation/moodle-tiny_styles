@@ -28,6 +28,7 @@
 /**
  * Custom installation logic
  */
+// PHPMD:suppress UnusedLocalVariable
 function xmldb_tiny_styles_install() {
     global $DB;
 
@@ -110,7 +111,7 @@ function create_future_categories() {
     $cat->sortorder = 4;
     $cat->timecreated = time();
     $cat->timemodified = time();
-    //Uncomment: $unicatid = $DB->insert_record('tiny_styles_categories', $cat);.
+    // Uncomment: $unicatid = $DB->insert_record('tiny_styles_categories', $cat);.
 
 }
 
