@@ -89,7 +89,6 @@ function create_default_categories() {
  * $unicatid = $DB -> insert_record('tiny_styles_categories', $cat);
  */
 function create_future_categories() {
-    
     // Divider category (commented out).
     $cat = new stdClass();
     $cat->name = '-------';
@@ -101,7 +100,6 @@ function create_future_categories() {
     $cat->sortorder = 3;
     $cat->timecreated = time();
     $cat->timemodified = time();
-    
     // Uni-Vorlagen category (commented out).
     $cat = new stdClass();
     $cat->name = 'Uni-Vorlagen';

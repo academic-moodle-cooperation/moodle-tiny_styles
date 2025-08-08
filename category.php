@@ -97,7 +97,6 @@ class category_form extends moodleform {
         /*
         // Description field stored in DB as "showdesc".
         // Commented out for not being implemented in editor side.
-        
         $descdisplayoptions = [
             'never'    => 'Never',
             'helptext' => 'Help text',
