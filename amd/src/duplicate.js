@@ -22,8 +22,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Notification from 'core/notification';
-
 /**
  * Initialize duplicate functionality
  */
@@ -68,8 +66,6 @@ export const init = () => {
             .then(data => {
                 if (data.success) {
                     location.reload();
-                } else {
-                    Notification.alert('', data.message);
                 }
             })
             .catch(() => {

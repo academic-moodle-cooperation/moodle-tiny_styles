@@ -74,16 +74,9 @@ define([], function() {
                         credentials: 'same-origin'
                     });
 
-                    if (!response.ok) {
-                        alert(response.status);
-                        return;
-                    }
-
                     const data = await response.json();
                     if (data.success) {
                         updateIcon(button, data.newstate);
-                    } else {
-                        alert(data.message);
                     }
                 } catch (e) {
                     alert(e.message);

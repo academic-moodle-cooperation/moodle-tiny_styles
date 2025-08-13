@@ -80,9 +80,6 @@ define([], function() {
                         credentials: 'same-origin'
                     });
 
-                    if (!response.ok) {
-                        alert(response.status);
-                    }
                 } catch (e) {
                     alert(e.message);
                 }

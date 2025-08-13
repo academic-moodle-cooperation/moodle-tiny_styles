@@ -134,10 +134,14 @@ export const init = () => {
             const modalElement = modal.getRoot();
             if (modalElement && modalElement[0]) {
                 // JQuery object
-                modalElement[0].addEventListener(ModalEvents.hidden, () => {});
+                modalElement[0].addEventListener(ModalEvents.hidden, () => {
+                    // Intentionally empty
+                });
             } else if (modalElement) {
                 // DOM element
-                modalElement.addEventListener(ModalEvents.hidden, () => {});
+                modalElement.addEventListener(ModalEvents.hidden, () => {
+                    // Intentionally empty
+                });
             }
         } catch (error) {
             alert(error);
