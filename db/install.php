@@ -62,6 +62,7 @@ function xmldb_tiny_styles_install() {
         $boxencatid = $DB->insert_record('tiny_styles_categories', $cat);
 
         // These two categories can be uncommented in future development.
+        // to add them use tiny_styles_categories and $cat to insert the record.
         // Divider.
         $cat = new stdClass();
         $cat->name         = '-------';
@@ -73,7 +74,6 @@ function xmldb_tiny_styles_install() {
         $cat->sortorder    = 3;
         $cat->timecreated  = time();
         $cat->timemodified = time();
-        // Uncomment: $dividercatid = $DB->insert_record('tiny_styles_categories', $cat);.
 
         // Uni-Vorlagen category.
         $cat = new stdClass();
@@ -86,7 +86,6 @@ function xmldb_tiny_styles_install() {
         $cat->sortorder    = 4;
         $cat->timecreated  = time();
         $cat->timemodified = time();
-        // Uncomment: $unicatid = $DB->insert_record('tiny_styles_categories', $cat);.
     }
 
     // Default badge and alerts bootstrap elements.

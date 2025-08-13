@@ -91,27 +91,6 @@ class category_form extends moodleform {
         $mform->setType('description', PARAM_TEXT);
         $mform->addRule('description', get_string('maximumchars', '', 400), 'maxlength', 400, 'client');
 
-        /*
-        // Description field stored in DB as "showdesc".
-        // Commented out for not being implemented in editor side.
-        $descdisplayoptions = [
-            'never'    => 'Never',
-            'helptext' => 'Help text',
-            'tooltip'  => 'Tooltip'
-        ];
-        */
-        /*
-        // Description field stored in DB as "showdesc".
-        // Commented out for not being implemented in editor side.
-         * $mform->addElement(
-         * 'select',
-         * 'showdesc',
-         * get_string('descriptiondisp', 'tiny_styles'),
-         * $descdisplayoptions,
-         * ['size' => 1, 'style' => 'width: 300px;']
-         * );
-         */
-
         $mform->addElement('html', '<div class="form-group row">
             <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
                 <label for="icon-search-input">' . get_string('selecticon', 'tiny_styles') . '</label>
