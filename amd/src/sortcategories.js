@@ -58,7 +58,7 @@ define([], function() {
                 };
 
                 try {
-                    const response = await fetch(
+                    await fetch(
                         M.cfg.wwwroot +
                         '/lib/editor/tiny/plugins/styles/ajax/sortcategories.php?sesskey='
                         + encodeURIComponent(M.cfg.sesskey),

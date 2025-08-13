@@ -70,7 +70,7 @@ define([], function() {
                         '/lib/editor/tiny/plugins/styles/ajax/sortelements.php?sesskey=' +
                         encodeURIComponent(M.cfg.sesskey);
 
-                    const response = await fetch(ajaxUrl, {
+                    await fetch(ajaxUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

@@ -22,7 +22,6 @@
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../../../../../config.php');
 
@@ -35,9 +34,8 @@ try {
     $context = context_system::instance();
     require_capability('moodle/site:config', $context);
 
-    $rawinput = file_get_contents('php://input');
-
-    $data = json_decode($rawinput, true);
+    $rawInput = file_get_contents('php://input');
+    $data = json_decode($rawInput, true);
 
     if (!isset($data['action'], $data['id'])) {
         throw new moodle_exception('Missing required parameters: ' .
@@ -70,6 +68,7 @@ try {
               ORDER BY sortorder ASC";
     }
     $params = ['currsort' => $current->sortorder];
+
     $neighbors = $DB->get_records_sql($sql, $params, 0, 1);
 
     if (empty($neighbors)) {
@@ -96,21 +95,21 @@ try {
         'message' => 'Category order updated successfully',
         'debug' => [
             'current' => $current->id . ' (now ' . $current->sortorder . ')',
-            'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')',
-        ],
+            'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')'
+        ]
     ];
 
     echo json_encode($response);
 
 } catch (Throwable $e) {
-    $errorinfo = [
+    $errorInfo = [
         'status' => 'error',
         'message' => $e->getMessage(),
         'file' => $e->getFile(),
         'line' => $e->getLine(),
-        'trace' => $e->getTraceAsString(),
+        'trace' => $e->getTraceAsString()
     ];
 
     http_response_code(500);
-    echo json_encode($errorinfo);
+    echo json_encode($errorInfo);
 }
