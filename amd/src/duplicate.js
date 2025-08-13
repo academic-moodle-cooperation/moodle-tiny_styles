@@ -15,8 +15,8 @@
 
 /**
  * Enables duplicating a single element using together with bulk_element_action.php
- * 
- * @package tiny_styles
+ *
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

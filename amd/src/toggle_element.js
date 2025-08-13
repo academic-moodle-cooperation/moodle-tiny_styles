@@ -16,7 +16,7 @@
 /**
  * Enables toggling the elements enabled/disabled seamlessly.
  *
- * @package tiny_styles
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -49,7 +49,7 @@ define([], function() {
 
     const init = () => {
         document.querySelectorAll('.toggle-enable-element').forEach(button => {
-            button.addEventListener('click', async (event) => {
+            button.addEventListener('click', async(event) => {
                 event.preventDefault();
 
                 const elementid = parseInt(button.dataset.id);
@@ -95,13 +95,12 @@ define([], function() {
 
                 } catch (e) {
                     alert(e.message);
-                }
-                finally {
+                } finally {
                     button.disabled = false;
                 }
             });
         });
     };
 
-    return { init };
+    return {init};
 });

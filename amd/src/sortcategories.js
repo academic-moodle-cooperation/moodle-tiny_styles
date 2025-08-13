@@ -15,8 +15,8 @@
 
 /**
  * Enables moving the categories up and down seamlessly.
- * 
- * @package tiny_styles
+ *
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -41,7 +41,7 @@ define([], function() {
 
     const init = () => {
         document.querySelectorAll('.moveup, .movedown').forEach(button => {
-            button.addEventListener('click', async (event) => {
+            button.addEventListener('click', async(event) => {
                 event.preventDefault();
 
                 const action = button.dataset.action;
@@ -83,5 +83,5 @@ define([], function() {
         });
     };
 
-    return { init };
+    return {init};
 });

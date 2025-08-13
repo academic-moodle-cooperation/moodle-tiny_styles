@@ -16,7 +16,7 @@
 /**
  * Enables a popup preview window in the element creation.
  *
- * @package tiny_styles
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -88,13 +88,13 @@ const buildPreviewHtml = (name, cssclasses, type) => {
 export const init = () => {
     const previewBtn = document.getElementById('btn-preview-element');
 
-    // debug
+    // Debug
     if (!previewBtn) {
         console.debug('Preview button not found with ID btn-preview-element');
         return;
     }
     // Form fields after preview click
-    previewBtn.addEventListener('click', async (e) => {
+    previewBtn.addEventListener('click', async(e) => {
         e.preventDefault();
 
         const nameField = document.getElementById('id_name');
@@ -102,7 +102,7 @@ export const init = () => {
         const cssClassesField = document.getElementById('id_cssclasses');
         const manualConfigField = document.getElementById('id_manualconfig');
 
-        // debug
+        // Debug
         if (!nameField || !typeField || !cssClassesField) {
             console.error('Required form fields not found');
             return;
@@ -130,12 +130,12 @@ export const init = () => {
                 const styleEl = document.createElement('style');
                 styleEl.textContent = cssVal;
 
-                // trying to access dom element
+                // Trying to access dom element
                 const modalRoot = modal.getRoot();
                 if (modalRoot && modalRoot[0]) {
                     modalRoot[0].appendChild(styleEl);
                 } else if (modalRoot) {
-                    // already a dom element
+                    // Already a dom element
                     modalRoot.appendChild(styleEl);
                 }
             }
@@ -144,7 +144,7 @@ export const init = () => {
 
             const modalElement = modal.getRoot();
             if (modalElement && modalElement[0]) {
-                //jQuery object
+                // JQuery object
                 modalElement[0].addEventListener(ModalEvents.hidden, () => {});
             } else if (modalElement) {
                 // DOM element

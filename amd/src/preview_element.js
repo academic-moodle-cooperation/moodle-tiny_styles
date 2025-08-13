@@ -15,8 +15,8 @@
 
 /**
  * Separate pop up window for previewing a style.
- * 
- * @package tiny_styles
+ *
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -88,7 +88,7 @@ const buildPreviewHtml = (name, cssclasses, type) => {
  * @param {string} cssclasses - CSS string or classes to be applied.
  * @param {string} type - 'block' or 'inline'.
  */
-const showPreview = async (name, cssclasses, type) => {
+const showPreview = async(name, cssclasses, type) => {
     const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
     const previewhtml = buildPreviewHtml(name, cssclasses, type);
 
