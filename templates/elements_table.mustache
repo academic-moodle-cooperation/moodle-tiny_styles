@@ -40,7 +40,10 @@
     * hideaction - Hide action text
     * duplicateaction - Duplicate action text
     * deleteaction - Delete action text
-    * catid - Category ID 
+    * catid - Category ID
+    
+    Example context (json):
+
 }}
 <div class="tiny-elements" id="elements-container" data-catid="{{catid}}">
     {{#heading}}<h3>{{heading}}</h3>{{/heading}}
@@ -52,7 +55,7 @@
             </button>
         </div>
     {{/has_bulk_message}}
-    <form method="post" action="{{#submiturl}}{{submiturl}}{{/submiturl}}{{^submiturl}}.{{/submiturl}}"
+    <form method="post" action="{{#submiturl}}{{submiturl}}{{/submiturl}}{{^submiturl}}.{{/submiturl}}">
         <div class="actions mb-3">
             <div class="mb-2">
                 <button type="submit" class="btn btn-secondary me-2">

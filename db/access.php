@@ -24,11 +24,12 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
     'tiny/styles:use' => [
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_SYSTEM | CONTEXT_COURSE | CONTEXT_MODULE,
         'archetypes' => [
             'user' => CAP_ALLOW,
         ],
