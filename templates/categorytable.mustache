@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_styles/settings
+    @template tiny_styles/categorytable
 
     Displays the categories in a table
 
@@ -34,6 +34,18 @@
     * importurl - URL for importing data
     * importlabel - Label for import button
 }}
+<div class="mb-3" data-region="importjson" data-init="tiny_styles/importdata">
+    <a href="{{createcaturl}}" class="btn btn-primary me-2">
+        {{createcategory}}
+    </a>
+    <a href="{{importurl}}" class="btn btn-secondary me-2">
+        {{#str}} importdata, tiny_styles {{/str}}
+    </a>
+    <a href="{{exporturl}}" class="btn btn-secondary me-2">
+        {{exportlabel}}
+    </a>
+</div>
+
 <table class="table generaltable">
   <thead>
     <tr>
@@ -43,19 +55,6 @@
       <th>{{#str}} actions, tiny_styles {{/str}}</th>
     </tr>
   </thead>
-  <p></p>
-  <div data-region="importjson" data-init="tiny_styles/importdata">
-      <a href="{{createcaturl}}" class="btn btn-primary me-2">
-          {{createcategory}}
-      </a>
-      <a href="{{importurl}}" class="btn btn-secondary me-2">
-          {{#str}} importdata, tiny_styles {{/str}}
-      </a>
-      <a href="{{exporturl}}" class="btn btn-secondary me-2">
-          {{exportlabel}}
-      </a>
-  </div>
-  </p></p>
   <tbody>
   {{#categories}}
     <tr>
