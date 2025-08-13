@@ -53,7 +53,7 @@ export default new Promise(async(resolve) => {
             });
             return pluginMetadata;
         });
-        // Invert coloring for selected items
+        // Invert coloring for selected items.
         const style = document.createElement('style');
         style.textContent = `
             .tox-collection__item--active .tox-collection__item-icon svg,

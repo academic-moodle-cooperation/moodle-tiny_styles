@@ -24,8 +24,7 @@
 
 define([], function() {
     /**
-     * Toggle the visibility icon based on new state
-     *
+     * Toggle the visibility icon based on new state.
      * @param {HTMLElement} button - The button element
      * @param {number} newState - The new visibility state (1 for visible, 0 for hidden)
      */

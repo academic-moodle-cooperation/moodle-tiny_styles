@@ -488,7 +488,6 @@ function clearStyling(editor) {
 
 /**
  * Asynchronous function to scan the custom styles for updates/deletions.
- *
  * @param {Object} editor - The TInyMCE editor instance.
  */
 export async function editCustomStyles(editor) {

@@ -24,7 +24,6 @@
 
 /**
  * Initialize icon selector functionality
- *
  * @return {void}
  */
 export const init = () => {
