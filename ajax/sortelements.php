@@ -34,8 +34,8 @@ try {
     $context = context_system::instance();
     require_capability('moodle/site:config', $context);
 
-    $rawInput = file_get_contents('php://input');
-    $data = json_decode($rawInput, true);
+    $rawinput = file_get_contents('php://input');
+    $data = json_decode($rawinput, true);
 
     if (!isset($data['elementid'], $data['categoryid'], $data['direction'])) {
         throw new moodle_exception('Missing required parameters: ' .
@@ -57,7 +57,7 @@ try {
     // Check if the record exists.
     $exists = $DB->record_exists('tiny_styles_cat_elements', [
         'categoryid' => $categoryid,
-        'elementid' => $elementid
+        'elementid' => $elementid,
     ]);
 
     if (!$exists) {
@@ -67,7 +67,7 @@ try {
     // Get the current element's bridging record.
     $current = $DB->get_record('tiny_styles_cat_elements', [
         'categoryid' => $categoryid,
-        'elementid' => $elementid
+        'elementid' => $elementid,
     ], '*', MUST_EXIST);
 
     // Find the neighbor element (the one above or below).
@@ -112,21 +112,21 @@ try {
         'message' => 'Order updated successfully',
         'debug' => [
             'current' => $current->id . ' (now ' . $current->sortorder . ')',
-            'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')'
-        ]
+            'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')',
+        ],
     ];
 
     echo json_encode($response);
 
 } catch (Throwable $e) {
-    $errorInfo = [
+    $errorinfo = [
         'status' => 'error',
         'message' => $e->getMessage(),
         'file' => $e->getFile(),
         'line' => $e->getLine(),
-        'trace' => $e->getTraceAsString()
+        'trace' => $e->getTraceAsString(),
     ];
 
     http_response_code(500);
-    echo json_encode($errorInfo);
+    echo json_encode($errorinfo);
 }
