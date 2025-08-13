@@ -109,7 +109,7 @@ const showPreview = async(name, cssclasses, type) => {
 
         modal.getRoot()[0].addEventListener(ModalEvents.hidden, () => {});
     } catch (error) {
-        console.error('Failed to create preview modal:', error);
+        alert(error);
     }
 };
 

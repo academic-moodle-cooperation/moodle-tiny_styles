@@ -195,18 +195,8 @@ function applyStyle(editor, styleDef) {
 }
 
 /**
- * Normalizes text content for consistent comparison.
- *
- * @param {string} text The text to normalize.
- * @returns {string} The normalized text.
- */
-function normalizeText(text) {
-    return text.trim().replace(/\s+/g, ' ');
-}
-
-/**
- *
- * @param node
+ * Checks if the element is a styled block element.
+ * @param {Node} node selected item
  */
 function isStyledBlockElement(node) {
     if (!node || !node.tagName) {
@@ -496,11 +486,10 @@ function clearStyling(editor) {
     return false;
 }
 
-
 /**
  * Asynchronous function to scan the custom styles for updates/deletions.
  *
- * @param editor - The TInyMCE editor instance.
+ * @param {Object} editor - The TInyMCE editor instance.
  */
 export async function editCustomStyles(editor) {
 

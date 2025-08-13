@@ -88,11 +88,6 @@ const buildPreviewHtml = (name, cssclasses, type) => {
 export const init = () => {
     const previewBtn = document.getElementById('btn-preview-element');
 
-    // Debug
-    if (!previewBtn) {
-        console.debug('Preview button not found with ID btn-preview-element');
-        return;
-    }
     // Form fields after preview click
     previewBtn.addEventListener('click', async(e) => {
         e.preventDefault();
@@ -101,12 +96,6 @@ export const init = () => {
         const typeField = document.getElementById('id_type');
         const cssClassesField = document.getElementById('id_cssclasses');
         const manualConfigField = document.getElementById('id_manualconfig');
-
-        // Debug
-        if (!nameField || !typeField || !cssClassesField) {
-            console.error('Required form fields not found');
-            return;
-        }
 
         const nameVal = nameField.value;
         const typeVal = typeField.value;
@@ -151,7 +140,7 @@ export const init = () => {
                 modalElement.addEventListener(ModalEvents.hidden, () => {});
             }
         } catch (error) {
-            console.error('Failed to create preview modal:', error);
+            alert(error);
         }
     });
 };
