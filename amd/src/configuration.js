@@ -41,6 +41,7 @@ const getToolbarConfiguration = (instanceConfig) => {
 
 /**
  * Add menu item under "Format"
+ *
  * @param {Object} instanceConfig TinyMCE config object
  * @return {String|Array} updated menu setting
  */

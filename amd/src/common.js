@@ -21,6 +21,7 @@
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 const component = 'tiny_styles';
 
 export const pluginName = `${component}`;

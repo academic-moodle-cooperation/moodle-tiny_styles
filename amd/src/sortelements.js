@@ -53,7 +53,7 @@ define([], function() {
                     return;
                 }
 
-                // Category ID from URL or from M.cfg
+                // Category ID from URL or from M.cfg.
                 const catid = M.cfg.catid || new URLSearchParams(window.location.search).get('catid');
                 if (!catid) {
                     return;

@@ -115,6 +115,7 @@ const showPreview = async(name, cssclasses, type) => {
 
 /**
  * Initialize preview functionality for selected elements
+ *
  * @param {string} selector - CSS selector for clickable preview elements
  */
 export const init = (selector) => {

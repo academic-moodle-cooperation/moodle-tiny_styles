@@ -40,6 +40,7 @@ export const register = (editor) => {
 
 /**
  * Retrieve the value (if needed) from the editor instance.
+ *
  * @param {TinyMCE.editor} editor
  * @returns {string} The current value of myStylesProperty (if set)
  */
