@@ -54,6 +54,7 @@ $string['duplicateaction'] = 'Duplicate';
 $string['edit'] = 'Edit';
 $string['editcategory'] = 'Edit category';
 $string['editelement'] = 'Edit element';
+$string['eidtor:clearstyle'] = 'Clear styles';
 $string['elementcancel'] = 'Entry/ Editing of style cancelled';
 $string['elementcreated'] = 'Element created';
 $string['elementdeleted'] = 'Element(s) deleted successfully';
