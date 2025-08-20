@@ -51,9 +51,10 @@ async function fetchCategories() {
  * @param {Object} editor TinyMCE instance.
  * @param {Array} categories List of categories.
  * @param {Object} icons Available icons for categories.
+ * @param {String} clearlabel Langstring for clearing styles.
  * @returns {Array} Menu items.
  */
-function buildCategoryItems(editor, categories, icons) {
+function buildCategoryItems(editor, categories, icons, clearlabel) {
     const items = [];
 
     categories.forEach((cat) => {
@@ -122,7 +123,7 @@ function buildCategoryItems(editor, categories, icons) {
     items.push({type: 'separator'});
     items.push({
         type: 'menuitem',
-        text: 'Clear Styling',
+        text: clearlabel,
         icon: icons.remove,
 
         onAction: () => {
@@ -577,6 +578,7 @@ export const getSetup = async() => {
         bookImage,
         folderImage,
         removeImage,
+        clearLabel,
     ] = await Promise.all([
         fetchCategories(),
         getButtonImage('icon', 'tiny_styles'),
@@ -600,6 +602,7 @@ export const getSetup = async() => {
         getButtonImage('book', 'tiny_styles'),
         getButtonImage('folder', 'tiny_styles'),
         getButtonImage('remove', 'tiny_styles'),
+        getString('editor:clearstyle', 'tiny_styles'),
     ]);
 
     return (editor) => {
@@ -651,14 +654,14 @@ export const getSetup = async() => {
             icon: icon,
             tooltip: mainMenuLabel,
             fetch: (callback) => {
-                callback(buildCategoryItems(editor, categories, icons));
+                callback(buildCategoryItems(editor, categories, icons, clearLabel));
             }
         });
 
         editor.ui.registry.addNestedMenuItem('tiny_styles_nestedmenu', {
             icon: icon,
             text: mainMenuLabel,
-            getSubmenuItems: () => buildCategoryItems(editor, categories, icons),
+            getSubmenuItems: () => buildCategoryItems(editor, categories, icons, clearLabel),
         });
 
     };
