@@ -16,7 +16,7 @@
 /**
  * TinyMCE styles plugin for Moodle.
  *
- * @package tiny_styles
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,7 +31,7 @@ import {editCustomStyles} from './commands';
 import * as Configuration from './configuration';
 
 // eslint-disable-next-line no-async-promise-executor
-export default new Promise(async (resolve) => {
+export default new Promise(async(resolve) => {
     try {
         const [
             tinyMCE,
@@ -48,12 +48,12 @@ export default new Promise(async (resolve) => {
             setupCommands(editor);
 
             // Runs a check on the editor text to update custom in text styles.
-            editor.on('init', async () => {
+            editor.on('init', async() => {
                 await editCustomStyles(editor);
             });
             return pluginMetadata;
         });
-        // invert coloring for selected items
+        // Invert coloring for selected items.
         const style = document.createElement('style');
         style.textContent = `
             .tox-collection__item--active .tox-collection__item-icon svg,
@@ -65,6 +65,6 @@ export default new Promise(async (resolve) => {
         resolve([pluginName, Configuration]);
 
     } catch (error) {
-        // console.error('Error initializing TinyMCE plugin:', error);
+        // Console.error('Error initializing TinyMCE plugin:', error);
     }
 });

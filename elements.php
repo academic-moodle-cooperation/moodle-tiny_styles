@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin administration elements 
+ * Plugin administration elements
  *
  * @package tiny_styles
  * @author Karri Pajarinen
@@ -46,7 +46,6 @@ $PAGE->requires->js_call_amd('tiny_styles/preview_element', 'init', ['a.element-
 $PAGE->requires->js_call_amd('tiny_styles/sortelements', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/duplicate', 'init');
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(
         new moodle_url('/admin/settings.php',
@@ -55,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 global $DB, $OUTPUT;
-$sql = "SELECT e.* 
+$sql = "SELECT e.*
           FROM {tiny_styles_elements} e
           JOIN {tiny_styles_cat_elements} ce ON ce.elementid = e.id
          WHERE ce.categoryid = :catid
@@ -63,6 +62,12 @@ $sql = "SELECT e.*
 $params = ['catid' => $catid];
 
 $records = $DB->get_records_sql($sql, $params);
+
+$sql = "SELECT c.name
+        FROM {tiny_styles_categories} c
+        WHERE c.id = :catid";
+$params = ['catid' => $catid];
+$catname = $DB->get_field_sql($sql, $params);
 
 // Array of elements for mustache template.
 $elements = [];
@@ -75,7 +80,7 @@ foreach ($records as $r) {
             'class'       => 'move-up btn-icon',
             'data-id'     => $r->id,
             'title'       => get_string('moveup'),
-            'style'       => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+            'style'       => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;',
         ]
     );
 
@@ -86,7 +91,7 @@ foreach ($records as $r) {
             'class'       => 'move-down btn-icon',
             'data-id'     => $r->id,
             'title'       => get_string('movedown'),
-            'style'       => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;'
+            'style'       => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;',
         ]
     );
 
@@ -95,14 +100,14 @@ foreach ($records as $r) {
         'catid'   => $catid,
         'action'  => 'delete',
         'id'      => $r->id,
-        'sesskey' => sesskey()
+        'sesskey' => sesskey(),
     ]);
 
     $deleteiconhtml = $OUTPUT->action_icon(
         $deleteurl,
         new pix_icon('t/delete', get_string('delete')),
         new confirm_action(get_string('confirmdeleteelement', 'tiny_styles')),
-        ['title' => get_string('delete')]
+        ['title' => get_string('delete')],
     );
 
     $viewdetailsattrs = [
@@ -110,7 +115,7 @@ foreach ($records as $r) {
         'class'          => 'element-preview-link',
         'data-name'      => $r->name,
         'data-cssclass'  => $r->cssclasses,
-        'data-type'      => $r->type
+        'data-type'      => $r->type,
     ];
 
     $viewdetailsicon = new pix_icon('i/preview', get_string('preview', 'tiny_styles'));
@@ -136,14 +141,15 @@ foreach ($records as $r) {
 
 $templatecontext = [
     'heading'           => get_string('elementsheading', 'tiny_styles'),
+    'category'          => $catname,
     'navigateback'      => get_string('back_overview', 'tiny_styles'),
     'createbuttonlabel' => get_string('create_element', 'tiny_styles'),
     'createelementurl'  => (new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php',
-        ['catid' => $catid
+        ['catid' => $catid,
         ]))->out(false),
     'submiturl'         => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php',
         ['catid' => $catid,
-        'sesskey' => sesskey()
+        'sesskey' => sesskey(),
         ]))->out(false),
     'elements'          => $elements,
     'bulkactionslabel' => get_string('withselection', 'tiny_styles'),
@@ -164,7 +170,7 @@ if ($action === 'delete' && $id > 0) {
     redirect(
         new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
             'catid' => $catid,
-            'sesskey' => sesskey()
+            'sesskey' => sesskey(),
         ]),
         get_string('elementdeleted', 'tiny_styles'),
         1
@@ -176,7 +182,7 @@ if ($action === 'delete' && $id > 0) {
 $bulkmessage = '';
 if (isset($_SESSION['tiny_styles_bulk_message'])) {
     $bulkmessage = $_SESSION['tiny_styles_bulk_message'];
-    unset($_SESSION['tiny_styles_bulk_message']); // Clear the message
+    unset($_SESSION['tiny_styles_bulk_message']);
 }
 
 if (!empty($bulkmessage)) {

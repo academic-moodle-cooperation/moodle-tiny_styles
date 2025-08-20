@@ -16,7 +16,7 @@
 /**
  * Options helper for the Moodle tiny_styles plugin.
  *
- * @package tiny_styles
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,7 +24,6 @@
 
 import {getPluginOptionName} from 'editor_tiny/options';
 import {pluginName} from './common';
-
 
 const myStylesPropertyName = getPluginOptionName(pluginName, 'myStylesProperty');
 

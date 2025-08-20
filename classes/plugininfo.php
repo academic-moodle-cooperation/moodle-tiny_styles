@@ -22,6 +22,7 @@
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+// phpcs:disable moodle.Commenting.MissingDocblock
 
 namespace tiny_styles;
 
@@ -29,8 +30,20 @@ use context;
 use editor_tiny\plugin;
 use editor_tiny\plugin_with_configuration;
 
+/**
+ * Crude plugininfo class
+ */
 class plugininfo extends plugin implements plugin_with_configuration {
 
+    /**
+     * Pluging info.
+     * @param \context $context
+     * @param array $options
+     * @param array $fpoptions
+     * @param mixed $editor
+     * @return array{property: string}
+     */
+    // PHPMD:suppress UnusedFormalParameter.
     public static function get_plugin_configuration_for_context(
         context $context,
         array $options,
@@ -38,8 +51,6 @@ class plugininfo extends plugin implements plugin_with_configuration {
         ?\editor_tiny\editor $editor = null
     ): array {
         return [
-            // Your values go here.
-            // These will be mapped to a namespaced EditorOption in Tiny.
             'property' => 'TODO Calculate your values here',
         ];
     }

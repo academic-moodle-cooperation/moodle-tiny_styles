@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
- 
+
 /**
  * File picker for JSON importing.
  *
@@ -41,7 +41,7 @@ use tiny_styles\importhandler;
 
 if (optional_param('download_example', false, PARAM_BOOL)) {
     require_sesskey();
-    
+
     $examplefile = __DIR__ . '/json/example.json';
     if (file_exists($examplefile)) {
         $content = file_get_contents($examplefile);
@@ -56,9 +56,16 @@ if (optional_param('download_example', false, PARAM_BOOL)) {
 }
 
 /**
- * Standard filepicker
+ * Standard moodle filepicker
+ * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_import_form extends moodleform {
+
+    /**
+     * Defines the standard moodle filepicker
+     * @return void
+     */
     public function definition() {
         global $CFG;
         $mform = $this->_form;
@@ -88,8 +95,7 @@ $mform = new local_import_form();
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
-}
-else if ($data = $mform->get_data()) {
+} else if ($data = $mform->get_data()) {
     $content = $mform->get_file_content('jsonfile');
 
     if (!$content) {
@@ -104,7 +110,7 @@ else if ($data = $mform->get_data()) {
         redirect($returnurl);
     }
 
-    // Process the JSON data with importhandler
+    // Process the JSON data with importhandler.
     try {
         importhandler::process($jsondata);
         notification::success(get_string('importsuccess', 'tiny_styles', 'Import successful'));
@@ -164,7 +170,29 @@ $downloadurl = new moodle_url($PAGE->url, ['download_example' => 1, 'sesskey' =>
         </div>
     </div>
 </div>
-
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Repeated for the AMC pipeline
+ *
+ * @package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 $mform->display();
 echo $OUTPUT->footer();

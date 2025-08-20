@@ -16,19 +16,23 @@
 
 /**
  * Upgrade file for Moodle tiny_styles plugin.
- * 
+ *
  * @package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Applies necessary db updates with newer versions.
+ *
+ * @param mixed $oldversion Previously installed plugin version.
+ * @return bool
+ */
 function xmldb_tiny_styles_upgrade($oldversion = 0) {
     global $DB;
 
-    $dbman = $DB->get_manager(); 
+    $dbman = $DB->get_manager();
 
     if ($oldversion < 2025022701) {
         $table = new xmldb_table('tiny_styles_elements');
@@ -71,13 +75,12 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
     if ($oldversion < 2025073002) {
         $table = new xmldb_table('tiny_styles_categories');
         $field = new xmldb_field('presentation', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'submenu');
-    
+
         if ($dbman->field_exists($table, $field)) {
             $dbman->rename_field($table, $field, 'menumode');
         }
-    
-    upgrade_plugin_savepoint(true, 2025073002, 'tiny', 'styles');
-}
+        upgrade_plugin_savepoint(true, 2025073002, 'tiny', 'styles');
+    }
 
     return true;
 }

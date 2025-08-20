@@ -15,8 +15,8 @@
 
 /**
  * Enables moving the elements up and down seamlessly.
- * 
- * @package tiny_styles
+ *
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -39,7 +39,7 @@ define([], function() {
 
     const init = () => {
         document.querySelectorAll('.move-up, .move-down').forEach(button => {
-            button.addEventListener('click', async (event) => {
+            button.addEventListener('click', async(event) => {
                 event.preventDefault();
 
                 const direction = button.classList.contains('move-up') ? 'up' : 'down';
@@ -53,7 +53,7 @@ define([], function() {
                     return;
                 }
 
-                // Category ID from URL or from M.cfg
+                // Category ID from URL or from M.cfg.
                 const catid = M.cfg.catid || new URLSearchParams(window.location.search).get('catid');
                 if (!catid) {
                     return;
@@ -70,7 +70,7 @@ define([], function() {
                         '/lib/editor/tiny/plugins/styles/ajax/sortelements.php?sesskey=' +
                         encodeURIComponent(M.cfg.sesskey);
 
-                    const response = await fetch(ajaxUrl, {
+                    await fetch(ajaxUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -80,14 +80,11 @@ define([], function() {
                         credentials: 'same-origin'
                     });
 
-                    if (!response.ok) {
-                        alert(response.status);
-                    }
                 } catch (e) {
                     alert(e.message);
                 }
             });
         });
     };
-    return { init };
+    return {init};
 });

@@ -15,8 +15,8 @@
 
 /**
  * Commands for the editor.
- * 
- * @package tiny_styles
+ *
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,9 +24,9 @@
 
 import {getButtonImage} from 'editor_tiny/utils';
 import Ajax from 'core/ajax';
-import { get_string as getString } from 'core/str';
-import { icon } from "./common";
-// import PreviewElement from "./preview_element"; // uncomment to enable preview
+import {get_string as getString} from 'core/str';
+import {icon} from "./common";
+// Import PreviewElement from "./preview_element"; // uncomment to enable preview
 
 /**
  * Fetches categories dynamically using AJAX.
@@ -51,14 +51,15 @@ async function fetchCategories() {
  * @param {Object} editor TinyMCE instance.
  * @param {Array} categories List of categories.
  * @param {Object} icons Available icons for categories.
+ * @param {String} clearlabel Langstring for clearing styles.
  * @returns {Array} Menu items.
  */
-function buildCategoryItems(editor, categories, icons) {
+function buildCategoryItems(editor, categories, icons, clearlabel) {
     const items = [];
 
     categories.forEach((cat) => {
         if (cat.menumode === 'divider') {
-            items.push({ type: 'separator' });
+            items.push({type: 'separator'});
             return;
         }
 
@@ -107,7 +108,7 @@ function buildCategoryItems(editor, categories, icons) {
 
             if (icons[symbolname]) {
                 caticon = icons[symbolname];
-            }           
+            }
             items.push({
                 type: 'nestedmenuitem',
                 icon: caticon,
@@ -117,13 +118,13 @@ function buildCategoryItems(editor, categories, icons) {
             });
         }
     });
-    
+
     // A separator and remove style button
-    items.push({ type: 'separator' });
+    items.push({type: 'separator'});
     items.push({
         type: 'menuitem',
-        text: 'Clear Styling',
-        icon: icons['remove'],
+        text: clearlabel,
+        icon: icons.remove,
 
         onAction: () => {
            clearStyling(editor);
@@ -134,7 +135,7 @@ function buildCategoryItems(editor, categories, icons) {
 
 /**
  * Applies a bootstrap or custom style to the selected text.
- * 
+ *
  * @param {Object} editor TinyMCE editor instance.
  * @param {Object} styleDef Object containing the style definition.
  * @param {string} styleDef.className The CSS class or custom CSS to apply.
@@ -143,36 +144,36 @@ function buildCategoryItems(editor, categories, icons) {
  * @param {string} styleDef.id A unique identifier for the style.
  */
 function applyStyle(editor, styleDef) {
-    const { className, block, custom, id } = styleDef;
+    const {className, block, custom, id} = styleDef;
 
-    const selectedHtml = editor.selection.getContent({ format: 'html' });
+    const selectedHtml = editor.selection.getContent({format: 'html'});
     if (!selectedHtml.trim() && !block) {
         return;
     }
 
     const selectedNode = editor.selection.getNode();
-    
+
     if (block) {
         return applyBlockStyle(editor, styleDef);
     }
-    
+
     const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
         return isStyledInlineElement(node);
     });
-    
+
     if (styledSpanParent) {
         const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
-                        
+
         // Replace the entire span with new styling
-        const newWrapper = document.createElement('span');        
-            
+        const newWrapper = document.createElement('span');
+
         if (custom) {
             newWrapper.style.cssText = className;
             newWrapper.style.setProperty('--custom-style-id', id);
         } else {
             newWrapper.className = className;
         }
-            
+
         // Original span's text content to preserve formatting
         newWrapper.textContent = spanTextContent;
         editor.dom.replace(newWrapper, styledSpanParent);
@@ -188,100 +189,112 @@ function applyStyle(editor, styleDef) {
         editor.focus();
         return;
     }
-    
+
     // Normal inline styling
-    const cleanSelectedHtml = editor.selection.getContent({ format: 'html' });
+    const cleanSelectedHtml = editor.selection.getContent({format: 'html'});
     return applyInlineStyle(editor, styleDef, cleanSelectedHtml);
 }
 
 /**
- * Normalizes text content for consistent comparison.
- * 
- * @param {string} text The text to normalize.
- * @returns {string} The normalized text.
+ * Checks if the element is a styled block element.
+ * @param {Node} node selected item
  */
-function normalizeText(text) {
-    return text.trim().replace(/\s+/g, ' ');
+function isStyledBlockElement(node) {
+    if (!node || !node.tagName) {
+ return false;
 }
 
-function isStyledBlockElement(node) {
-    if (!node || !node.tagName) return false;
-
     const blockTags = ['DIV', 'P', 'SECTION', 'ARTICLE', 'ASIDE'];
-    if (!blockTags.includes(node.tagName.toUpperCase())) return false;
-    
+    if (!blockTags.includes(node.tagName.toUpperCase())) {
+ return false;
+}
+
     // Check className
-    if (node.className) return true;
-    
+    if (node.className) {
+ return true;
+}
+
     // Check style property
-    if (node.style && node.style.getPropertyValue('--custom-style-id')) return true;
-    
+    if (node.style && node.style.getPropertyValue('--custom-style-id')) {
+ return true;
+}
+
     // Check data-mce-style attribute for custom style ID
     if (node.getAttribute && node.getAttribute('data-mce-style')) {
         const dataMceStyle = node.getAttribute('data-mce-style');
-        if (dataMceStyle.includes('--custom-style-id')) return true;
+        if (dataMceStyle.includes('--custom-style-id')) {
+ return true;
+}
     }
-    
+
     return false;
 }
 
 /**
  * Checks if a DOM node is a styled inline element.
  * Now also checks data-mce-style attribute for custom style IDs.
- * 
+ *
  * @param {Node} node The DOM node to check.
  * @returns {boolean} True if the node is a styled inline element.
  */
 function isStyledInlineElement(node) {
-    if (!node || node.tagName !== 'SPAN') return false;
-    
+    if (!node || node.tagName !== 'SPAN') {
+ return false;
+}
+
     // Check className
-    if (node.className) return true;
-    
+    if (node.className) {
+ return true;
+}
+
     // Check style property
-    if (node.style && node.style.getPropertyValue('--custom-style-id')) return true;
-    
+    if (node.style && node.style.getPropertyValue('--custom-style-id')) {
+ return true;
+}
+
     // Check data-mce-style attribute for custom style ID
     if (node.getAttribute && node.getAttribute('data-mce-style')) {
         const dataMceStyle = node.getAttribute('data-mce-style');
-        if (dataMceStyle.includes('--custom-style-id')) return true;
+        if (dataMceStyle.includes('--custom-style-id')) {
+ return true;
+}
     }
-    
+
     return false;
 }
 
 /**
  * Applies block type styling to the selected content.
- * 
+ *
  * @param {Object} editor TinyMCE editor instance.
  * @param {Object} styleDef Object containing the style definition.
  */
 function applyBlockStyle(editor, styleDef) {
-    const { className, custom, id } = styleDef;
+    const {className, custom, id} = styleDef;
     const selection = editor.selection;
     const targetBlockTypes = [
-                            'P', 'DIV', 'H1', 
+                            'P', 'DIV', 'H1',
                             'H2', 'H3', 'H4',
                             'H5', 'H6', 'BLOCKQUOTE',
                             'PRE', 'SECTION',
                             'ARTICLE', 'ASIDE'
-                        ]
+                        ];
     const selectedBlocks = selection.getSelectedBlocks();
-    
-    const targetBlocks = selectedBlocks.filter(block => 
+
+    const targetBlocks = selectedBlocks.filter(block =>
         targetBlockTypes.includes(block.tagName)
     );
-    
+
     // Extract text content from each block preserving any inline formatting
     const textContents = targetBlocks.map(block => {
         return block.innerHTML.trim();
     }).filter(content => content.length > 0);
-    
+
     if (textContents.length > 0) {
         // Keeps structure of combined content with <br> separators
         const combinedContent = textContents.join('<br><br>');
         const newParagraph = editor.dom.create('p', {}, combinedContent);
-        
+
         // Apply styling to the new paragraph
         if (custom) {
             newParagraph.style.cssText = className;
@@ -289,41 +302,41 @@ function applyBlockStyle(editor, styleDef) {
         } else {
             newParagraph.className = className;
         }
-        
+
         // Replace the selected blocks
         const firstBlock = targetBlocks[0];
         editor.dom.insertAfter(newParagraph, firstBlock);
-        
+
         targetBlocks.forEach(block => {
             editor.dom.remove(block);
         });
-        
+
         // A new paragraph after to avoid continuous styling
         const nextParagraph = editor.dom.create('p', {}, '');
         editor.dom.insertAfter(nextParagraph, newParagraph);
         selection.setCursorLocation(nextParagraph, 0);
     }
-    
+
     editor.focus();
 }
 
 /**
  * Applies inline type styling to the selected HTML content.
  * Creates a new span element with the specified styling and positions cursor afterward.
- * 
+ *
  * @param {Object} editor TinyMCE editor instance.
  * @param {Object} styleDef Object containing the style definition.
  * @param {string} selectedHtml The HTML content to apply styling to.
  */
 function applyInlineStyle(editor, styleDef, selectedHtml) {
-    const { className, custom, id } = styleDef;
-    
+    const {className, custom, id} = styleDef;
+
     const container = document.createElement('div');
     container.innerHTML = selectedHtml;
     Array.from(container.childNodes).forEach(stripText);
 
     const newWrapper = document.createElement('span');
-    
+
     if (custom) {
         newWrapper.style.cssText = className;
         newWrapper.style.setProperty('--custom-style-id', id);
@@ -337,11 +350,11 @@ function applyInlineStyle(editor, styleDef, selectedHtml) {
 
     newWrapper.setAttribute('data-temp-inline-style', 'true');
     editor.selection.setContent(newWrapper.outerHTML + '&nbsp;');
-    
+
     const insertedSpan = editor.dom.select('[data-temp-inline-style="true"]')[0];
     if (insertedSpan) {
         editor.dom.setAttrib(insertedSpan, 'data-temp-inline-style', null);
-        
+
         const nextNode = insertedSpan.nextSibling;
         if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
             const range = editor.dom.createRng();
@@ -356,20 +369,20 @@ function applyInlineStyle(editor, styleDef, selectedHtml) {
 /**
  * Recursively removes class attributes from DOM elements.
  * Helper function to clean existing styling from content.
- * 
+ *
  * @param {Node} root The root element to process.
  */
 function stripText(root) {
     if (root.nodeType === Node.ELEMENT_NODE) {
         root.removeAttribute('class');
-        
+
         // Also remove custom styles
         if (root.style) {
             root.style.cssText = '';
         }
         root.removeAttribute('style');
         root.removeAttribute('data-mce-style');
-        
+
         Array.from(root.childNodes).forEach(stripText);
     }
 }
@@ -384,7 +397,7 @@ function stripText(root) {
 function clearStyling(editor) {
     const selection = editor.selection;
     const selectedNode = selection.getNode();
-    
+
     // Inline styling spans
     let styledSpanParent = null;
 
@@ -407,58 +420,58 @@ function clearStyling(editor) {
             const spanParent = editor.dom.getParent(range.startContainer, function(node) {
                 const isStyled = isStyledInlineElement(node);
                 return isStyled;
-            });        
+            });
             if (spanParent) {
                 styledSpanParent = spanParent;
             }
 
         }
     }
-    
+
     // Replace the styled span with plain text
     if (styledSpanParent) {
-        const textContent = styledSpanParent.textContent || styledSpanParent.innerText;        
+        const textContent = styledSpanParent.textContent || styledSpanParent.innerText;
         const textNode = document.createTextNode(textContent);
-        
+
         editor.dom.replace(textNode, styledSpanParent);
-        
+
         // Position cursor after the text
         const range = editor.dom.createRng();
         range.setStartAfter(textNode);
         range.setEndAfter(textNode);
         selection.setRng(range);
-        
+
         editor.focus();
         return true;
     }
-    
+
     // Block styling paragraphs
     const blockParent = editor.dom.getParent(selectedNode, function(node) {
         const isStyled = isStyledBlockElement(node);
         return isStyled;
     });
-        
+
     if (blockParent) {
         const innerHTML = blockParent.innerHTML;
-        
+
         // Check if content contains <br><br> - split into separate paragraphs
         if (innerHTML.includes('<br><br>')) {
             const parts = innerHTML.split('<br><br>');
-            
+
             // First clean paragraph and additional paragraphs for remaining parts
             const firstParagraph = editor.dom.create('p', {}, parts[0]);
             editor.dom.insertAfter(firstParagraph, blockParent);
-            
+
             let currentParagraph = firstParagraph;
             for (let i = 1; i < parts.length; i++) {
                 const newParagraph = editor.dom.create('p', {}, parts[i]);
                 editor.dom.insertAfter(newParagraph, currentParagraph);
                 currentParagraph = newParagraph;
             }
-            
+
             //  Remove the original styled block
             editor.dom.remove(blockParent);
-            
+
             // Position cursor in the first paragraph
             selection.setCursorLocation(firstParagraph, 0);
         } else {
@@ -467,18 +480,17 @@ function clearStyling(editor) {
             editor.dom.insertAfter(cleanParagraph, blockParent);
             editor.dom.remove(blockParent);
             selection.setCursorLocation(cleanParagraph, 0);
-        }   
+        }
         editor.focus();
         return true;
     }
     return false;
 }
 
-
 /**
  * Asynchronous function to scan the custom styles for updates/deletions.
  *
- * @param editor - The TInyMCE editor instance.
+ * @param {Object} editor - The TInyMCE editor instance.
  */
 export async function editCustomStyles(editor) {
 
@@ -521,7 +533,7 @@ export async function editCustomStyles(editor) {
             editor.dom.setAttrib(element, 'style', minimalCss);
             editor.dom.setAttrib(element, 'data-mce-style', minimalCss);
 
-            // todo: delete styling completely?
+            // Todo: delete styling completely?
             // editor.dom.removeAttrib(element, 'style');
             // editor.dom.removeAttrib(element, 'data-mce-style');
 
@@ -541,7 +553,7 @@ export async function editCustomStyles(editor) {
  * Button, Icon and Menu setup for tinymce.
  *
  */
-export const getSetup = async () => {
+export const getSetup = async() => {
 
     const [
         categories,
@@ -566,6 +578,7 @@ export const getSetup = async () => {
         bookImage,
         folderImage,
         removeImage,
+        clearLabel,
     ] = await Promise.all([
         fetchCategories(),
         getButtonImage('icon', 'tiny_styles'),
@@ -589,6 +602,7 @@ export const getSetup = async () => {
         getButtonImage('book', 'tiny_styles'),
         getButtonImage('folder', 'tiny_styles'),
         getButtonImage('remove', 'tiny_styles'),
+        getString('editor:clearstyle', 'tiny_styles'),
     ]);
 
     return (editor) => {
@@ -617,7 +631,7 @@ export const getSetup = async () => {
         const icons = {
             label: 'labelIcon',
             box: 'boxIcon',
-            default: 'defaultIcon',
+            "default": 'defaultIcon',
             preview: 'previewIcon',
             paint: 'applyIcon',
             check: 'checkIcon',
@@ -640,14 +654,14 @@ export const getSetup = async () => {
             icon: icon,
             tooltip: mainMenuLabel,
             fetch: (callback) => {
-                callback(buildCategoryItems(editor, categories, icons));
+                callback(buildCategoryItems(editor, categories, icons, clearLabel));
             }
         });
 
         editor.ui.registry.addNestedMenuItem('tiny_styles_nestedmenu', {
             icon: icon,
             text: mainMenuLabel,
-            getSubmenuItems: () => buildCategoryItems(editor, categories, icons),
+            getSubmenuItems: () => buildCategoryItems(editor, categories, icons, clearLabel),
         });
 
     };

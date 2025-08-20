@@ -23,18 +23,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Log errors to a file
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/error_log.txt');
-
 require_once(__DIR__ . '/../../../../../../config.php');
-
-// Log initial access
-error_log('Sortcategories AJAX request received at: ' . date('Y-m-d H:i:s'));
 
 try {
     require_login();
@@ -45,14 +34,8 @@ try {
     $context = context_system::instance();
     require_capability('moodle/site:config', $context);
 
-    // Log raw input
-    $rawInput = file_get_contents('php://input');
-    error_log('Raw input: ' . $rawInput);
-
-    $data = json_decode($rawInput, true);
-
-    // Log parsed data
-    error_log('Parsed data: ' . print_r($data, true));
+    $rawinput = file_get_contents('php://input');
+    $data = json_decode($rawinput, true);
 
     if (!isset($data['action'], $data['id'])) {
         throw new moodle_exception('Missing required parameters: ' .
@@ -63,25 +46,22 @@ try {
     $action = $data['action'];
     $catid = (int)$data['id'];
 
-    error_log("Received action: $action, CategoryID: $catid");
-
     if (!in_array($action, ['moveup', 'movedown'])) {
         throw new moodle_exception('Invalid action: ' . $action);
     }
 
     global $DB;
 
-    // Get the current category record from tiny_styles_categories
+    // Get the current category record from tiny_styles_categories.
     $current = $DB->get_record('tiny_styles_categories', ['id' => $catid], '*', MUST_EXIST);
-    error_log("Current category record: " . print_r($current, true));
 
-    // Build SQL query to find neighbor based on action
+    // Build SQL query to find neighbor based on action.
     if ($action === 'moveup') {
         $sql = "SELECT *
                   FROM {tiny_styles_categories}
                  WHERE sortorder < :currsort
               ORDER BY sortorder DESC";
-    } else { // movedown
+    } else {
         $sql = "SELECT *
                   FROM {tiny_styles_categories}
                  WHERE sortorder > :currsort
@@ -89,16 +69,11 @@ try {
     }
     $params = ['currsort' => $current->sortorder];
 
-    error_log("SQL query: $sql");
-    error_log("Params: " . print_r($params, true));
-
     $neighbors = $DB->get_records_sql($sql, $params, 0, 1);
-    error_log("Neighbors found: " . print_r($neighbors, true));
 
     if (empty($neighbors)) {
         // No neighbors found; nothing to swap.
         $response = ['status' => 'success', 'message' => 'No change required (no neighbor found)'];
-        error_log("Response: " . json_encode($response));
         echo json_encode($response);
         exit;
     }
@@ -111,9 +86,6 @@ try {
     $current->sortorder = $neighbor->sortorder;
     $neighbor->sortorder = $temp;
 
-    error_log("Updating records - Current ID: {$current->id}, New sortorder: {$current->sortorder}");
-    error_log("Updating records - Neighbor ID: {$neighbor->id}, New sortorder: {$neighbor->sortorder}");
-
     // Save changes to the database.
     $DB->update_record('tiny_styles_categories', $current);
     $DB->update_record('tiny_styles_categories', $neighbor);
@@ -123,24 +95,21 @@ try {
         'message' => 'Category order updated successfully',
         'debug' => [
             'current' => $current->id . ' (now ' . $current->sortorder . ')',
-            'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')'
-        ]
+            'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')',
+        ],
     ];
 
-    error_log("Success response: " . json_encode($response));
     echo json_encode($response);
 
 } catch (Throwable $e) {
-    $errorInfo = [
+    $errorinfo = [
         'status' => 'error',
         'message' => $e->getMessage(),
         'file' => $e->getFile(),
         'line' => $e->getLine(),
-        'trace' => $e->getTraceAsString()
+        'trace' => $e->getTraceAsString(),
     ];
 
-    error_log("Error occurred: " . print_r($errorInfo, true));
-
     http_response_code(500);
-    echo json_encode($errorInfo);
+    echo json_encode($errorinfo);
 }

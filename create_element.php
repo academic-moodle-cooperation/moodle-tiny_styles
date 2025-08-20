@@ -1,6 +1,4 @@
 <?php
-
-use Dom\Text;
 // This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +22,7 @@ use Dom\Text;
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+// phpcs:disable moodle.Commenting.MissingDocblock
 
 require_once(__DIR__ . '/../../../../../config.php');
 require_login();
@@ -57,11 +56,17 @@ require_once($CFG->libdir . '/formslib.php');
  * Form class for creating or editing an Element.
  */
 class element_form extends moodleform {
+
+    /**
+     * Defines the moodle form.
+     * @return void
+     */
+    // PHPMD:suppress ExcessiveMethodLength.
     public function definition() {
         global $DB;
         $mform = $this->_form;
 
-        // Name
+        // Name.
         $mform->addElement(
             'text',
             'name',
@@ -72,10 +77,9 @@ class element_form extends moodleform {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
 
-
         $categories = $DB->get_records_menu('tiny_styles_categories', null, 'sortorder ASC', 'id,name');
 
-        // todo: remove the divider more efficiently by a conditional query
+        // TODO: remove the divider more efficiently by a conditional query.
         foreach ($categories as $id => $name) {
             $menumode = $DB->get_field('tiny_styles_categories', 'menumode', ['id' => $id]);
             if ($menumode === 'divider') {
@@ -88,13 +92,13 @@ class element_form extends moodleform {
             'categoryid',
             get_string('category', 'tiny_styles'),
             $categories,
-            ['size' => 1, 'style' => 'width: 400px;']
+            ['size' => 1, 'style' => 'width: 400px;'],
         );
         $mform->setType('categoryid', PARAM_INT);
         $mform->setDefault('categoryid', 'catid');
         $mform->addHelpButton('categoryid', 'categoryhelp', 'tiny_styles');
 
-        // CSS classes
+        // CSS classes.
         $elements = $DB->get_fieldset_sql("
             SELECT cssclasses
             FROM (
@@ -108,9 +112,9 @@ class element_form extends moodleform {
 
         $cssoptions = [
             'Manual style' => 'Manual style',
-            '' => ''
+            '' => '',
         ];
-        
+
         foreach ($elements as $element) {
             $cssoptions[$element] = $element;
         }
@@ -167,7 +171,7 @@ class element_form extends moodleform {
         );
         $mform->hideIf('manualconfig_help', 'cssclasses', 'neq', 'Manual style');
 
-        // Hidden fields
+        // Hidden fields.
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
@@ -204,9 +208,15 @@ class element_form extends moodleform {
 
     }
 
-    // todo: expand validation
+    /**
+     * Crude validation for name length.
+     * @param mixed $data User input for name.
+     * @param mixed $files Required by moodle.
+     * @return array
+     */
+    // PHPMD:suppress UnusedLocalVariable.
     public function validation($data, $files) {
-        $errors = array();
+        $errors = [];
 
         if (strlen(trim($data['name'])) < 3) {
             $errors['name'] = get_string('error_nametooshort', 'tiny_styles');
@@ -217,7 +227,7 @@ class element_form extends moodleform {
 $formurl = new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', [
     'action' => $action,
     'id'     => $id,
-    'catid'  => $catid
+    'catid'  => $catid,
 ]);
 $mform = new element_form($formurl, ['catid' => $catid]);
 
@@ -238,7 +248,7 @@ if ($data = $mform->get_data()) {
         $data->manualconfig = '';
     }
 
-    if($data->cssclasses == 'Manual style') {
+    if ($data->cssclasses == 'Manual style') {
         $record->cssclasses = $data->manualconfig;
         $record->custom     = 1;
         $record->type       = $data->type;
@@ -264,16 +274,12 @@ if ($data = $mform->get_data()) {
 
             $DB->update_record('tiny_styles_elements', $record);
 
-            if (!empty($data->categoryid)) {
-                // todo: validate
-            }
-
             redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                 'catid' => $data->categoryid,
             ])
             )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
         }
-        print_error('invalidelementid', 'tiny_styles');
+        throw new moodle_exception('invalidelementid', 'tiny_styles');
 
     } else {
         // New element addition.
@@ -290,7 +296,7 @@ if ($data = $mform->get_data()) {
             $maxsort = 0;
         }
         $record->enabled     = 0;
-        $record->sortorder   = $maxsort+1;
+        $record->sortorder   = $maxsort + 1;
         $record->timecreated = time();
         $elemid = $DB->insert_record('tiny_styles_elements', $record);
 
@@ -300,7 +306,7 @@ if ($data = $mform->get_data()) {
             $link->categoryid   = $data->categoryid;
             $link->elementid    = $elemid;
             $link->enabled      = 1;
-            $link->sortorder    = $maxsort+1;
+            $link->sortorder    = $maxsort + 1;
             $link->timecreated  = time();
             $link->timemodified = time();
             $DB->insert_record('tiny_styles_cat_elements', $link);
@@ -316,13 +322,13 @@ if ($data = $mform->get_data()) {
 
 // Loading data for editing an existing element.
 if ($action === 'edit' && $id > 0) {
-    if ($element = $DB->get_record('tiny_styles_elements', ['id'=>$id], '*', MUST_EXIST)) {
+    if ($element = $DB->get_record('tiny_styles_elements', ['id' => $id], '*', MUST_EXIST)) {
         $formdata = new stdClass();
         $formdata->id          = $element->id;
         $formdata->action      = 'edit';
         $formdata->name        = $element->name;
         $formdata->type        = $element->type;
-        
+
         if ($element->custom === '1') {
             $formdata->cssclasses = 'Manual style';
             $formdata->manualconfig = $element->cssclasses;
@@ -339,7 +345,7 @@ if ($action === 'edit' && $id > 0) {
 
         $mform->set_data($formdata);
     } else {
-        print_error('invalidelementid', 'tiny_styles');
+        throw new moodle_exception('invalidelementid', 'tiny_styles');
     }
 } else {
     // Create new style element.
@@ -358,13 +364,12 @@ $mform->display();
 $PAGE->requires->js_call_amd(
     'tiny_styles/form_preview',
     'init',
-    ['#btn-preview-element']
+    ['#btn-preview-element'],
 );
 
 $PAGE->requires->js_amd_inline("
-// Vanilla JS solution that mimics the jQuery pattern very closely
+// Vanilla JS solution that mimics jQuery pattern very closely
 require([], function() {
-    // Define our function exactly like in the jQuery version
     function checkForAlertClass() {
         var selectedClass = document.getElementById('id_cssclasses').value;
         if (selectedClass && selectedClass.indexOf('alert') !== -1) {
@@ -374,34 +379,32 @@ require([], function() {
             document.getElementById('id_type').value = 'inline';
         }
     }
-    
-    // This simulates $(document).ready()
+
+    // $(document).ready()
     function docReady(fn) {
-        // If document is already loaded, run the function now
+        // If document is already loaded, run the function
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             setTimeout(fn, 1); // Slight delay to ensure DOM is fully available
             return;
         }
-        
+
         // Otherwise, wait for DOMContentLoaded
         document.addEventListener('DOMContentLoaded', fn);
     }
-    
-    // This is our equivalent to $(document).ready(function() {...})
+
+    // Equivalent to $(document).ready(function() {...})
     docReady(function() {
-        // Get the element
         var cssClassesField = document.getElementById('id_cssclasses');
-        
+
         if (cssClassesField) {
-            // Add the change event listener - equivalent to $('#id_cssclasses').on('change', ...)
             cssClassesField.addEventListener('change', function() {
                 checkForAlertClass();
             });
-            
-            // Run once immediately after DOM is ready
+
+            // Run immediately after DOM is ready
             checkForAlertClass();
         } else {
-            // If the element wasn't found, try again after a short delay
+            // If the element wasn't found, run again after a short delay
             setTimeout(function() {
                 cssClassesField = document.getElementById('id_cssclasses');
                 if (cssClassesField) {

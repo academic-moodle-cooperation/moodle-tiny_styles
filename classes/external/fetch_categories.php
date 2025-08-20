@@ -37,6 +37,9 @@ use external_iterator;
 use stdClass;
 use context_system;
 
+/**
+ * Fetches and returns all enabled categories and associated elements.
+ */
 class fetch_categories extends external_api {
 
     /**
@@ -65,7 +68,7 @@ class fetch_categories extends external_api {
         FROM {tiny_styles_categories} c
         LEFT JOIN {tiny_styles_cat_elements} ce ON ce.categoryid = c.id
         LEFT JOIN {tiny_styles_elements} e ON e.id = ce.elementid
-        WHERE c.enabled = 1 
+        WHERE c.enabled = 1
         AND (e.enabled = 1 OR c.menumode = 'divider')
         ORDER BY c.sortorder, ce.sortorder";
         $recordset = $DB->get_recordset_sql($sql);
@@ -99,6 +102,10 @@ class fetch_categories extends external_api {
         return $results;
     }
 
+    /**
+     * Defines the structure of the data returned by the external function.
+     * @return external_multiple_structure
+     */
     public static function execute_returns() {
         return new external_multiple_structure(
             new external_single_structure([

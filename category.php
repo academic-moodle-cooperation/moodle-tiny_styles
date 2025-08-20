@@ -36,9 +36,9 @@ $PAGE->set_pagelayout('admin');
 $action = optional_param('action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
-$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php',[
+$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
     'action' => $action,
-    'id' => $id
+    'id' => $id,
 ]));
 
 // Dynamic naming for the site.
@@ -56,6 +56,11 @@ require_once($CFG->libdir . '/formslib.php');
  * Form for creating/editing category.
  */
 class category_form extends moodleform {
+
+    /**
+     * Defines the moodle form.
+     * @return void
+     */
     public function definition() {
         $mform = $this->_form;
 
@@ -65,12 +70,11 @@ class category_form extends moodleform {
             'text',
             'name',
             get_string('name'),
-            ['size' => 1, 'style' => 'width: 400px;', 'maxlength' => 100,]
+            ['size' => 1, 'style' => 'width: 400px;', 'maxlength' => 100],
         );
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
-
 
         $mform->addElement(
             'textarea',
@@ -87,25 +91,6 @@ class category_form extends moodleform {
         $mform->setType('description', PARAM_TEXT);
         $mform->addRule('description', get_string('maximumchars', '', 400), 'maxlength', 400, 'client');
 
-        // Description field stored in DB as "showdesc".
-        $descdisplayoptions = [
-            'never'    => 'Never',
-            'helptext' => 'Help text',
-            'tooltip'  => 'Tooltip'
-        ];
-        
-        /**
-         * Removed for not being implemented in editor side.
-         *
-         * $mform->addElement(
-         * 'select',
-         * 'showdesc',
-         * get_string('descriptiondisp', 'tiny_styles'),
-         * $descdisplayoptions,
-         * ['size' => 1, 'style' => 'width: 300px;']
-         * );
-         */
-
         $mform->addElement('html', '<div class="form-group row">
             <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
                 <label for="icon-search-input">' . get_string('selecticon', 'tiny_styles') . '</label>
@@ -117,17 +102,18 @@ class category_form extends moodleform {
             </div>
         </div>');
 
-        // The popup with search functionality
+        // The popup with search functionality.
         global $CFG;
         $iconpath = $CFG->dirroot . '/lib/editor/tiny/plugins/styles/pix';
         $iconurlbase = $CFG->wwwroot . '/lib/editor/tiny/plugins/styles/pix';
 
-        $iconpopuphtml = '<div id="icon-popup" style="display:none; position:absolute; top:100%; left:0; 
-            width:400px; max: height 450px; background-color:#fff; 
-            border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); 
-            z-index:1000; overflow:hidden; padding:0; margin-top:5px;">';
+        $iconpopuphtml = '<div id="icon-popup" style="display:none; position:absolute; top:100%; left:0;
+        width:400px; max: height 450px; background-color:#fff;
+        border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15);
+        z-index:1000; overflow:hidden; padding:0; margin-top:5px;">';
 
-        $iconpopuphtml .= '<div style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+        $iconpopuphtml .= '<div style="padding:20px; border-bottom:1px solid #eee; display:flex;
+            justify-content:space-between; align-items:center;">
             <h4 style="margin:0;">' . get_string('selectanicon', 'tiny_styles') . '</h4>
             <button type="button" id="clear-search-btn" class="btn btn-secondary btn-sm">'
             . get_string('clearsearch', 'tiny_styles') . '</button>
@@ -136,8 +122,8 @@ class category_form extends moodleform {
         $iconpopuphtml .= '<div id="icon-grid-container" style="max-height:300px; overflow-y:auto; padding:20px;">
             <div id="icon-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap:10px;">';
 
-        // Icons and names for the popup
-        $iconNames = [];
+        // Icons and names for the popup.
+        $iconnames = [];
         if (is_dir($iconpath)) {
             $files = scandir($iconpath);
             foreach ($files as $file) {
@@ -146,16 +132,16 @@ class category_form extends moodleform {
                 }
                 $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
                 if ($ext === 'svg') {
-                    $iconNames[] = $file;
+                    $iconnames[] = $file;
                     $iconurl = $iconurlbase . '/' . $file;
                     $iconname = pathinfo($file, PATHINFO_FILENAME);
-            
-                    $iconpopuphtml .= '<div class="icon-grid-item" data-icon="' . s($file) . '" 
+
+                    $iconpopuphtml .= '<div class="icon-grid-item" data-icon="' . s($file) . '"
                         data-icon-name="' . s($iconname) . '"
-                        style="cursor:pointer; display:flex; flex-direction:column; align-items:center; 
+                        style="cursor:pointer; display:flex; flex-direction:column; align-items:center;
                         justify-content:center; padding:12px; border-radius:12px;"
                         title="' . s($iconname) . '">';
-                    
+
                     $iconpopuphtml .= '<img src="' . $iconurl . '" alt="' . s($file) . '"
                         style="width:24px; height:24px; display:block; margin: 0 auto;" />';
                     $iconpopuphtml .= '<div style="font-size:0.75em; margin-top:4px;
@@ -177,7 +163,7 @@ class category_form extends moodleform {
             </div>
             </div>';
 
-        // Close button for popup
+        // Close button for popup.
         $iconpopuphtml .= '<div style="padding:15px 20px; border-top:1px solid #eee;
              display:flex; justify-content:center; align-items:center;">
             <button type="button" id="close-icon-popup" class="btn btn-primary">'
@@ -185,7 +171,7 @@ class category_form extends moodleform {
             </div>';
         $iconpopuphtml .= '</div>';
 
-        // Add popup HTML to form
+        // Add popup HTML to form.
         $mform->addElement('html', $iconpopuphtml);
 
         $menumodeoptions = [
@@ -214,16 +200,17 @@ class category_form extends moodleform {
         $mform->addElement('hidden', 'selectedicon', '');
         $mform->setType('selectedicon', PARAM_TEXT);
 
-        // Add available icon names as a data attribute for JavaScript validation
-        $mform->addElement('html', '<script>window.availableIcons = ' . json_encode($iconNames) . ';</script>');
-
+        // Add available icon names as a data attribute for JavaScript validation.
+        $mform->addElement('html', '<script>window.availableIcons = ' . json_encode($iconnames) . ';</script>');
 
         $this->add_action_buttons(true, get_string('savechanges'));
     }
 
     /**
-     * TODO: validation
-     * eg. name must be at least 3 chars
+     * TODO: extend validation.
+     * Eg. name must be at least 3 chars.
+     * @param mixed $data User input for name.
+     * @param mixed $files Required by moodle.
      */
     public function validation($data, $files) {
         $errors = [];
@@ -247,13 +234,12 @@ if ($data = $mform->get_data()) {
     $record = new stdClass();
     $record->name         = $data->name;
     $record->description  = $data->description;
-    $record->showdesc     = 'null';//$data->showdesc;
+    $record->showdesc     = 'null';
     $record->symbol       = $data->selectedicon;
     $record->menumode = $data->menumode;
     $record->timemodified = time();
 
-    
-    //  UPDATE of existing category 
+    // UPDATE of existing category.
     if ($data->action === 'edit' && !empty($data->id)) {
         if ($old = $DB->get_record('tiny_styles_categories', ['id' => $data->id], '*', MUST_EXIST)) {
             $record->id          = $old->id;
@@ -262,21 +248,21 @@ if ($data = $mform->get_data()) {
             $record->timecreated = $old->timecreated;
 
             $DB->update_record('tiny_styles_categories', $record);
-            redirect(new moodle_url('/admin/settings.php', ['section'=>'tiny_styles_admin']), 'Category updated!', 2);
+            redirect(new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']), 'Category updated!', 2);
         }
-        // todo: edit this
-        print_error('Invalid category ID');
+        // TODO: edit this.
+        throw new moodle_exception('Invalid category ID');
     } else {
-        // CREATE new category
+        // CREATE new category.
         $maxsort = $DB->get_field_sql("SELECT MAX(sortorder)
                                  FROM {tiny_styles_categories}");
         $record->enabled     = 0;
-        $record->sortorder   = $maxsort+1;
+        $record->sortorder   = $maxsort + 1;
         $record->timecreated = time();
         $newid = $DB->insert_record('tiny_styles_categories', $record);
         redirect(new moodle_url(
             '/admin/settings.php',
-            ['section'=>'tiny_styles_admin']),
+            ['section' => 'tiny_styles_admin']),
             get_string('category_saved', 'tiny_styles'), 2
         );
     }
@@ -286,23 +272,24 @@ if ($data = $mform->get_data()) {
 // Get the category from db and set row to form data.
 if ($action === 'edit' && $id > 0) {
     global $DB;
-    if ($category = $DB->get_record('tiny_styles_categories', ['id'=>$id], '*', MUST_EXIST)) {
+    if ($category = $DB->get_record('tiny_styles_categories', ['id' => $id], '*', MUST_EXIST)) {
         $formdata = new stdClass();
         $formdata->id           = $category->id;
         $formdata->action       = 'edit';
         $formdata->name         = $category->name;
         $formdata->description  = $category->description;
-        // $formdata->showdesc     = $category->showdesc;  // removed for not being implemented in editor.
+        // To uncommment: $formdata->showdesc     = $category->showdesc;.
+        // Removed for not being implemented in editor.
         $formdata->selectedicon = $category->symbol;
         $formdata->menumode = $category->menumode;
 
         $mform->set_data($formdata);
     } else {
-        // TODO: edit this
-        print_error('Invalid category ID');
+        // TODO: edit this.
+        throw new moodle_exception('Invalid category ID');
     }
 } else {
-    // ensures hidden fields are set
+    // Ensures hidden fields are set.
     $formdata = new stdClass();
     $formdata->id = 0;
     $formdata->action = 'create';

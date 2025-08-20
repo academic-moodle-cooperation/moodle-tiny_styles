@@ -25,6 +25,9 @@
 
 namespace tiny_styles\privacy;
 
+/**
+ * Returns a text explaining that this plugin stores no personal data.
+ */
 class provider implements \core_privacy\local\metadata\null_provider {
 
     /**
@@ -32,7 +35,7 @@ class provider implements \core_privacy\local\metadata\null_provider {
      *
      * @return string
      */
-    public static function get_reason() : string {
+    public static function get_reason(): string {
         return 'privacy:metadata';
     }
 }

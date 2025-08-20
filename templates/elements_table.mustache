@@ -1,5 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_styles/elements_table
+
+    Displays the style elements of a category in a table
+
+    Classes required for JS:
+    * 
+
+    Data attributes required for JS:
+    *
+
+    Context variables required for this template:
+    * heading - Heading text for the page
+    * has_bulk_message - Whether there is a bulk message to display
+    * bulk_message - The bulk message to display
+    * submiturl - URL for form submission
+    * navigateback - Label for back button
+    * createbuttonlabel - Label for create button
+    * createelementurl - URL for creating a new element
+    * elements - Array of element objects
+    * bulkactionslabel - Label for bulk actions
+    * selectdefault - Default option text for bulk actions
+    * showaction - Show action text
+    * hideaction - Hide action text
+    * duplicateaction - Duplicate action text
+    * deleteaction - Delete action text
+    * catid - Category ID
+    
+    Example context (json):
+    {}
+}}
 <div class="tiny-elements" id="elements-container" data-catid="{{catid}}">
-    <h3>{{heading}}</h3>
+    {{#heading}}<h1>{{#str}}elementsheadingname, tiny_styles {{/str}}</h1>{{/heading}}
+
+    {{#heading}}<h3>{{heading}}  ({{#str}}category, tiny_styles {{/str}}: {{category}})</h3>{{/heading}}
+
     {{#has_bulk_message}}
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             {{bulk_message}}
@@ -8,10 +58,10 @@
             </button>
         </div>
     {{/has_bulk_message}}
-    <form method="post" action="{{submiturl}}">
+    <form method="post" action="{{#submiturl}}{{submiturl}}{{/submiturl}}{{^submiturl}}.{{/submiturl}}">
         <div class="actions mb-3">
             <div class="mb-2">
-                <button type="submit" class="btn btn-secondary">
+                <button type="submit" class="btn btn-secondary me-2">
                     {{navigateback}}
                 </button>
                 <a href="{{createelementurl}}" class="btn btn-primary">
@@ -69,11 +119,11 @@
     <div class="bulk-actions mt-3 ms-3">
         <label for="bulk-actions-dropdown">{{bulkactionslabel}}</label>
         <select id="bulk-actions-dropdown" class="form-select form-select w-auto d-inline-block align-middle rounded">
-            <option value="">{{selectdefault}}</option>
-            <option value="show">{{showaction}}</option>
-            <option value="hide">{{hideaction}}</option>
-            <option value="duplicate">{{duplicateaction}}</option>
-            <option value="delete">{{deleteaction}}</option>
+            <option value="">{{#selectdefault}}{{selectdefault}}{{/selectdefault}}{{^selectdefault}}Choose action{{/selectdefault}}</option>
+            <option value="show">{{#showaction}}{{showaction}}{{/showaction}}{{^showaction}}Show{{/showaction}}</option>
+            <option value="hide">{{#hideaction}}{{hideaction}}{{/hideaction}}{{^hideaction}}Hide{{/hideaction}}</option>
+            <option value="duplicate">{{#duplicateaction}}{{duplicateaction}}{{/duplicateaction}}{{^duplicateaction}}Duplicate{{/duplicateaction}}</option>
+            <option value="delete">{{#deleteaction}}{{deleteaction}}{{/deleteaction}}{{^deleteaction}}Delete{{/deleteaction}}</option>
         </select>
         <div id="bulk-action-warning" class="mt-2 text-danger" style="display: none;">
                 {{#str}} bulkactionmustselect, tiny_styles {{/str}}

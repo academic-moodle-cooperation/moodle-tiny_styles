@@ -16,7 +16,7 @@
 /**
  * Enables toggling the categories enabled/disabled seamlessly.
  *
- * @package tiny_styles
+ * @ package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -48,7 +48,7 @@ define([], function() {
     const init = () => {
         const buttons = document.querySelectorAll('.toggle-enable');
         buttons.forEach(button => {
-            button.addEventListener('click', async (event) => {
+            button.addEventListener('click', async(event) => {
                 event.preventDefault();
 
                 const categoryid = parseInt(button.dataset.id);
@@ -57,7 +57,7 @@ define([], function() {
                 }
                 // Button disabled to prevent multiple clicks.
                 button.disabled = true;
-                const payload = { categoryid: categoryid };
+                const payload = {categoryid: categoryid};
 
                 const ajaxUrl = M.cfg.wwwroot +
                     '/lib/editor/tiny/plugins/styles/ajax/toggle_category.php?sesskey=' +
@@ -74,26 +74,18 @@ define([], function() {
                         credentials: 'same-origin'
                     });
 
-                    if (!response.ok) {
-                        alert(response.status);
-                        return;
-                    }
-
                     const data = await response.json();
                     if (data.success) {
                         updateIcon(button, data.newstate);
-                    } else {
-                        alert(data.message);
                     }
                 } catch (e) {
                     alert(e.message);
-                }
-                finally {
+                } finally {
                     button.disabled = false;
                 }
             });
         });
     };
 
-    return { init };
+    return {init};
 });
