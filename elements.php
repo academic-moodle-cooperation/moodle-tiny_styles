@@ -46,7 +46,6 @@ $PAGE->requires->js_call_amd('tiny_styles/preview_element', 'init', ['a.element-
 $PAGE->requires->js_call_amd('tiny_styles/sortelements', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/duplicate', 'init');
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(
         new moodle_url('/admin/settings.php',
@@ -63,6 +62,12 @@ $sql = "SELECT e.*
 $params = ['catid' => $catid];
 
 $records = $DB->get_records_sql($sql, $params);
+
+$sql = "SELECT c.name
+        FROM {tiny_styles_categories} c
+        WHERE c.id = :catid";
+$params = ['catid' => $catid];
+$catname = $DB->get_field_sql($sql, $params);
 
 // Array of elements for mustache template.
 $elements = [];
@@ -136,6 +141,7 @@ foreach ($records as $r) {
 
 $templatecontext = [
     'heading'           => get_string('elementsheading', 'tiny_styles'),
+    'category'          => $catname,
     'navigateback'      => get_string('back_overview', 'tiny_styles'),
     'createbuttonlabel' => get_string('create_element', 'tiny_styles'),
     'createelementurl'  => (new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php',

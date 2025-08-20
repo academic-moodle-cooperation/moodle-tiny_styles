@@ -66,6 +66,7 @@ $string['elements'] = 'Elemente bearbeiten';
 $string['elements_updated'] = 'Elemente aktualisiert';
 $string['elementsettings'] = 'Element-Einstellungen';
 $string['elementsheading'] = 'Elemente';
+$string['elementsheadingname'] = 'Gestaltungsvorlagen';
 $string['elementshown'] = 'Element(e) wurden erfolgreich sichtbar gemacht';
 $string['elementstitle'] = 'Kategorie-Elemente';
 $string['elementupdated'] = 'Element aktualisiert';

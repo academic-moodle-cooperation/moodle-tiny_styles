@@ -64,6 +64,7 @@ $string['elements'] = 'Edit elements';
 $string['elements_updated'] = 'Elements updated';
 $string['elementsettings'] = 'Element settings';
 $string['elementsheading'] = 'Elements';
+$string['elementsheadingname'] = 'Styles';
 $string['elementshown'] = 'Element(s) set visible successfully';
 $string['elementstitle'] = 'Category elements';
 $string['elementupdated'] = 'Element updated';
