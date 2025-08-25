@@ -43,11 +43,11 @@ try {
             (isset($data['id']) ? '' : 'id '));
     }
 
-    $tiny_styles_action = $data['action'];
+    $tinystylesaction = $data['action'];
     $catid = (int)$data['id'];
 
-    if (!in_array($tiny_styles_action, ['moveup', 'movedown'])) {
-        throw new moodle_exception('Invalid action: ' . $tiny_styles_action);
+    if (!in_array($tinystylesaction, ['moveup', 'movedown'])) {
+        throw new moodle_exception('Invalid action: ' . $tinystylesaction);
     }
 
     global $DB;
@@ -56,7 +56,7 @@ try {
     $current = $DB->get_record('tiny_styles_categories', ['id' => $catid], '*', MUST_EXIST);
 
     // Build SQL query to find neighbor based on tiny_styles_action.
-    if ($tiny_styles_action === 'moveup') {
+    if ($tinystylesaction === 'moveup') {
         $sql = "SELECT *
                   FROM {tiny_styles_categories}
                  WHERE sortorder < :currsort

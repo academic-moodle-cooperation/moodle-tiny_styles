@@ -34,7 +34,7 @@ $PAGE->set_pagelayout('admin');
 
 // Category id for bridging table query.
 $catid = required_param('catid', PARAM_INT);
-$tiny_styles_action = optional_param('tiny_styles_action', '', PARAM_ALPHA);
+$tinystylesaction = optional_param('tiny_styles_action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $catid]));
@@ -161,7 +161,7 @@ $templatecontext = [
 ];
 
 
-if ($tiny_styles_action === 'delete' && $id > 0) {
+if ($tinystylesaction === 'delete' && $id > 0) {
     confirm_sesskey();
 
     $DB->delete_records('tiny_styles_elements', ['id' => $id]);

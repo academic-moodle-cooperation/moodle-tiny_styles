@@ -39,13 +39,13 @@ try {
     if (!isset($data['action']) || !isset($data['elementids'])) {
         throw new moodle_exception('Missing parameters');
     }
-    $tiny_styles_action = $data['action'];
+    $tinystylesaction = $data['action'];
     $elementids = $data['elementids'];
     if (!is_array($elementids) || empty($elementids)) {
         throw new moodle_exception('No elements selected');
     }
     global $DB;
-    switch ($tiny_styles_action) {
+    switch ($tinystylesaction) {
         case 'show':
             foreach ($elementids as $id) {
                 $element = $DB->get_record('tiny_styles_elements', ['id' => $id], '*', MUST_EXIST);
@@ -112,7 +112,7 @@ try {
             throw new moodle_exception('Invalid action');
     }
     $message = '';
-    switch ($tiny_styles_action) {
+    switch ($tinystylesaction) {
         case 'show':
             $message = get_string('elementshown', 'tiny_styles', count($elementids));
             break;

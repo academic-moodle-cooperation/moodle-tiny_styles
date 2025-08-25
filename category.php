@@ -33,16 +33,16 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 
 // Parameters for editing/creating category entries.
-$tiny_styles_action = optional_param('tiny_styles_action', 'create', PARAM_ALPHA);
+$tinystylesaction = optional_param('tiny_styles_action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-    'tiny_styles_action' => $tiny_styles_action,
+    'tiny_styles_action' => $tinystylesaction,
     'id' => $id,
 ]));
 
 // Dynamic naming for the site.
-if ($tiny_styles_action === 'edit') {
+if ($tinystylesaction === 'edit') {
     $formtype = get_string('editcategory', 'tiny_styles');
 } else {
     $formtype = get_string('createcategory', 'tiny_styles');
@@ -270,7 +270,7 @@ if ($data = $mform->get_data()) {
 }
 
 // Get the category from db and set row to form data.
-if ($tiny_styles_action === 'edit' && $id > 0) {
+if ($tinystylesaction === 'edit' && $id > 0) {
     global $DB;
     if ($category = $DB->get_record('tiny_styles_categories', ['id' => $id], '*', MUST_EXIST)) {
         $formdata = new stdClass();

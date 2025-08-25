@@ -26,11 +26,11 @@
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/editor/tiny/plugins/styles/locallib.php');
 
-$tiny_styles_action = optional_param('tiny_styles_action', '', PARAM_ALPHA);
+$tinystylesaction = optional_param('tiny_styles_action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 $PAGE->requires->js_call_amd('tiny_styles/sortcategories', 'init');;
 
-if ($tiny_styles_action === 'delete' && $id > 0) {
+if ($tinystylesaction === 'delete' && $id > 0) {
     require_sesskey();
     require_capability('moodle/site:config', context_system::instance());
 
@@ -57,7 +57,7 @@ if ($tiny_styles_action === 'delete' && $id > 0) {
     );
     exit;
 
-} else if ($tiny_styles_action === 'export') {
+} else if ($tinystylesaction === 'export') {
     require_once(__DIR__ . '/exporthandler.php');
     exit;
 }
