@@ -34,7 +34,7 @@ $PAGE->set_pagelayout('admin');
 
 // Category id for bridging table query.
 $catid = required_param('catid', PARAM_INT);
-$action = optional_param('action', '', PARAM_ALPHA);
+$tiny_styles_action = optional_param('tiny_styles_action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $catid]));
@@ -95,10 +95,10 @@ foreach ($records as $r) {
         ]
     );
 
-    // Delete url for delete action.
+    // Delete url for delete tiny_styles_action.
     $deleteurl = new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
         'catid'   => $catid,
-        'action'  => 'delete',
+        'tiny_styles_action'  => 'delete',
         'id'      => $r->id,
         'sesskey' => sesskey(),
     ]);
@@ -131,7 +131,7 @@ foreach ($records as $r) {
         'moveupiconhtml'   => $moveupiconhtml,
         'movedowniconhtml' => $movedowniconhtml,
         'editurl'        => (new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', [
-            'action' => 'edit',
+            'tiny_styles_action' => 'edit',
             'id'     => $r->id,
             'catid' => $catid,
         ]))->out(false),
@@ -161,7 +161,7 @@ $templatecontext = [
 ];
 
 
-if ($action === 'delete' && $id > 0) {
+if ($tiny_styles_action === 'delete' && $id > 0) {
     confirm_sesskey();
 
     $DB->delete_records('tiny_styles_elements', ['id' => $id]);
