@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-5.0.1 (2025-08-027)
+5.0.1 (2025-08-27)
 ------------------
 * [FIXED] #83 Fix Problems with Boost Union [github #16]
 
