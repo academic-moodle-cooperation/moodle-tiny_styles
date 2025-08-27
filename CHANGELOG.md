@@ -1,6 +1,9 @@
 CHANGELOG
 =========
 
+5.0.1 (2025-08-027)
+* [FIXED] #83 Fix Problems with Boost Union [github #16]
+
 5.0.0 (2025-08-06)
 ------------------
 * Moodle 5.0 compatible version
