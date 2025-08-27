@@ -33,17 +33,17 @@ require_capability('moodle/site:config', $context);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 
-$action = optional_param('action', 'create', PARAM_ALPHA);
+$tinystylesaction = optional_param('tiny_styles_action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 $catid = required_param('catid', PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', [
-    'action' => $action,
+    'tiny_styles_action' => $tinystylesaction,
     'id'     => $id,
     'catid'  => $catid,
 ]));
 
-if ($action === 'edit') {
+if ($tinystylesaction === 'edit') {
     $formtitle = get_string('editelement', 'tiny_styles');
 } else {
     $formtitle = get_string('create_element', 'tiny_styles');
@@ -175,8 +175,8 @@ class element_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'action');
-        $mform->setType('action', PARAM_ALPHA);
+        $mform->addElement('hidden', 'tiny_styles_action');
+        $mform->setType('tiny_styles_action', PARAM_ALPHA);
 
         $mform->addElement('hidden', 'catid', $this->_customdata['catid']);
         $mform->setType('catid', PARAM_INT);
@@ -225,7 +225,7 @@ class element_form extends moodleform {
     }
 }
 $formurl = new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', [
-    'action' => $action,
+    'tiny_styles_action' => $tinystylesaction,
     'id'     => $id,
     'catid'  => $catid,
 ]);
@@ -265,7 +265,7 @@ if ($data = $mform->get_data()) {
     $record->name       = $data->name;
     $record->timemodified = time();
 
-    if ($data->action === 'edit' && !empty($data->id)) {
+    if ($data->tiny_styles_action === 'edit' && !empty($data->id)) {
         if ($old = $DB->get_record('tiny_styles_elements', ['id' => $data->id], '*', MUST_EXIST)) {
             $record->id          = $old->id;
             $record->enabled     = $old->enabled;
@@ -321,11 +321,11 @@ if ($data = $mform->get_data()) {
 }
 
 // Loading data for editing an existing element.
-if ($action === 'edit' && $id > 0) {
+if ($tinystylesaction === 'edit' && $id > 0) {
     if ($element = $DB->get_record('tiny_styles_elements', ['id' => $id], '*', MUST_EXIST)) {
         $formdata = new stdClass();
         $formdata->id          = $element->id;
-        $formdata->action      = 'edit';
+        $formdata->tiny_styles_action      = 'edit';
         $formdata->name        = $element->name;
         $formdata->type        = $element->type;
 
@@ -351,7 +351,7 @@ if ($action === 'edit' && $id > 0) {
     // Create new style element.
     $formdata = new stdClass();
     $formdata->id = 0;
-    $formdata->action = 'create';
+    $formdata->tiny_styles_action = 'create';
     $formdata->categoryid = $catid;
     $formdata->cssclasses = '';
     $mform->set_data($formdata);

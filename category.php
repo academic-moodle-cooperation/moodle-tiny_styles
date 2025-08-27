@@ -33,16 +33,16 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 
 // Parameters for editing/creating category entries.
-$action = optional_param('action', 'create', PARAM_ALPHA);
+$tinystylesaction = optional_param('tiny_styles_action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-    'action' => $action,
+    'tiny_styles_action' => $tinystylesaction,
     'id' => $id,
 ]));
 
 // Dynamic naming for the site.
-if ($action === 'edit') {
+if ($tinystylesaction === 'edit') {
     $formtype = get_string('editcategory', 'tiny_styles');
 } else {
     $formtype = get_string('createcategory', 'tiny_styles');
@@ -192,9 +192,9 @@ class category_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        // Hidden $action field -> create or edit.
-        $mform->addElement('hidden', 'action');
-        $mform->setType('action', PARAM_ALPHA);
+        // Hidden $tiny_styles_action field -> create or edit.
+        $mform->addElement('hidden', 'tiny_styles_action');
+        $mform->setType('tiny_styles_action', PARAM_ALPHA);
 
         // Hidden selected icon field for storing to db.
         $mform->addElement('hidden', 'selectedicon', '');
@@ -240,7 +240,7 @@ if ($data = $mform->get_data()) {
     $record->timemodified = time();
 
     // UPDATE of existing category.
-    if ($data->action === 'edit' && !empty($data->id)) {
+    if ($data->tiny_styles_action === 'edit' && !empty($data->id)) {
         if ($old = $DB->get_record('tiny_styles_categories', ['id' => $data->id], '*', MUST_EXIST)) {
             $record->id          = $old->id;
             $record->enabled     = $old->enabled;
@@ -270,12 +270,12 @@ if ($data = $mform->get_data()) {
 }
 
 // Get the category from db and set row to form data.
-if ($action === 'edit' && $id > 0) {
+if ($tinystylesaction === 'edit' && $id > 0) {
     global $DB;
     if ($category = $DB->get_record('tiny_styles_categories', ['id' => $id], '*', MUST_EXIST)) {
         $formdata = new stdClass();
         $formdata->id           = $category->id;
-        $formdata->action       = 'edit';
+        $formdata->tiny_styles_action       = 'edit';
         $formdata->name         = $category->name;
         $formdata->description  = $category->description;
         // To uncommment: $formdata->showdesc     = $category->showdesc;.
@@ -292,7 +292,7 @@ if ($action === 'edit' && $id > 0) {
     // Ensures hidden fields are set.
     $formdata = new stdClass();
     $formdata->id = 0;
-    $formdata->action = 'create';
+    $formdata->tiny_styles_action = 'create';
     $mform->set_data($formdata);
 }
 

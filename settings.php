@@ -26,11 +26,11 @@
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/editor/tiny/plugins/styles/locallib.php');
 
-$action = optional_param('action', '', PARAM_ALPHA);
+$tinystylesaction = optional_param('tiny_styles_action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 $PAGE->requires->js_call_amd('tiny_styles/sortcategories', 'init');;
 
-if ($action === 'delete' && $id > 0) {
+if ($tinystylesaction === 'delete' && $id > 0) {
     require_sesskey();
     require_capability('moodle/site:config', context_system::instance());
 
@@ -57,7 +57,7 @@ if ($action === 'delete' && $id > 0) {
     );
     exit;
 
-} else if ($action === 'export') {
+} else if ($tinystylesaction === 'export') {
     require_once(__DIR__ . '/exporthandler.php');
     exit;
 }
@@ -101,7 +101,7 @@ if ($hassiteconfig) {
 
             $deleteurl = new moodle_url('/admin/settings.php', [
                 'section' => 'tiny_styles_admin',
-                'action'  => 'delete',
+                'tiny_styles_action'  => 'delete',
                 'id'      => $category->id,
                 'sesskey' => sesskey(),
             ]);
@@ -129,7 +129,7 @@ if ($hassiteconfig) {
                     'moveupiconhtml'  => $moveupiconhtml,
                     'movedowniconhtml' => $movedowniconhtml,
                     'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-                        'action' => 'edit', 'id' => $category->id,
+                        'tiny_styles_action' => 'edit', 'id' => $category->id,
                     ]))->out(false),
                     'deleteiconhtml' => $deleteiconhtml,
                 ];
@@ -147,7 +147,7 @@ if ($hassiteconfig) {
                     'moveupiconhtml'  => $moveupiconhtml,
                     'movedowniconhtml' => $movedowniconhtml,
                     'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-                        'action' => 'edit', 'id' => $category->id,
+                        'tiny_styles_action' => 'edit', 'id' => $category->id,
                     ]))->out(false),
                     'deleteiconhtml' => $deleteiconhtml,
                 ];
@@ -155,11 +155,11 @@ if ($hassiteconfig) {
         }
 
         $createcaturl = new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
-            'action' => 'create',
+            'tiny_styles_action' => 'create',
         ]);
         $exporturl    = new moodle_url('/admin/settings.php', [
             'section' => 'tiny_styles_admin',
-            'action' => 'export',
+            'tiny_styles_action' => 'export',
             'sesskey' => sesskey(),
         ]);
         $importurl = new moodle_url('/lib/editor/tiny/plugins/styles/import.php');
