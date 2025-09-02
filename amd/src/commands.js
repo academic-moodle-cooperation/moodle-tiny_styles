@@ -213,7 +213,6 @@ function applyStyle(editor, styleDef) {
  */
 function applyListBlockStyle(editor, styleDef, listParent) {
     const {className, custom, id} = styleDef;
-    
     // Apply styling directly to the list element
     if (custom) {
         listParent.style.cssText = className;
@@ -225,7 +224,6 @@ function applyListBlockStyle(editor, styleDef, listParent) {
             listParent.removeAttribute('style');
         }
     }
-    
     editor.focus();
     return true;
 }
@@ -242,11 +240,9 @@ function applyListBlockStyle(editor, styleDef, listParent) {
 function applyListItemStyle(editor, styleDef, selectedNode) {
     const {className, custom, id} = styleDef;
     const selectedHtml = editor.selection.getContent({format: 'html'});
-    
     // Get all selected list items
     const selectedBlocks = editor.selection.getSelectedBlocks();
     const selectedListItems = selectedBlocks.filter(block => block.tagName === 'LI');
-    
     // If no list items in selection, check if cursor is inside one
     if (selectedListItems.length === 0) {
         const currentListItem = editor.dom.getParent(selectedNode, 'LI');
@@ -254,11 +250,9 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
             selectedListItems.push(currentListItem);
         }
     }
-    
     if (selectedListItems.length === 0) {
         return false;
     }
-    
     if (selectedHtml.trim() && selectedListItems.length > 1) {
         // User selected text across multiple list items
         return applyStyleToMultipleListItems(editor, styleDef, selectedListItems);
@@ -298,7 +292,7 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
         // No existing span, new styling to selected text
         const cleanSelectedHtml = editor.selection.getContent({format: 'html'});
         applyInlineStyle(editor, styleDef, cleanSelectedHtml);
-        return true;   
+        return true;
     }
     return false;
 }
@@ -314,9 +308,7 @@ function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
     const {className, custom, id} = styleDef;
     const selection = editor.selection;
     const range = selection.getRng();
-    
     const originalRange = range.cloneRange();
-    
     // Apply styling to all selected list items entirely
     selectedListItems.forEach((li) => {
         // Remove existing inline styling
@@ -326,8 +318,6 @@ function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
                 span.outerHTML = span.innerHTML;
             }
         });
-        
-        // 
         const span = editor.dom.create('span');
         if (custom) {
             span.style.cssText = className;
@@ -339,7 +329,6 @@ function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
         li.innerHTML = '';
         li.appendChild(span);
     });
-    
     // Restore original selection
     selection.setRng(originalRange);
     editor.focus();
@@ -358,19 +347,16 @@ function clearListStyling(editor) {
     if (listParent) {
         // Check if there's selected content within list items
         const selectedHtml = editor.selection.getContent({format: 'html'});
-        
         if (selectedHtml.trim()) {
             // Check for inline styles in list items
             const selectedBlocks = editor.selection.getSelectedBlocks();
             const selectedListItems = selectedBlocks.filter(block => block.tagName === 'LI');
-            
             if (selectedListItems.length === 0) {
                 const currentListItem = editor.dom.getParent(selectedNode, 'LI');
                 if (currentListItem) {
                     selectedListItems.push(currentListItem);
                 }
             }
-            
             let inlineStylesRemoved = false;
             selectedListItems.forEach(li => {
                 const styledSpans = li.querySelectorAll('span');
@@ -381,11 +367,9 @@ function clearListStyling(editor) {
                     }
                 });
             });
-            
             if (inlineStylesRemoved) {
                 return true;
             }
-            
             // Check for block styling directly on the list element
             if (isStyledBlockElement(listParent)) {
                 // Clear styling from the list itself
@@ -394,11 +378,9 @@ function clearListStyling(editor) {
                 listParent.removeAttribute('data-mce-style');
                 return true;
             }
-            
             return false;
         }
     }
-    
     return false;
 }
 
@@ -520,7 +502,7 @@ function applyBlockStyle(editor, styleDef) {
 
         // Create a new paragraph after to avoid continuous styling
         const nextSibling = newParagraph.nextSibling;
-        const needsNewParagraph = !nextSibling || 
+        const needsNewParagraph = !nextSibling ||
                                   nextSibling.nodeType !== Node.ELEMENT_NODE ||
                                   nextSibling.tagName !== 'P' ||
                                   (nextSibling.textContent && nextSibling.textContent.trim()) ||
