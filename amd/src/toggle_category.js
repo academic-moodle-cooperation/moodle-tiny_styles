@@ -37,11 +37,11 @@ define([], function() {
         if (newState === 1) {
             icon.classList.remove('fa-eye-slash');
             icon.classList.add('fa-eye');
-            button.title = M.str.core.hide;
+            button.title = M.util.get_string('hide', 'core');
         } else {
             icon.classList.remove('fa-eye');
             icon.classList.add('fa-eye-slash');
-            button.title = M.str.core.show;
+            button.title = M.util.get_string('show', 'core');
         }
     };
 
