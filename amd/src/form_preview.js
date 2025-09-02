@@ -143,8 +143,6 @@ export const init = () => {
                     // Intentionally empty
                 });
             }
-        } catch (error) {
-            //alert(error);
-        }
+        } catch (error) {}
     });
 };

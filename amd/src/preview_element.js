@@ -108,9 +108,7 @@ const showPreview = async(name, cssclasses, type) => {
         modal.show();
 
         modal.getRoot()[0].addEventListener(ModalEvents.hidden, () => {});
-    } catch (error) {
-        //alert(error);
-    }
+    } catch (error) {}
 };
 
 /**
