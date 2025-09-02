@@ -144,7 +144,7 @@ export const init = () => {
                 });
             }
         } catch (error) {
-            alert(error);
+            //alert(error);
         }
     });
 };
