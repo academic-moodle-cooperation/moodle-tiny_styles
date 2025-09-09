@@ -153,6 +153,15 @@ function applyStyle(editor, styleDef) {
 
     const selectedNode = editor.selection.getNode();
 
+    const listParent = editor.dom.getParent(selectedNode, 'UL,OL');
+    if (listParent) {
+        if (block) {
+            return applyListBlockStyle(editor, styleDef, listParent);
+        } else {
+            return applyListItemStyle(editor, styleDef, selectedNode);
+        }
+    }
+
     if (block) {
         return applyBlockStyle(editor, styleDef);
     }
@@ -196,6 +205,186 @@ function applyStyle(editor, styleDef) {
 }
 
 /**
+ * Applies block-level styling directly to the list element (UL/OL)
+ * @param {Object} editor TinyMCE editor instance
+ * @param {Object} styleDef Style definition object
+ * @param {Node} listParent The list element (UL/OL) to style
+ * @returns {boolean} True if styling was applied
+ */
+function applyListBlockStyle(editor, styleDef, listParent) {
+    const {className, custom, id} = styleDef;
+    // Apply styling directly to the list element
+    if (custom) {
+        listParent.style.cssText = className;
+        listParent.style.setProperty('--custom-style-id', id);
+        listParent.removeAttribute('class');
+    } else {
+        listParent.className = className;
+        if (listParent.hasAttribute('style')) {
+            listParent.removeAttribute('style');
+        }
+    }
+    editor.focus();
+    return true;
+}
+
+
+/**
+ * Applies inline styling to list items with proper span replacement logic
+ * Now handles multiple selected list items properly
+ * @param {Object} editor TinyMCE editor instance
+ * @param {Object} styleDef Style definition object
+ * @param {Node} selectedNode The currently selected node
+ * @returns {boolean} True if styling was applied
+ */
+function applyListItemStyle(editor, styleDef, selectedNode) {
+    const {className, custom, id} = styleDef;
+    const selectedHtml = editor.selection.getContent({format: 'html'});
+    // Get all selected list items
+    const selectedBlocks = editor.selection.getSelectedBlocks();
+    const selectedListItems = selectedBlocks.filter(block => block.tagName === 'LI');
+    // If no list items in selection, check if cursor is inside one
+    if (selectedListItems.length === 0) {
+        const currentListItem = editor.dom.getParent(selectedNode, 'LI');
+        if (currentListItem) {
+            selectedListItems.push(currentListItem);
+        }
+    }
+    if (selectedListItems.length === 0) {
+        return false;
+    }
+    if (selectedHtml.trim() && selectedListItems.length > 1) {
+        // User selected text across multiple list items
+        return applyStyleToMultipleListItems(editor, styleDef, selectedListItems);
+    } else if (selectedHtml.trim() && selectedListItems.length === 1) {
+        // Single list item with selected text
+        const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
+            return isStyledInlineElement(node);
+        });
+
+        if (styledSpanParent) {
+            // Replace existing styled span
+            const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
+            const newWrapper = document.createElement('span');
+
+            if (custom) {
+                newWrapper.style.cssText = className;
+                newWrapper.style.setProperty('--custom-style-id', id);
+            } else {
+                newWrapper.className = className;
+            }
+
+            newWrapper.textContent = spanTextContent;
+            editor.dom.replace(newWrapper, styledSpanParent);
+
+            // Position cursor after the styled span
+            const spaceNode = document.createTextNode('\u00A0');
+            editor.dom.insertAfter(spaceNode, newWrapper);
+            const range = editor.dom.createRng();
+            range.setStartAfter(spaceNode);
+            range.setEndAfter(spaceNode);
+            editor.selection.setRng(range);
+
+            editor.focus();
+            return true;
+        }
+
+        // No existing span, new styling to selected text
+        const cleanSelectedHtml = editor.selection.getContent({format: 'html'});
+        applyInlineStyle(editor, styleDef, cleanSelectedHtml);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Handles styling when text is selected across multiple list items
+ * @param {Object} editor TinyMCE editor instance
+ * @param {Object} styleDef Style definition object
+ * @param {Array} selectedListItems Array of selected list item elements
+ * @returns {boolean} True if styling was applied
+ */
+function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
+    const {className, custom, id} = styleDef;
+    const selection = editor.selection;
+    const range = selection.getRng();
+    const originalRange = range.cloneRange();
+    // Apply styling to all selected list items entirely
+    selectedListItems.forEach((li) => {
+        // Remove existing inline styling
+        const existingStyledSpans = li.querySelectorAll('span');
+        existingStyledSpans.forEach(span => {
+            if (isStyledInlineElement(span)) {
+                span.outerHTML = span.innerHTML;
+            }
+        });
+        const span = editor.dom.create('span');
+        if (custom) {
+            span.style.cssText = className;
+            span.style.setProperty('--custom-style-id', id);
+        } else {
+            span.className = className;
+        }
+        span.innerHTML = li.innerHTML;
+        li.innerHTML = '';
+        li.appendChild(span);
+    });
+    // Restore original selection
+    selection.setRng(originalRange);
+    editor.focus();
+    return true;
+}
+
+/**
+ * Enhanced clearStyling function to handle list block styles on UL/OL elements
+ * @param {Object} editor TinyMCE editor instance
+ */
+function clearListStyling(editor) {
+    const selection = editor.selection;
+    const selectedNode = selection.getNode();
+
+    const listParent = editor.dom.getParent(selectedNode, 'UL,OL');
+    if (listParent) {
+        // Check if there's selected content within list items
+        const selectedHtml = editor.selection.getContent({format: 'html'});
+        if (selectedHtml.trim()) {
+            // Check for inline styles in list items
+            const selectedBlocks = editor.selection.getSelectedBlocks();
+            const selectedListItems = selectedBlocks.filter(block => block.tagName === 'LI');
+            if (selectedListItems.length === 0) {
+                const currentListItem = editor.dom.getParent(selectedNode, 'LI');
+                if (currentListItem) {
+                    selectedListItems.push(currentListItem);
+                }
+            }
+            let inlineStylesRemoved = false;
+            selectedListItems.forEach(li => {
+                const styledSpans = li.querySelectorAll('span');
+                styledSpans.forEach(span => {
+                    if (isStyledInlineElement(span)) {
+                        span.outerHTML = span.innerHTML;
+                        inlineStylesRemoved = true;
+                    }
+                });
+            });
+            if (inlineStylesRemoved) {
+                return true;
+            }
+            // Check for block styling directly on the list element
+            if (isStyledBlockElement(listParent)) {
+                // Clear styling from the list itself
+                listParent.removeAttribute('class');
+                listParent.removeAttribute('style');
+                listParent.removeAttribute('data-mce-style');
+                return true;
+            }
+            return false;
+        }
+    }
+    return false;
+}
+
+/**
  * Checks if the element is a styled block element.
  * @param {Node} node selected item
  */
@@ -204,7 +393,7 @@ function isStyledBlockElement(node) {
  return false;
 }
 
-    const blockTags = ['DIV', 'P', 'SECTION', 'ARTICLE', 'ASIDE'];
+    const blockTags = ['DIV', 'P', 'SECTION', 'ARTICLE', 'ASIDE', 'UL', 'OL'];
     if (!blockTags.includes(node.tagName.toUpperCase())) {
  return false;
 }
@@ -311,10 +500,22 @@ function applyBlockStyle(editor, styleDef) {
             editor.dom.remove(block);
         });
 
-        // A new paragraph after to avoid continuous styling
-        const nextParagraph = editor.dom.create('p', {}, '');
-        editor.dom.insertAfter(nextParagraph, newParagraph);
-        selection.setCursorLocation(nextParagraph, 0);
+        // Create a new paragraph after to avoid continuous styling
+        const nextSibling = newParagraph.nextSibling;
+        const needsNewParagraph = !nextSibling ||
+                                  nextSibling.nodeType !== Node.ELEMENT_NODE ||
+                                  nextSibling.tagName !== 'P' ||
+                                  (nextSibling.textContent && nextSibling.textContent.trim()) ||
+                                  nextSibling.innerHTML.trim();
+
+        if (needsNewParagraph) {
+            const nextParagraph = editor.dom.create('p', {}, '');
+            editor.dom.insertAfter(nextParagraph, newParagraph);
+            selection.setCursorLocation(nextParagraph, 0);
+        } else {
+            // Use the existing empty paragraph
+            selection.setCursorLocation(nextSibling, 0);
+        }
     }
 
     editor.focus();
@@ -397,6 +598,11 @@ function stripText(root) {
 function clearStyling(editor) {
     const selection = editor.selection;
     const selectedNode = selection.getNode();
+
+    const listResult = clearListStyling(editor);
+    if (listResult) {
+        return true;
+    }
 
     // Inline styling spans
     let styledSpanParent = null;

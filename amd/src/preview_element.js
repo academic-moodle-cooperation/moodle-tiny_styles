@@ -104,9 +104,7 @@ const showPreview = async(name, cssclasses, type) => {
             styleEl.textContent = cssclasses;
             modal.getRoot()[0].appendChild(styleEl);
         }
-
         modal.show();
-
         modal.getRoot()[0].addEventListener(ModalEvents.hidden, () => {});
     } catch (error) {
         alert(error);
