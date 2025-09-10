@@ -152,26 +152,25 @@ function applyStyle(editor, styleDef) {
     }
 
     const selectedNode = editor.selection.getNode();
-    
+
     if (block) {
         const listParent = editor.dom.getParent(selectedNode, 'UL,OL');
         if (listParent) {
             return applyListBlockStyle(editor, styleDef, listParent);
         }
-        
+
         // Check for list & text mixed content
         const selectedBlocks = editor.selection.getSelectedBlocks();
-        const hasLists = selectedBlocks.some(block => 
+        const hasLists = selectedBlocks.some(block =>
             block.tagName === 'LI' || block.tagName === 'UL' || block.tagName === 'OL'
         );
-        const hasTextBlocks = selectedBlocks.some(block => 
+        const hasTextBlocks = selectedBlocks.some(block =>
             ['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(block.tagName)
         );
-        
+
         if (hasLists && hasTextBlocks) {
             return applyMixedBlockStyle(editor, styleDef, selectedBlocks);
         }
-        
         return applyBlockStyle(editor, styleDef);
     }
 
@@ -179,7 +178,7 @@ function applyStyle(editor, styleDef) {
     if (listParent) {
         return applyListItemStyle(editor, styleDef, selectedNode);
     }
-    
+
     const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
         return isStyledInlineElement(node);
     });
@@ -218,60 +217,62 @@ function applyStyle(editor, styleDef) {
     return applyInlineStyle(editor, styleDef, cleanSelectedHtml);
 }
 
+/**
+ * Applies styling to a selection which includes text and a list.
+ *
+ * @param {Object} editor TinyMCE editor instance.
+ * @param {Object} styleDef Object containing the style definition.
+ * @param {Object} selectedBlocks Selected text elements
+ * @returns {boolean}
+ */
 function applyMixedBlockStyle(editor, styleDef, selectedBlocks) {
     const {className, custom, id} = styleDef;
-    
+
     // Actual elements to wrap
     const elementsToWrap = [];
-    let currentElement = null;
-    
+
     for (let i = 0; i < selectedBlocks.length; i++) {
         const block = selectedBlocks[i];
-        
+
         if (block.tagName === 'LI') {
             // Get the parent list
             const list = editor.dom.getParent(block, 'UL,OL');
             if (list && !elementsToWrap.includes(list)) {
                 elementsToWrap.push(list);
-                currentElement = list;
             }
         } else if (block.tagName === 'UL' || block.tagName === 'OL') {
             if (!elementsToWrap.includes(block)) {
                 elementsToWrap.push(block);
-                currentElement = block;
             }
         } else {
             elementsToWrap.push(block);
-            currentElement = block;
         }
     }
-    
+
     if (elementsToWrap.length === 0) {
         return false;
     }
-    
+
     const wrapperDiv = editor.dom.create('div');
-    
     if (custom) {
         wrapperDiv.style.cssText = className;
         wrapperDiv.style.setProperty('--custom-style-id', id);
     } else {
         wrapperDiv.className = className;
     }
-    
+
     // Insert wrapper after the last element
     const lastElement = elementsToWrap[elementsToWrap.length - 1];
     editor.dom.insertAfter(wrapperDiv, lastElement);
-    
+
     // Move all elements into the wrapper
     elementsToWrap.forEach(element => {
         wrapperDiv.appendChild(element);
     });
-    
+
     const nextParagraph = editor.dom.create('p', {}, '');
     editor.dom.insertAfter(nextParagraph, wrapperDiv);
     editor.selection.setCursorLocation(nextParagraph, 0);
-    
     editor.focus();
     return true;
 }
@@ -285,7 +286,7 @@ function applyMixedBlockStyle(editor, styleDef, selectedBlocks) {
  */
 function applyListBlockStyle(editor, styleDef, listParent) {
     const {className, custom, id} = styleDef;
-    
+
     // Check if list is already wrapped in a styled div
     const parentDiv = listParent.parentElement;
     if (parentDiv && parentDiv.tagName === 'DIV' && isStyledBlockElement(parentDiv)) {
@@ -302,18 +303,18 @@ function applyListBlockStyle(editor, styleDef, listParent) {
         }
     } else {
         const wrapperDiv = editor.dom.create('div');
-        
+
         if (custom) {
             wrapperDiv.style.cssText = className;
             wrapperDiv.style.setProperty('--custom-style-id', id);
         } else {
             wrapperDiv.className = className;
         }
-        
+
         editor.dom.insertAfter(wrapperDiv, listParent);
         wrapperDiv.appendChild(listParent);
     }
-    
+
     editor.focus();
     return true;
 }
@@ -329,11 +330,11 @@ function applyListBlockStyle(editor, styleDef, listParent) {
 function applyListItemStyle(editor, styleDef, selectedNode) {
     const {className, custom, id} = styleDef;
     const selectedHtml = editor.selection.getContent({format: 'html'});
-    
+
     // Get all selected list items
     const selectedBlocks = editor.selection.getSelectedBlocks();
     const selectedListItems = selectedBlocks.filter(block => block.tagName === 'LI');
-    
+
     // If no list items in selection, check if cursor is inside one
     if (selectedListItems.length === 0) {
         const currentListItem = editor.dom.getParent(selectedNode, 'LI');
@@ -341,11 +342,11 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
             selectedListItems.push(currentListItem);
         }
     }
-    
+
     if (selectedListItems.length === 0) {
         return false;
     }
-    
+
     if (selectedHtml.trim() && selectedListItems.length > 1) {
         // User selected text across multiple list items
         return applyStyleToMultipleListItems(editor, styleDef, selectedListItems);
@@ -385,7 +386,7 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
         // No existing span, new styling to selected text
         const cleanSelectedHtml = editor.selection.getContent({format: 'html'});
         applyInlineStyle(editor, styleDef, cleanSelectedHtml);
-        return true;   
+        return true;
     }
     return false;
 }
@@ -401,9 +402,8 @@ function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
     const {className, custom, id} = styleDef;
     const selection = editor.selection;
     const range = selection.getRng();
-    
     const originalRange = range.cloneRange();
-    
+
     // Apply styling to all selected list items entirely
     selectedListItems.forEach((li) => {
         // Remove existing inline styling
@@ -413,8 +413,7 @@ function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
                 span.outerHTML = span.innerHTML;
             }
         });
-        
-        // 
+
         const span = editor.dom.create('span');
         if (custom) {
             span.style.cssText = className;
@@ -426,7 +425,6 @@ function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
         li.innerHTML = '';
         li.appendChild(span);
     });
-    
     // Restore original selection
     selection.setRng(originalRange);
     editor.focus();
@@ -440,24 +438,20 @@ function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
 function clearListStyling(editor) {
     const selection = editor.selection;
     const selectedNode = selection.getNode();
-
     const listParent = editor.dom.getParent(selectedNode, 'UL,OL');
     if (listParent) {
         // Check if there's selected content within list items
         const selectedHtml = editor.selection.getContent({format: 'html'});
-        
         if (selectedHtml.trim()) {
             // Check for inline styles in list items
             const selectedBlocks = editor.selection.getSelectedBlocks();
             const selectedListItems = selectedBlocks.filter(block => block.tagName === 'LI');
-            
             if (selectedListItems.length === 0) {
                 const currentListItem = editor.dom.getParent(selectedNode, 'LI');
                 if (currentListItem) {
                     selectedListItems.push(currentListItem);
                 }
             }
-            
             let inlineStylesRemoved = false;
             selectedListItems.forEach(li => {
                 const styledSpans = li.querySelectorAll('span');
@@ -468,11 +462,9 @@ function clearListStyling(editor) {
                     }
                 });
             });
-            
             if (inlineStylesRemoved) {
                 return true;
             }
-            
             // Check for block styling directly on the list element
             const parentDiv = listParent.parentElement;
             if (parentDiv && parentDiv.tagName === 'DIV' && isStyledBlockElement(parentDiv)) {
@@ -604,7 +596,7 @@ function applyBlockStyle(editor, styleDef) {
 
         // Create a new paragraph after to avoid continuous styling
         const nextSibling = newParagraph.nextSibling;
-        const needsNewParagraph = !nextSibling || 
+        const needsNewParagraph = !nextSibling ||
                                   nextSibling.nodeType !== Node.ELEMENT_NODE ||
                                   nextSibling.tagName !== 'P' ||
                                   (nextSibling.textContent && nextSibling.textContent.trim()) ||
@@ -705,21 +697,17 @@ function clearStyling(editor) {
     if (listResult) {
         return true;
     }
-
     const styledDiv = editor.dom.getParent(selectedNode, function(node) {
         return node.tagName === 'DIV' && isStyledBlockElement(node);
     });
-    
     if (styledDiv) {
         // Check if this div contains lists or multiple elements (mixed content)
-        const children = Array.from(styledDiv.childNodes).filter(node => 
+        const children = Array.from(styledDiv.childNodes).filter(node =>
             node.nodeType === Node.ELEMENT_NODE
         );
-        
-        const hasLists = children.some(child => 
+        const hasLists = children.some(child =>
             child.tagName === 'UL' || child.tagName === 'OL'
         );
-        
         // If it contains lists or multiple elements, unwrap them
         if (hasLists || children.length > 1) {
             // Unwrap all content from the div
@@ -728,15 +716,12 @@ function clearStyling(editor) {
                 editor.dom.insertAfter(child, insertPoint);
                 insertPoint = child;
             });
-            
             // Remove the now-empty styled div
             editor.dom.remove(styledDiv);
-            
             // Position cursor in the first unwrapped element
             if (children.length > 0) {
                 selection.setCursorLocation(children[0], 0);
             }
-            
             editor.focus();
             return true;
         }
