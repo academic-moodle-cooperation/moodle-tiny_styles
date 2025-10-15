@@ -31,7 +31,7 @@ export const init = () => {
     document.querySelectorAll('input[name="selected_elements[]"]').forEach(checkbox => {
         checkbox.checked = false;
     });
-    
+
     // Also reset select-all checkbox if present
     const selectAllCheckbox = document.getElementById('select-all');
     if (selectAllCheckbox) {
