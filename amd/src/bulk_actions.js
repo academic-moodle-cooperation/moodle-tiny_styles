@@ -102,7 +102,7 @@ export const init = () => {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    window.location.href = window.location.pathname + window.location.search;
                 } else {
                     alert(data.message);
                 }
