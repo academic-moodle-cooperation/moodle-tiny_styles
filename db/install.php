@@ -61,8 +61,8 @@ function xmldb_tiny_styles_install() {
         $cat->timemodified = time();
         $boxencatid = $DB->insert_record('tiny_styles_categories', $cat);
 
-        // These two categories can be uncommented in future development.
-        // to add them use tiny_styles_categories and $cat to insert the record.
+        // These two categories can be added in future development.
+        // To add them use tiny_styles_categories and $cat to insert the record.
         // Divider.
         $cat = new stdClass();
         $cat->name         = '-------';
@@ -91,6 +91,7 @@ function xmldb_tiny_styles_install() {
     // Default badge and alerts bootstrap elements.
     if (!$DB->record_exists('tiny_styles_elements', [])) {
         $elements = [
+            // === LABELS ===
             [
                 'name'       => 'Blue Label',
                 'type'       => 'inline',
@@ -98,15 +99,15 @@ function xmldb_tiny_styles_install() {
                 'sortorder'  => 1,
             ],
             [
-                'name'       => 'Green Label',
+                'name'       => 'Info Label',
                 'type'       => 'inline',
-                'cssclasses' => 'badge bg-success text-white',
+                'cssclasses' => 'badge bg-info text-dark',
                 'sortorder'  => 2,
             ],
             [
-                'name'       => 'Gray Label',
+                'name'       => 'Green Label',
                 'type'       => 'inline',
-                'cssclasses' => 'badge bg-secondary text-dark',
+                'cssclasses' => 'badge bg-success text-white',
                 'sortorder'  => 3,
             ],
             [
@@ -122,15 +123,15 @@ function xmldb_tiny_styles_install() {
                 'sortorder'  => 5,
             ],
             [
-                'name'       => 'Info Label',
-                'type'       => 'inline',
-                'cssclasses' => 'badge bg-info text-dark',
-                'sortorder'  => 6,
-            ],
-            [
                 'name'       => 'Dark Label',
                 'type'       => 'inline',
                 'cssclasses' => 'badge bg-dark text-white',
+                'sortorder'  => 6,
+            ],
+            [
+                'name'       => 'Gray Label',
+                'type'       => 'inline',
+                'cssclasses' => 'badge bg-secondary text-dark',
                 'sortorder'  => 7,
             ],
             [
@@ -139,40 +140,42 @@ function xmldb_tiny_styles_install() {
                 'cssclasses' => 'badge bg-light text-dark',
                 'sortorder'  => 8,
             ],
+
+            // === BOXES ===
+            [
+                'name'       => 'Blue Box',
+                'type'       => 'block',
+                'cssclasses' => 'alert alert-primary',
+                'sortorder'  => 9,
+            ],
             [
                 'name'       => 'Info Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-info',
-                'sortorder'  => 9,
-            ],
-            [
-                'name'       => 'Yellow Box',
-                'type'       => 'block',
-                'cssclasses' => 'alert alert-warning',
                 'sortorder'  => 10,
-            ],
-            [
-                'name'       => 'Red Box',
-                'type'       => 'block',
-                'cssclasses' => 'alert alert-danger',
-                'sortorder'  => 11,
             ],
             [
                 'name'       => 'Green Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-success',
+                'sortorder'  => 11,
+            ],
+            [
+                'name'       => 'Yellow Box',
+                'type'       => 'block',
+                'cssclasses' => 'alert alert-warning',
                 'sortorder'  => 12,
+            ],
+            [
+                'name'       => 'Red Box',
+                'type'       => 'block',
+                'cssclasses' => 'alert alert-danger',
+                'sortorder'  => 13,
             ],
             [
                 'name'       => 'Dark Box',
                 'type'       => 'block',
                 'cssclasses' => 'alert alert-dark',
-                'sortorder'  => 13,
-            ],
-            [
-                'name'       => 'Blue Box',
-                'type'       => 'block',
-                'cssclasses' => 'alert alert-primary',
                 'sortorder'  => 14,
             ],
             [
@@ -187,12 +190,7 @@ function xmldb_tiny_styles_install() {
                 'cssclasses' => 'alert alert-light',
                 'sortorder'  => 16,
             ],
-            [
-                'name'       => 'Divider Link',
-                'type'       => '',
-                'cssclasses' => '',
-                'sortorder'  => 17,
-            ],
+
         ];
 
         foreach ($elements as $key => $data) {
