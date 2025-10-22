@@ -134,7 +134,8 @@ class element_form extends moodleform {
             'block'  => get_string('type:paragraph', 'tiny_styles'),
         ];
         $mform->addElement(
-            'select', 'type',
+            'select',
+            'type',
             get_string('type', 'tiny_styles'),
             $typeoptions,
             ['size' => 1, 'style' => 'width: 400px;']
@@ -204,7 +205,6 @@ class element_form extends moodleform {
         );
 
         $mform->addGroup($buttons, 'actionar', '', [' '], false);
-
     }
 
     /**
@@ -286,10 +286,10 @@ if ($data = $mform->get_data()) {
 
         if ($exists) {
             $maxsort = $DB->get_field_sql(
-            "SELECT MAX(sortorder)
-            FROM {tiny_styles_cat_elements}
-            WHERE categoryid = ?",
-            [$catid]
+                "SELECT MAX(sortorder)
+                FROM {tiny_styles_cat_elements}
+                WHERE categoryid = ?",
+                [$catid]
             );
         } else {
             $maxsort = 0;

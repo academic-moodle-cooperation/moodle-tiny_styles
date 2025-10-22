@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/lib/editor/tiny/plugins/styles/locallib.php');
 
 $tinystylesaction = optional_param('tiny_styles_action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
-$PAGE->requires->js_call_amd('tiny_styles/sortcategories', 'init');;
+$PAGE->requires->js_call_amd('tiny_styles/sortcategories', 'init');
 
 if ($tinystylesaction === 'delete' && $id > 0) {
     require_sesskey();

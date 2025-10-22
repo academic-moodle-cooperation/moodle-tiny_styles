@@ -261,8 +261,8 @@ if ($data = $mform->get_data()) {
         $newid = $DB->insert_record('tiny_styles_categories', $record);
         redirect(
             new moodle_url(
-            '/admin/settings.php',
-            ['section' => 'tiny_styles_admin']
+                '/admin/settings.php',
+                ['section' => 'tiny_styles_admin']
             ),
             get_string('category_saved', 'tiny_styles'),
             2

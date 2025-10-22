@@ -34,7 +34,6 @@ use editor_tiny\plugin_with_configuration;
  * Crude plugininfo class
  */
 class plugininfo extends plugin implements plugin_with_configuration {
-
     /**
      * Pluging info.
      * @param \context $context
