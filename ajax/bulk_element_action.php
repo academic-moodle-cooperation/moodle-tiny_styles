@@ -83,10 +83,10 @@ try {
                     $exists = $DB->record_exists('tiny_styles_cat_elements', ['categoryid' => $catid]);
                     if ($exists) {
                         $maxsort = $DB->get_field_sql(
-                    "SELECT MAX(sortorder)
-                    FROM {tiny_styles_cat_elements}
-                    WHERE categoryid = ?",
-                    [$catid]
+                        "SELECT MAX(sortorder)
+                        FROM {tiny_styles_cat_elements}
+                        WHERE categoryid = ?",
+                        [$catid]
                         );
                     } else {
                         $maxsort = 0;

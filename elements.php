@@ -150,7 +150,7 @@ $templatecontext = [
     'createelementurl'  => (
         new moodle_url(
             '/lib/editor/tiny/plugins/styles/create_element.php',
-            ['catid' => $catid,]
+            ['catid' => $catid]
         )
     )->out(false),
     'submiturl'         => (
