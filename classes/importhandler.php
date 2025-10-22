@@ -30,7 +30,6 @@ namespace tiny_styles;
  * Handles importing the categories and styles from JSON data.
  */
 class importhandler {
-
     /**
      * Process the imported JSON data.
      *

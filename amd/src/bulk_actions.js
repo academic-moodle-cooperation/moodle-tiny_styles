@@ -26,7 +26,18 @@
  * Initialize bulk actions functionality
  */
 export const init = () => {
-    // No need for $(document).ready - init function serves this purpose
+
+    // Reset all checkboxes on page load (fixes Firefox form state persistence)
+    document.querySelectorAll('input[name="selected_elements[]"]').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+
+    // Also reset select-all checkbox if present
+    const selectAllCheckbox = document.getElementById('select-all');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false;
+    }
+
     const dropdown = document.getElementById('bulk-actions-dropdown');
 
     if (!dropdown) {
@@ -91,7 +102,7 @@ export const init = () => {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    window.location.href = window.location.pathname + window.location.search;
                 } else {
                     alert(data.message);
                 }

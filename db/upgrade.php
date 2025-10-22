@@ -35,7 +35,6 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2025041002) {
-
         $table = new xmldb_table('tiny_styles_categories');
 
         $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'id');
@@ -73,4 +72,3 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
 
     return true;
 }
-

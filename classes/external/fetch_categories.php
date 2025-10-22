@@ -41,7 +41,6 @@ use context_system;
  * Fetches and returns all enabled categories and associated elements.
  */
 class fetch_categories extends external_api {
-
     /**
      * Returns the external function parameters required by execute().
      * Additional parameters can be defined later.
@@ -111,7 +110,7 @@ class fetch_categories extends external_api {
             new external_single_structure([
                 'id'           => new external_value(PARAM_INT, 'Category ID'),
                 'name'         => new external_value(PARAM_TEXT, 'Category name'),
-                'symbol'       => new external_value(PARAM_RAW,  'Optional FA symbol', VALUE_OPTIONAL),
+                'symbol'       => new external_value(PARAM_RAW, 'Optional FA symbol', VALUE_OPTIONAL),
                 'description'  => new external_value(PARAM_TEXT, 'Category description'),
                 'menumode' => new external_value(PARAM_TEXT, 'divider/submenu/inline/'),
                 'elements'     => new external_multiple_structure(
@@ -119,8 +118,8 @@ class fetch_categories extends external_api {
                         'id'         => new external_value(PARAM_INT, 'Element ID'),
                         'name'       => new external_value(PARAM_TEXT, 'Element name'),
                         'type'       => new external_value(PARAM_TEXT, 'inline/block'),
-                        'cssclasses' => new external_value(PARAM_RAW,  'e.g. "alert alert-info"'),
-                        'custom'     => new external_value(PARAM_INT , 'Custom CSS class boolean'),
+                        'cssclasses' => new external_value(PARAM_RAW, 'e.g. "alert alert-info"'),
+                        'custom'     => new external_value(PARAM_INT, 'Custom CSS class boolean'),
                     ]),
                     'list of bridging elements',
                     VALUE_OPTIONAL

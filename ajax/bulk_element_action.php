@@ -61,7 +61,6 @@ try {
             }
             break;
         case 'duplicate':
-
             // Get the category id.
             $catid = isset($data['categoryid']) ? (int)$data['categoryid'] : 0;
 
@@ -83,11 +82,12 @@ try {
                     // The current maximum sort.
                     $exists = $DB->record_exists('tiny_styles_cat_elements', ['categoryid' => $catid]);
                     if ($exists) {
-                        $maxsort = $DB->get_field_sql("
-                    SELECT MAX(sortorder)
-                    FROM {tiny_styles_cat_elements}
-                    WHERE categoryid = ?",
-                            [$catid]);
+                        $maxsort = $DB->get_field_sql(
+                            "SELECT MAX(sortorder)
+                            FROM {tiny_styles_cat_elements}
+                            WHERE categoryid = ?",
+                            [$catid]
+                        );
                     } else {
                         $maxsort = 0;
                     }
@@ -132,7 +132,6 @@ try {
     }
 
     echo json_encode(['success' => true]);
-
 } catch (\Exception $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
