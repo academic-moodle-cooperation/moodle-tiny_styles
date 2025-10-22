@@ -34,7 +34,6 @@ function xmldb_tiny_styles_install() {
 
     // Adding default categories.
     if (!$DB->record_exists('tiny_styles_categories', [])) {
-
         // Labels.
         $cat = new stdClass();
         $cat->name         = 'Labels';
@@ -91,7 +90,7 @@ function xmldb_tiny_styles_install() {
     // Default badge and alerts bootstrap elements.
     if (!$DB->record_exists('tiny_styles_elements', [])) {
         $elements = [
-            // === LABELS ===
+            // Labels.
             [
                 'name'       => 'Blue Label',
                 'type'       => 'inline',
@@ -141,7 +140,7 @@ function xmldb_tiny_styles_install() {
                 'sortorder'  => 8,
             ],
 
-            // === BOXES ===
+            // Boxes.
             [
                 'name'       => 'Blue Box',
                 'type'       => 'block',

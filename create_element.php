@@ -56,7 +56,6 @@ require_once($CFG->libdir . '/formslib.php');
  * Form class for creating or editing an Element.
  */
 class element_form extends moodleform {
-
     /**
      * Defines the moodle form.
      * @return void
@@ -280,18 +279,18 @@ if ($data = $mform->get_data()) {
             )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
         }
         throw new moodle_exception('invalidelementid', 'tiny_styles');
-
     } else {
         // New element addition.
         $catid = $data->categoryid;
         $exists = $DB->record_exists('tiny_styles_cat_elements', ['categoryid' => $catid]);
 
         if ($exists) {
-            $maxsort = $DB->get_field_sql("
-                SELECT MAX(sortorder)
-                FROM {tiny_styles_cat_elements}
-                WHERE categoryid = ?",
-                [$catid]);
+            $maxsort = $DB->get_field_sql(
+            "SELECT MAX(sortorder)
+            FROM {tiny_styles_cat_elements}
+            WHERE categoryid = ?",
+            [$catid]
+            );
         } else {
             $maxsort = 0;
         }

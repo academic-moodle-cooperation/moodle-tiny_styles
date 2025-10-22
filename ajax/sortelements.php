@@ -117,7 +117,6 @@ try {
     ];
 
     echo json_encode($response);
-
 } catch (Throwable $e) {
     $errorinfo = [
         'status' => 'error',

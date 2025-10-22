@@ -56,7 +56,6 @@ require_once($CFG->libdir . '/formslib.php');
  * Form for creating/editing category.
  */
 class category_form extends moodleform {
-
     /**
      * Defines the moodle form.
      * @return void
@@ -260,10 +259,13 @@ if ($data = $mform->get_data()) {
         $record->sortorder   = $maxsort + 1;
         $record->timecreated = time();
         $newid = $DB->insert_record('tiny_styles_categories', $record);
-        redirect(new moodle_url(
+        redirect(
+            new moodle_url(
             '/admin/settings.php',
-            ['section' => 'tiny_styles_admin']),
-            get_string('category_saved', 'tiny_styles'), 2
+            ['section' => 'tiny_styles_admin']
+            ),
+            get_string('category_saved', 'tiny_styles'),
+            2
         );
     }
     exit;

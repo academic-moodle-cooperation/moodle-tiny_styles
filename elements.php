@@ -48,8 +48,10 @@ $PAGE->requires->js_call_amd('tiny_styles/duplicate', 'init');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(
-        new moodle_url('/admin/settings.php',
-        ['section' => 'tiny_styles_admin'])
+        new moodle_url(
+        '/admin/settings.php',
+        ['section' => 'tiny_styles_admin']
+        )
     );
 }
 
@@ -72,8 +74,8 @@ $catname = $DB->get_field_sql($sql, $params);
 // Array of elements for mustache template.
 $elements = [];
 foreach ($records as $r) {
-
-    $moveupiconhtml = html_writer::tag('button',
+    $moveupiconhtml = html_writer::tag(
+        'button',
         $OUTPUT->pix_icon('t/up', get_string('moveup')),
         [
             'type'        => 'button',
@@ -84,7 +86,8 @@ foreach ($records as $r) {
         ]
     );
 
-    $movedowniconhtml = html_writer::tag('button',
+    $movedowniconhtml = html_writer::tag(
+        'button',
         $OUTPUT->pix_icon('t/down', get_string('movedown')),
         [
             'type'        => 'button',
@@ -144,13 +147,21 @@ $templatecontext = [
     'category'          => $catname,
     'navigateback'      => get_string('back_overview', 'tiny_styles'),
     'createbuttonlabel' => get_string('create_element', 'tiny_styles'),
-    'createelementurl'  => (new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php',
-        ['catid' => $catid,
-        ]))->out(false),
-    'submiturl'         => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php',
-        ['catid' => $catid,
-        'sesskey' => sesskey(),
-        ]))->out(false),
+    'createelementurl'  => (
+        new moodle_url(
+            '/lib/editor/tiny/plugins/styles/create_element.php',
+            ['catid' => $catid,]
+        )
+    )->out(false),
+    'submiturl'         => (
+        new moodle_url(
+            '/lib/editor/tiny/plugins/styles/elements.php',
+            [
+            'catid' => $catid,
+            'sesskey' => sesskey(),
+            ]
+        )
+    )->out(false),
     'elements'          => $elements,
     'bulkactionslabel' => get_string('withselection', 'tiny_styles'),
     'selectdefault'    => get_string('selectdefault', 'tiny_styles'),

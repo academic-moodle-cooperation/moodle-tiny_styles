@@ -56,14 +56,12 @@ if ($tinystylesaction === 'delete' && $id > 0) {
         1
     );
     exit;
-
 } else if ($tinystylesaction === 'export') {
     require_once(__DIR__ . '/exporthandler.php');
     exit;
 }
 
 if ($hassiteconfig) {
-
     $settingspage = new admin_settingpage('tiny_styles_admin', get_string('tiny_styles_admin', 'tiny_styles'));
 
     if ($ADMIN->fulltree) {
@@ -74,8 +72,8 @@ if ($hassiteconfig) {
 
         // Categories prepared for the template.
         foreach ($records as $category) {
-
-            $moveupiconhtml = html_writer::tag('button',
+            $moveupiconhtml = html_writer::tag(
+                'button',
                 $OUTPUT->pix_icon('t/up', get_string('moveup')),
                 [
                     'type' => 'button',
@@ -87,7 +85,8 @@ if ($hassiteconfig) {
                 ]
             );
 
-            $movedowniconhtml = html_writer::tag('button',
+            $movedowniconhtml = html_writer::tag(
+                'button',
                 $OUTPUT->pix_icon('t/down', get_string('movedown')),
                 [
                     'type' => 'button',

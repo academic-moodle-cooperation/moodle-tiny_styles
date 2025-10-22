@@ -46,7 +46,6 @@ try {
 
     // Returns the new state in the response.
     echo json_encode(['success' => true, 'newstate' => $element->enabled]);
-
 } catch (\Exception $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
