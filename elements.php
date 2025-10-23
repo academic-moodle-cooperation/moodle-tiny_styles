@@ -48,10 +48,7 @@ $PAGE->requires->js_call_amd('tiny_styles/duplicate', 'init');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(
-        new moodle_url(
-            '/admin/settings.php',
-            ['section' => 'tiny_styles_admin']
-        )
+        new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php')
     );
 }
 
@@ -148,14 +145,12 @@ $templatecontext = [
     'navigateback'      => get_string('back_overview', 'tiny_styles'),
     'createbuttonlabel' => get_string('create_element', 'tiny_styles'),
     'createelementurl'  => (
-        new moodle_url(
-            '/lib/editor/tiny/plugins/styles/create_element.php',
-            ['catid' => $catid]
+        new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php',
+        ['catid' => $catid]
         )
     )->out(false),
     'submiturl'         => (
-        new moodle_url(
-            '/lib/editor/tiny/plugins/styles/elements.php',
+        new moodle_url('/lib/editor/tiny/plugins/styles/elements.php',
             [
             'catid' => $catid,
             'sesskey' => sesskey(),

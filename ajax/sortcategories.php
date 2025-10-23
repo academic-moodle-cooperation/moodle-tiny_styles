@@ -92,7 +92,7 @@ try {
 
     $response = [
         'status' => 'success',
-        'message' => 'Category order updated successfully',
+        'message' => get_string('categoriesorder', 'tiny_styles'),
         'debug' => [
             'current' => $current->id . ' (now ' . $current->sortorder . ')',
             'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')',

@@ -37,12 +37,12 @@ try {
     $data = json_decode($raw, true);
 
     if (!isset($data['action']) || !isset($data['elementids'])) {
-        throw new moodle_exception('Missing parameters');
+        throw new moodle_exception(get_string('error:missingparam', 'tiny_styles'));
     }
     $tinystylesaction = $data['action'];
     $elementids = $data['elementids'];
     if (!is_array($elementids) || empty($elementids)) {
-        throw new moodle_exception('No elements selected');
+        throw new moodle_exception(get_string('error:missingelements', 'tiny_styles'));
     }
     global $DB;
     switch ($tinystylesaction) {
@@ -83,10 +83,10 @@ try {
                     $exists = $DB->record_exists('tiny_styles_cat_elements', ['categoryid' => $catid]);
                     if ($exists) {
                         $maxsort = $DB->get_field_sql(
-                            "SELECT MAX(sortorder)
-                            FROM {tiny_styles_cat_elements}
-                            WHERE categoryid = ?",
-                            [$catid]
+                        "SELECT MAX(sortorder)
+                        FROM {tiny_styles_cat_elements}
+                        WHERE categoryid = ?",
+                        [$catid]
                         );
                     } else {
                         $maxsort = 0;

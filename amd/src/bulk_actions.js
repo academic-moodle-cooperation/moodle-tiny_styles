@@ -68,8 +68,11 @@ export const init = () => {
             warningElement.style.display = 'none';
         }
 
+        const stringsEl = document.getElementById('bulk-action-strings');
+        const msg = stringsEl ? stringsEl.getAttribute('data-confirm-delete') : 'Are you sure you want to delete the elements?';
+
         // Confirm deletion using native confirm dialog
-        if (action === 'delete' && !confirm('Are you sure you want to delete the selected elements?')) {
+        if (action === 'delete' && !confirm(msg)) {
             dropdown.value = '';
             return;
         }
@@ -90,7 +93,6 @@ export const init = () => {
             '/lib/editor/tiny/plugins/styles/ajax/bulk_element_action.php?sesskey=' +
             encodeURIComponent(M.cfg.sesskey);
 
-        // Use fetch instead of $.ajax
         fetch(ajaxUrl, {
             method: 'POST',
             headers: {

@@ -214,7 +214,7 @@ class category_form extends moodleform {
     public function validation($data, $files) {
         $errors = [];
         if (strlen(trim($data['name'])) < 3) {
-            $errors['name'] = get_string('errorname', 'tiny_styles');
+            $errors['name'] = get_string('error:name', 'tiny_styles');
         }
         return $errors;
     }
@@ -223,7 +223,7 @@ class category_form extends moodleform {
 $mform = new category_form(null, []);
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']));
+    redirect(new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php'));
     exit;
 }
 
@@ -247,10 +247,10 @@ if ($data = $mform->get_data()) {
             $record->timecreated = $old->timecreated;
 
             $DB->update_record('tiny_styles_categories', $record);
-            redirect(new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']), 'Category updated!', 2);
+            redirect(new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php'), 'Category updated!', 2);
         }
         // TODO: edit this.
-        throw new moodle_exception('Invalid category ID');
+        throw new moodle_exception(get_string('invalidid', 'tiny_styles'));
     } else {
         // CREATE new category.
         $maxsort = $DB->get_field_sql("SELECT MAX(sortorder)
@@ -260,10 +260,7 @@ if ($data = $mform->get_data()) {
         $record->timecreated = time();
         $newid = $DB->insert_record('tiny_styles_categories', $record);
         redirect(
-            new moodle_url(
-                '/admin/settings.php',
-                ['section' => 'tiny_styles_admin']
-            ),
+            new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php'),
             get_string('category_saved', 'tiny_styles'),
             2
         );

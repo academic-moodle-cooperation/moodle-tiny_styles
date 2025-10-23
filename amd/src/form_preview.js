@@ -99,9 +99,10 @@ export const init = () => {
 
         const nameVal = nameField.value;
         const typeVal = typeField.value;
+        const previewVal = previewBtn.textContent;
         let cssVal = cssClassesField.value;
 
-        if (cssVal === 'Manual style' && manualConfigField) {
+        if (cssVal === '_manual' && manualConfigField) {
             cssVal = manualConfigField.value;
         }
 
@@ -111,7 +112,7 @@ export const init = () => {
         try {
             const modal = await ModalFactory.create({
                 type: ModalFactory.types.DEFAULT,
-                title: `Preview "${nameVal}"`,
+                title: `${previewVal} "${nameVal}"`,
                 body: previewhtml
             });
 

@@ -110,7 +110,7 @@ class element_form extends moodleform {
         ");
 
         $cssoptions = [
-            'Manual style' => 'Manual style',
+            '_manual' => get_string('manualstyle', 'tiny_styles'),
             '' => '',
         ];
 
@@ -159,9 +159,9 @@ class element_form extends moodleform {
         $mform->setDefault('manualconfig', '');
         $mform->addRule('manualconfig', get_string('maximumchars', '', 2048), 'maxlength', 2048, 'client');
 
-        // Manual configuration hidden unless "Manual style" selected.
-        $mform->hideIf('manualconfig', 'cssclasses', 'neq', 'Manual style');
-        $mform->hideIf('type', 'cssclasses', 'neq', 'Manual style');
+        // Manual configuration hidden unless a manual style selected.
+        $mform->hideIf('manualconfig', 'cssclasses', 'neq', '_manual');
+        $mform->hideIf('type', 'cssclasses', 'neq', '_manual');
 
         $mform->addElement(
             'static',
@@ -169,7 +169,7 @@ class element_form extends moodleform {
             '',
             get_string('manualdefault', 'tiny_styles')
         );
-        $mform->hideIf('manualconfig_help', 'cssclasses', 'neq', 'Manual style');
+        $mform->hideIf('manualconfig_help', 'cssclasses', 'neq', '_manual');
 
         // Hidden fields.
         $mform->addElement('hidden', 'id');
@@ -218,7 +218,7 @@ class element_form extends moodleform {
         $errors = [];
 
         if (strlen(trim($data['name'])) < 3) {
-            $errors['name'] = get_string('error_nametooshort', 'tiny_styles');
+            $errors['name'] = get_string('error:name', 'tiny_styles');
         }
         return $errors;
     }
@@ -247,7 +247,7 @@ if ($data = $mform->get_data()) {
         $data->manualconfig = '';
     }
 
-    if ($data->cssclasses == 'Manual style') {
+    if ($data->cssclasses == '_manual') {
         $record->cssclasses = $data->manualconfig;
         $record->custom     = 1;
         $record->type       = $data->type;
@@ -279,6 +279,7 @@ if ($data = $mform->get_data()) {
             )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
         }
         throw new moodle_exception('invalidelementid', 'tiny_styles');
+
     } else {
         // New element addition.
         $catid = $data->categoryid;
@@ -286,10 +287,10 @@ if ($data = $mform->get_data()) {
 
         if ($exists) {
             $maxsort = $DB->get_field_sql(
-                "SELECT MAX(sortorder)
-                FROM {tiny_styles_cat_elements}
-                WHERE categoryid = ?",
-                [$catid]
+            "SELECT MAX(sortorder)
+            FROM {tiny_styles_cat_elements}
+            WHERE categoryid = ?",
+            [$catid]
             );
         } else {
             $maxsort = 0;
@@ -329,7 +330,7 @@ if ($tinystylesaction === 'edit' && $id > 0) {
         $formdata->type        = $element->type;
 
         if ($element->custom === '1') {
-            $formdata->cssclasses = 'Manual style';
+            $formdata->cssclasses = '_manual';
             $formdata->manualconfig = $element->cssclasses;
         } else {
             $formdata->cssclasses  = $element->cssclasses;
