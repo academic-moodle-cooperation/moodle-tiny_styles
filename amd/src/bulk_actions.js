@@ -67,7 +67,6 @@ export const init = () => {
         } else if (warningElement) {
             warningElement.style.display = 'none';
         }
-
         const stringsEl = document.getElementById('bulk-action-strings');
         const msg = stringsEl ? stringsEl.getAttribute('data-confirm-delete') : 'Are you sure you want to delete the elements?';
 
