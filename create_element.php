@@ -279,7 +279,6 @@ if ($data = $mform->get_data()) {
             )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
         }
         throw new moodle_exception('invalidelementid', 'tiny_styles');
-
     } else {
         // New element addition.
         $catid = $data->categoryid;
@@ -287,10 +286,10 @@ if ($data = $mform->get_data()) {
 
         if ($exists) {
             $maxsort = $DB->get_field_sql(
-            "SELECT MAX(sortorder)
-            FROM {tiny_styles_cat_elements}
-            WHERE categoryid = ?",
-            [$catid]
+                "SELECT MAX(sortorder)
+                FROM {tiny_styles_cat_elements}
+                WHERE categoryid = ?",
+                [$catid]
             );
         } else {
             $maxsort = 0;
