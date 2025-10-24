@@ -247,7 +247,11 @@ if ($data = $mform->get_data()) {
             $record->timecreated = $old->timecreated;
 
             $DB->update_record('tiny_styles_categories', $record);
-            redirect(new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php'), 'Category updated!', 2);
+            redirect(
+                new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php'),
+                get_string('category_saved', 'tiny_styles'),
+                2
+            );
         }
         // TODO: edit this.
         throw new moodle_exception(get_string('invalidid', 'tiny_styles'));
