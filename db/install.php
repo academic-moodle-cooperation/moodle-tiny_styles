@@ -90,7 +90,7 @@ function xmldb_tiny_styles_install() {
     // Default badge and alerts bootstrap elements.
     if (!$DB->record_exists('tiny_styles_elements', [])) {
         $elements = [
-            // Labels.
+            // LABELS.
             [
                 'name'       => 'Blue Label',
                 'type'       => 'inline',
@@ -140,7 +140,7 @@ function xmldb_tiny_styles_install() {
                 'sortorder'  => 8,
             ],
 
-            // Boxes.
+            // BOXES.
             [
                 'name'       => 'Blue Box',
                 'type'       => 'block',

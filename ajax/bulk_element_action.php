@@ -37,12 +37,12 @@ try {
     $data = json_decode($raw, true);
 
     if (!isset($data['action']) || !isset($data['elementids'])) {
-        throw new moodle_exception('Missing parameters');
+        throw new moodle_exception(get_string('error:missingparam', 'tiny_styles'));
     }
     $tinystylesaction = $data['action'];
     $elementids = $data['elementids'];
     if (!is_array($elementids) || empty($elementids)) {
-        throw new moodle_exception('No elements selected');
+        throw new moodle_exception(get_string('error:missingelements', 'tiny_styles'));
     }
     global $DB;
     switch ($tinystylesaction) {

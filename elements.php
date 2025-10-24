@@ -48,10 +48,7 @@ $PAGE->requires->js_call_amd('tiny_styles/duplicate', 'init');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(
-        new moodle_url(
-            '/admin/settings.php',
-            ['section' => 'tiny_styles_admin']
-        )
+        new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php')
     );
 }
 

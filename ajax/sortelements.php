@@ -109,7 +109,7 @@ try {
 
     $response = [
         'status' => 'success',
-        'message' => 'Order updated successfully',
+        'message' => get_string('elementsorder', 'tiny_styles'),
         'debug' => [
             'current' => $current->id . ' (now ' . $current->sortorder . ')',
             'neighbor' => $neighbor->id . ' (now ' . $neighbor->sortorder . ')',

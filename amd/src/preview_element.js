@@ -95,7 +95,7 @@ const showPreview = async(name, cssclasses, type) => {
     try {
         const modal = await ModalFactory.create({
             type: ModalFactory.types.DEFAULT,
-            title: `Preview "${name}"`,
+            title: `${name}`,
             body: previewhtml
         });
 

@@ -88,7 +88,7 @@ class local_import_form extends moodleform {
     }
 }
 
-$returnurl = new moodle_url('/admin/settings.php', ['section' => 'tiny_styles_admin']);
+$returnurl = new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php');
 
 $mform = new local_import_form();
 
