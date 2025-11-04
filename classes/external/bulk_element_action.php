@@ -41,7 +41,6 @@ use moodle_exception;
  * External service for bulk element actions.
  */
 class bulk_element_action extends external_api {
-
     /**
      * Returns the external function parameters.
      *

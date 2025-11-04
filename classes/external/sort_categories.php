@@ -40,7 +40,6 @@ use moodle_exception;
  * External service for category sorting.
  */
 class sort_categories extends external_api {
-
     /**
      * Returns the external function parameters.
      *
