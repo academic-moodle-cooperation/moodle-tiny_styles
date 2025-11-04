@@ -23,7 +23,7 @@
  */
 
 
-define([], function() {
+define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
     /**
      * Toggle the visibility icon based on new state
      *
@@ -60,33 +60,20 @@ define([], function() {
                 // Button disabled to prevent multiple clicks.
                 button.disabled = true;
 
-                const payload = {
-                    elementid: elementid,
-                };
-
-                const ajaxUrl = M.cfg.wwwroot +
-                    '/lib/editor/tiny/plugins/styles/ajax/toggle_element.php?sesskey=' +
-                    encodeURIComponent(M.cfg.sesskey);
-
                 try {
-                    const response = await fetch(ajaxUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify(payload),
-                        credentials: 'same-origin'
-                    });
+                    const response = await Ajax.call([{
+                        methodname: 'tiny_styles_toggle_element',
+                        args: {
+                            elementid: elementid
+                        }
+                    }])[0];
 
-                    const data = await response.json();
-
-                    if (data.success) {
-                        updateIcon(button, data.newstate);
+                    if (response.success) {
+                        updateIcon(button, response.newstate);
                     }
 
-                } catch (e) {
-                    alert(e.message);
+                } catch (error) {
+                    Notification.exception(error);
                 } finally {
                     button.disabled = false;
                 }

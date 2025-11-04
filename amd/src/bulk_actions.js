@@ -22,6 +22,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Ajax from 'core/ajax';
+import Notification from 'core/notification';
+
 /**
  * Initialize bulk actions functionality
  */
@@ -44,7 +47,7 @@ export const init = () => {
         return;
     }
 
-    dropdown.addEventListener('change', (event) => {
+    dropdown.addEventListener('change', async(event) => {
         const action = event.target.value;
         if (!action) {
             return;
@@ -53,7 +56,7 @@ export const init = () => {
         // Get selected element IDs using native selectors
         const selected = [];
         document.querySelectorAll('input[name="selected_elements[]"]:checked').forEach(checkbox => {
-            selected.push(checkbox.value);
+            selected.push(parseInt(checkbox.value));
         });
 
         const warningElement = document.getElementById('bulk-action-warning');
@@ -82,34 +85,22 @@ export const init = () => {
             return;
         }
 
-        const payload = {
-            action: action,
-            elementids: selected,
-            categoryid: parseInt(catid)
-        };
-
-        const ajaxUrl = M.cfg.wwwroot +
-            '/lib/editor/tiny/plugins/styles/ajax/bulk_element_action.php?sesskey=' +
-            encodeURIComponent(M.cfg.sesskey);
-
-        fetch(ajaxUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-            credentials: 'same-origin'
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = window.location.pathname + window.location.search;
-                } else {
-                    alert(data.message);
+        try {
+            const response = await Ajax.call([{
+                methodname: 'tiny_styles_bulk_element_action',
+                args: {
+                    action: action,
+                    elementids: selected,
+                    categoryid: parseInt(catid)
                 }
-            })
-            .catch((error) => {
-                alert(error.message || 'An error occurred');
-            });
+            }])[0];
+
+            if (response.success) {
+                window.location.href = window.location.pathname + window.location.search;
+            }
+
+        } catch (error) {
+            Notification.exception(error);
+        }
     });
 };

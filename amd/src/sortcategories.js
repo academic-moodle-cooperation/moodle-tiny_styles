@@ -22,7 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define([], function() {
+define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
     const moveRow = (row, direction) => {
         if (!row) {
             return;
@@ -52,28 +52,17 @@ define([], function() {
                 const row = button.closest('tr');
                 moveRow(row, action === 'moveup' ? 'up' : 'down');
 
-                const payload = {
-                    action: action,
-                    id: id
-                };
-
                 try {
-                    await fetch(
-                        M.cfg.wwwroot +
-                        '/lib/editor/tiny/plugins/styles/ajax/sortcategories.php?sesskey='
-                        + encodeURIComponent(M.cfg.sesskey),
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: JSON.stringify(payload),
-                            credentials: 'same-origin'
+                    await Ajax.call([{
+                        methodname: 'tiny_styles_sort_categories',
+                        args: {
+                            action: action,
+                            categoryid: id
                         }
-                    );
-                } catch (e) {
-                    alert(e.message);
+                    }])[0];
+
+                } catch (error) {
+                    Notification.exception(error);
                 }
             });
         });
