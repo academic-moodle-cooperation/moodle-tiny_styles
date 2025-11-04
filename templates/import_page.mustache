@@ -69,43 +69,37 @@
             </a>
 
             <details class="mt-2">
-                <summary class="h3 btn btn-secondary" style="cursor: pointer;">{{instructions0_toggle}}</summary>
-                <div class="mt-3">
-                    <h4>{{instructions1_structure_heading}}</h4>
-                    <p>{{instructions1_1_structure_text}}</p>
-                    <hr>
-                    <h4>{{instructions1_2_visualized_label}}</h4>
-                    <pre><code>{{instructions1_3_visualized_code}}</code></pre>
+                <summary class="h3" style="cursor: pointer; text-decoration: underline; color: CornflowerBlue;">{{instructions0_toggle}}</summary>
+                <div class="mt-3 w-75">
+                    <h4>{{instructions1_usage_heading}}</h4>
+                    <p>{{instructions1_1_usage_text}}</p>
 
-                    <h4>{{instructions2_usage_heading}}</h4>
-                    <p>{{instructions2_1_usage_text}}</p>
+                    <h4>{{instructions2_structure_heading}}</h4>
+                    <p>{{instructions2_1_structure_text}}</p>
 
-                    <h4>{{instructions3_fill_heading}}</h4>
-                    <p><em>{{instructions3_1_fill_note}}</em></p>
-                    <pre><code>{{instructions3_2_fill_code}}</code></pre>
-
-                    <h4>{{instructions4_expl_heading}}</h4>
-                    <p>{{instructions4_1_expl_intro}}</p>
-                    <p>{{instructions4_2_fields_title}}</p>
-
-                    <h4>{{instructions5_cat_heading}}</h4>
-                    <p><code>menumode:</code> {{{instructions5_1_cat_menumode}}}</p>
-                    <p><code>enabled:</code> {{{instructions5_2_cat_enabled}}}</p>
-
-                    <h4>{{instructions6_elem_heading}}</h4>
-                    <p><code>type:</code> {{{instructions6_1_elem_type}}}<br>
-                    <em>{{instructions6_1_1_elem_type_note}}</em></p>
-
-                    <p><code>cssclasses:</code> {{instructions6_2_elem_cssclasses}}<br>
-                    <em>{{{instructions6_2_1_elem_cssclasses_note}}}</em></p>
+                    <p>{{{instructions3_cat_intro}}}</p>
+                    <ul>
+                        <li><strong>name:</strong> {{{instructions3_1_cat_name}}}</li>
+                        <li><strong>description:</strong> {{{instructions3_2_cat_description}}}</li>
+                        <li><strong>menumode:</strong> {{{instructions3_3_cat_menumode}}}</li>
+                        <li><strong>enabled:</strong> {{{instructions3_4_cat_enabled}}}</li>
+                    </ul>
                     
-                    <p><code>enabled:</code> {{{instructions6_3_elem_enabled}}}</p>
-                    <p><code>custom:</code> {{{instructions6_4_elem_custom}}}</p>
+                    <p>{{{instructions4_elem_intro}}}</p>
+                    <ul>
+                        <li><strong>name:</strong> {{{instructions4_1_elem_name}}}</li>
+                        <li><strong>custom:</strong> {{{instructions4_2_elem_custom}}}</li>
+                        <li><strong>type:</strong> {{{instructions4_3_elem_type}}}<br><em>{{instructions6_1_1_elem_type_note}}</em></li>
+                        <li><strong>cssclasses:</strong> {{{instructions4_4_elem_cssclasses}}}</li>
+                        <li><strong>enabled:</strong> {{{instructions4_5_elem_enabled}}}</li>
+                    </ul>
 
-                    <hr>
+                    <h4>{{instructions5_example_heading}}</h4>
+                    <p>{{instructions5_1_example_note}}</p>
+                    <pre><code>{{instructions5_2_example_code}}</code></pre>
 
-                    <h4>{{instructions7_good_heading}}</h4>
-                    {{{instructions7_1_good_list}}}
+                    <h4>{{instructions6_good_heading}}</h4>
+                    {{{instructions6_1_good_list}}}
                 </div>
             </details>
         </div>
