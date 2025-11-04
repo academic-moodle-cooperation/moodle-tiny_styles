@@ -39,7 +39,6 @@ use context_system;
  * External service for toggling category visibility.
  */
 class toggle_category extends external_api {
-
     /**
      * Returns the external function parameters.
      *

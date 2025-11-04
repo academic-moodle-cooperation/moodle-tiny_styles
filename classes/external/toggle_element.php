@@ -39,7 +39,6 @@ use context_system;
  * External service for toggling element visibility.
  */
 class toggle_element extends external_api {
-
     /**
      * Returns the external function parameters.
      *
