@@ -50,18 +50,20 @@ class importhandler {
         try {
             $catmapping = [];
 
-            // Fetch max sortorder values.
+            // Fetch max sortorder values once.
             $maxcatorder = $DB->get_field_sql(
                 "SELECT MAX(sortorder) FROM {tiny_styles_categories}"
             );
-            $currentcatorder = ($maxcatorder === null ? 0 : $maxcatorder);
+            $currentcatorder = $maxcatorder === null ? 0 : $maxcatorder;
 
             $maxelemorder = $DB->get_field_sql(
                 "SELECT MAX(sortorder) FROM {tiny_styles_elements}"
             );
-            $currentelemorder = ($maxelemorder === null ? 0 : $maxelemorder);
+            $currentelemorder = $maxelemorder === null ? 0 : $maxelemorder;
 
-            // Process categories.
+            // Prepare all category records for bulk insert.
+            $categoriestoinsert = [];
+            $time = time();
             foreach ($data['categories'] as $catarr) {
                 $catobj = new \stdClass();
                 $catobj->name = $catarr['name'] ?? 'no name';
@@ -69,21 +71,47 @@ class importhandler {
                 $catobj->symbol = $catarr['symbol'] ?? '';
                 $catobj->menumode = $catarr['menumode'] ?? 'submenu';
                 $catobj->enabled = $catarr['enabled'] ?? 0;
-                $catobj->timecreated = time();
-                $catobj->timemodified = time();
-
-                // Increment sortorder.
+                $catobj->timecreated = $time;
+                $catobj->timemodified = $time;
                 $currentcatorder++;
                 $catobj->sortorder = $currentcatorder;
-                $catobj->id = $DB->insert_record('tiny_styles_categories', $catobj);
 
-                $catmapping[$catobj->name] = $catobj->id;
+                $categoriestoinsert[] = $catobj;
             }
 
-            // Track bridge sortorder per category.
+            // Bulk insert all categories.
+            if (!empty($categoriestoinsert)) {
+                $DB->insert_records('tiny_styles_categories', $categoriestoinsert);
+
+                // Retrieve inserted categories to get their IDs.
+                $insertedcats = $DB->get_records('tiny_styles_categories',
+                    ['timecreated' => $time],
+                    'sortorder ASC');
+
+                $catindex = 0;
+                foreach ($insertedcats as $cat) {
+                    $catmapping[$cat->name] = $cat->id;
+                    $catindex++;
+                }
+            }
+
+            // Prepare all elements and bridges for bulk insert.
+            $elementstoinsert = [];
+            $bridgestoinsert = [];
             $bridgesortorder = [];
 
-            // Process elements for each category.
+            // Get max bridge sortorder per category.
+            foreach ($catmapping as $catname => $catid) {
+                $maxbridgesort = $DB->get_field_sql(
+                    "SELECT MAX(sortorder)
+                       FROM {tiny_styles_cat_elements}
+                      WHERE categoryid = ?",
+                    [$catid]
+                );
+                $bridgesortorder[$catid] = $maxbridgesort === null ? 0 : $maxbridgesort;
+            }
+
+            // Prepare elements and bridges.
             foreach ($data['categories'] as $catarr) {
                 if (empty($catarr['elements']) || !is_array($catarr['elements'])) {
                     continue;
@@ -95,17 +123,6 @@ class importhandler {
                 }
                 $newcatid = $catmapping[$catname];
 
-                // Initialize bridge sortorder for this category if not set.
-                if (!isset($bridgesortorder[$newcatid])) {
-                    $maxbridgesort = $DB->get_field_sql(
-                        "SELECT MAX(sortorder)
-                           FROM {tiny_styles_cat_elements}
-                          WHERE categoryid = ?",
-                        [$newcatid]
-                    );
-                    $bridgesortorder[$newcatid] = $maxbridgesort === null ? 0 : $maxbridgesort;
-                }
-
                 foreach ($catarr['elements'] as $elemarr) {
                     $elemobj = new \stdClass();
                     $elemobj->name = $elemarr['name'] ?? 'no name';
@@ -113,33 +130,54 @@ class importhandler {
                     $elemobj->cssclasses = $elemarr['cssclasses'] ?? '';
                     $elemobj->enabled = $elemarr['enabled'] ?? 0;
                     $elemobj->custom = $elemarr['custom'] ?? 1;
-                    $elemobj->timecreated = time();
-                    $elemobj->timemodified = time();
-
-                    // Increment element sortorder in memory.
+                    $elemobj->timecreated = $time;
+                    $elemobj->timemodified = $time;
                     $currentelemorder++;
                     $elemobj->sortorder = $currentelemorder;
-                    $elemobj->id = $DB->insert_record('tiny_styles_elements', $elemobj);
 
+                    // Store category and bridge info for later.
+                    $elemobj->_categoryid = $newcatid;
+                    $elementstoinsert[] = $elemobj;
+                }
+            }
+
+            // Bulk insert all elements.
+            if (!empty($elementstoinsert)) {
+                $DB->insert_records('tiny_styles_elements', $elementstoinsert);
+
+                // Retrieve inserted elements to get their IDs.
+                $insertedelems = $DB->get_records('tiny_styles_elements',
+                    ['timecreated' => $time],
+                    'sortorder ASC');
+
+                $elemindex = 0;
+                foreach ($insertedelems as $elem) {
+                    $categoryid = $elementstoinsert[$elemindex]->_categoryid;
+
+                    // Check if bridge already exists.
                     $bridgeparams = [
-                        'categoryid' => $newcatid,
-                        'elementid'  => $elemobj->id,
+                        'categoryid' => $categoryid,
+                        'elementid'  => $elem->id,
                     ];
                     if (!$DB->record_exists('tiny_styles_cat_elements', $bridgeparams)) {
                         $bridge = new \stdClass();
-                        $bridge->categoryid = $newcatid;
-                        $bridge->elementid = $elemobj->id;
+                        $bridge->categoryid = $categoryid;
+                        $bridge->elementid = $elem->id;
                         $bridge->enabled = 1;
+                        $bridgesortorder[$categoryid]++;
+                        $bridge->sortorder = $bridgesortorder[$categoryid];
+                        $bridge->timecreated = $time;
+                        $bridge->timemodified = $time;
 
-                        // Increment bridge sortorder in memory.
-                        $bridgesortorder[$newcatid]++;
-                        $bridge->sortorder = $bridgesortorder[$newcatid];
-                        $bridge->timecreated = time();
-                        $bridge->timemodified = time();
-
-                        $DB->insert_record('tiny_styles_cat_elements', $bridge);
+                        $bridgestoinsert[] = $bridge;
                     }
+                    $elemindex++;
                 }
+            }
+
+            // Bulk insert all bridges.
+            if (!empty($bridgestoinsert)) {
+                $DB->insert_records('tiny_styles_cat_elements', $bridgestoinsert);
             }
             $transaction->allow_commit();
             return true;
