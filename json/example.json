@@ -1,10 +1,16 @@
 {
+  "_available_symbols": [ "These are the currently available symbols:",
+    "book.svg", "box.svg", "brush.svg", "check.svg", "default.svg",
+    "download.svg", "flag.svg", "folder.svg", "graduate.svg", "icon.svg",
+    "info.svg", "label.svg", "laptop.svg", "magnify.svg", "paint.svg",
+    "pen.svg", "preview.svg", "remove.svg", "school.svg", "square.svg"
+  ],
   "categories": [
     {
       "name": "Category name here.",
-      "description": "Category description here. Check the instructions for detailed instructions.",
-      "showdesc": "helptext/tooltip/never",
-      "menumode": "submenu/inline/divider",
+      "description": "Category description here. Check the import page for detailed instructions.",
+      "symbol": "book.svg",
+      "menumode": "submenu",
       "enabled": 1,
       "elements": [
         {

@@ -28,20 +28,21 @@ require_login();
 require_sesskey();
 require_capability('moodle/site:config', context_system::instance());
 
-// Table fetch.
-$categories = $DB->get_records('tiny_styles_categories');
-$elements = $DB->get_records('tiny_styles_elements');
-$catelements = $DB->get_records('tiny_styles_cat_elements');
+// Table fetch ordered by sortorder to preserve original ordering.
+$categories = $DB->get_records('tiny_styles_categories', null, 'sortorder ASC');
+$elements = $DB->get_records('tiny_styles_elements', null, 'sortorder ASC');
+$catelements = $DB->get_records('tiny_styles_cat_elements', null, 'sortorder ASC');
 
 // Associative array, each key is a category id.
+// Missing: cat->showdesc due to not being implemented on frontside.
 $exportcategories = [];
 foreach ($categories as $cat) {
     $exportcategories[$cat->id] = [
         'id'          => $cat->id,
         'name'        => $cat->name,
         'description' => $cat->description,
-        'showdesc'    => $cat->showdesc,
-        'menumode' => $cat->menumode,
+        'symbol'      => $cat->symbol,
+        'menumode'    => $cat->menumode,
         'enabled'     => $cat->enabled,
         'elements'    => [],
     ];
@@ -63,6 +64,7 @@ foreach ($catelements as $ce) {
         'name'      => $elements[$elementid]->name,
         'type'      => $elements[$elementid]->type,
         'cssclasses' => $elements[$elementid]->cssclasses,
+        'enabled'   => $elements[$elementid]->enabled,
         'custom'    => $elements[$elementid]->custom,
     ];
 }

@@ -50,27 +50,38 @@ class importhandler {
         try {
             $catmapping = [];
 
+            // Fetch max sortorder values.
+            $maxcatorder = $DB->get_field_sql(
+                "SELECT MAX(sortorder) FROM {tiny_styles_categories}"
+            );
+            $currentcatorder = ($maxcatorder === null ? 0 : $maxcatorder);
+
+            $maxelemorder = $DB->get_field_sql(
+                "SELECT MAX(sortorder) FROM {tiny_styles_elements}"
+            );
+            $currentelemorder = ($maxelemorder === null ? 0 : $maxelemorder);
+
             // Process categories.
             foreach ($data['categories'] as $catarr) {
                 $catobj = new \stdClass();
                 $catobj->name = $catarr['name'] ?? 'no name';
                 $catobj->description = $catarr['description'] ?? '';
-                $catobj->showdesc = $catarr['showdesc'] ?? 'never';
-                $catobj->symbol = '';
+                $catobj->symbol = $catarr['symbol'] ?? '';
                 $catobj->menumode = $catarr['menumode'] ?? 'submenu';
                 $catobj->enabled = $catarr['enabled'] ?? 0;
                 $catobj->timecreated = time();
                 $catobj->timemodified = time();
 
-                // Category sortorder from DB.
-                $maxcatorder = $DB->get_field_sql(
-                    "SELECT MAX(sortorder) FROM {tiny_styles_categories}"
-                );
-                $catobj->sortorder = ($maxcatorder === null ? 0 : $maxcatorder) + 1;
+                // Increment sortorder.
+                $currentcatorder++;
+                $catobj->sortorder = $currentcatorder;
                 $catobj->id = $DB->insert_record('tiny_styles_categories', $catobj);
 
                 $catmapping[$catobj->name] = $catobj->id;
             }
+
+            // Track bridge sortorder per category.
+            $bridgesortorder = [];
 
             // Process elements for each category.
             foreach ($data['categories'] as $catarr) {
@@ -84,6 +95,17 @@ class importhandler {
                 }
                 $newcatid = $catmapping[$catname];
 
+                // Initialize bridge sortorder for this category if not set.
+                if (!isset($bridgesortorder[$newcatid])) {
+                    $maxbridgesort = $DB->get_field_sql(
+                        "SELECT MAX(sortorder)
+                           FROM {tiny_styles_cat_elements}
+                          WHERE categoryid = ?",
+                        [$newcatid]
+                    );
+                    $bridgesortorder[$newcatid] = $maxbridgesort === null ? 0 : $maxbridgesort;
+                }
+
                 foreach ($catarr['elements'] as $elemarr) {
                     $elemobj = new \stdClass();
                     $elemobj->name = $elemarr['name'] ?? 'no name';
@@ -94,10 +116,9 @@ class importhandler {
                     $elemobj->timecreated = time();
                     $elemobj->timemodified = time();
 
-                    $maxelemorder = $DB->get_field_sql(
-                        "SELECT MAX(sortorder) FROM {tiny_styles_elements}"
-                    );
-                    $elemobj->sortorder = ($maxelemorder === null ? 0 : $maxelemorder) + 1;
+                    // Increment element sortorder in memory.
+                    $currentelemorder++;
+                    $elemobj->sortorder = $currentelemorder;
                     $elemobj->id = $DB->insert_record('tiny_styles_elements', $elemobj);
 
                     $bridgeparams = [
@@ -109,14 +130,10 @@ class importhandler {
                         $bridge->categoryid = $newcatid;
                         $bridge->elementid = $elemobj->id;
                         $bridge->enabled = 1;
-                        // Next highest in bridging table.
-                        $maxbridgesort = $DB->get_field_sql(
-                            "SELECT MAX(sortorder)
-                               FROM {tiny_styles_cat_elements}
-                              WHERE categoryid = ?",
-                            [$newcatid]
-                        );
-                        $bridge->sortorder = ($maxbridgesort === null ? 0 : $maxbridgesort) + 1;
+
+                        // Increment bridge sortorder in memory.
+                        $bridgesortorder[$newcatid]++;
+                        $bridge->sortorder = $bridgesortorder[$newcatid];
                         $bridge->timecreated = time();
                         $bridge->timemodified = time();
 
