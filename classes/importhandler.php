@@ -84,9 +84,11 @@ class importhandler {
                 $DB->insert_records('tiny_styles_categories', $categoriestoinsert);
 
                 // Retrieve inserted categories to get their IDs.
-                $insertedcats = $DB->get_records('tiny_styles_categories',
+                $insertedcats = $DB->get_records(
+                    'tiny_styles_categories',
                     ['timecreated' => $time],
-                    'sortorder ASC');
+                    'sortorder ASC'
+                );
 
                 $catindex = 0;
                 foreach ($insertedcats as $cat) {
@@ -146,9 +148,11 @@ class importhandler {
                 $DB->insert_records('tiny_styles_elements', $elementstoinsert);
 
                 // Retrieve inserted elements to get their IDs.
-                $insertedelems = $DB->get_records('tiny_styles_elements',
+                $insertedelems = $DB->get_records(
+                    'tiny_styles_elements',
                     ['timecreated' => $time],
-                    'sortorder ASC');
+                    'sortorder ASC'
+                );
 
                 $elemindex = 0;
                 foreach ($insertedelems as $elem) {
