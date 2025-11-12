@@ -52,21 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 }
 
-global $DB, $OUTPUT;
-$sql = "SELECT e.*
-          FROM {tiny_styles_elements} e
-          JOIN {tiny_styles_cat_elements} ce ON ce.elementid = e.id
-         WHERE ce.categoryid = :catid
-         ORDER BY ce.sortorder ASC, e.id";
-$params = ['catid' => $catid];
+global $OUTPUT;
 
-$records = $DB->get_records_sql($sql, $params);
-
-$sql = "SELECT c.name
-        FROM {tiny_styles_categories} c
-        WHERE c.id = :catid";
-$params = ['catid' => $catid];
-$catname = $DB->get_field_sql($sql, $params);
+// Get elements and category name from database.
+$records = tiny_styles_get_elements_by_category($catid);
+$catname = tiny_styles_get_category_name($catid);
 
 // Array of elements for mustache template.
 $elements = [];
@@ -95,7 +85,6 @@ foreach ($records as $r) {
         ]
     );
 
-    // Delete url for delete tiny_styles_action.
     $deleteurl = new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
         'catid'   => $catid,
         'tiny_styles_action'  => 'delete',
@@ -169,20 +158,28 @@ $templatecontext = [
 ];
 
 
+// Handle delete action.
 if ($tinystylesaction === 'delete' && $id > 0) {
     confirm_sesskey();
 
-    $DB->delete_records('tiny_styles_elements', ['id' => $id]);
-    $DB->delete_records('tiny_styles_cat_elements', ['elementid' => $id]);
-
-    redirect(
-        new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-            'catid' => $catid,
-            'sesskey' => sesskey(),
-        ]),
-        get_string('elementdeleted', 'tiny_styles'),
-        1
-    );
+    try {
+        tiny_styles_delete_element_with_bridges($id);
+        redirect(
+            new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+                'catid' => $catid,
+                'sesskey' => sesskey(),
+            ]),
+            get_string('elementdeleted', 'tiny_styles'),
+            1
+        );
+    } catch (Exception $e) {
+        redirect(
+            new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $catid]),
+            get_string('error') . ': ' . $e->getMessage(),
+            1,
+            \core\output\notification::NOTIFY_ERROR
+        );
+    }
     exit;
 }
 

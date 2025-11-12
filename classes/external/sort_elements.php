@@ -64,7 +64,6 @@ class sort_elements extends external_api {
     public static function execute($elementid, $categoryid, $direction) {
         global $DB;
 
-        // Validate parameters.
         $params = self::validate_parameters(self::execute_parameters(), [
             'elementid' => $elementid,
             'categoryid' => $categoryid,
