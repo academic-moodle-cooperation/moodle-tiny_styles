@@ -15,14 +15,13 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Locallib for extra methods for CATEGORY.PHP, CATEGORYSETTINGS.PHP, ELMENTS.PHP, CREATE_ELEMENT.PHP. 
+ * Locallib for extra methods for CATEGORY.PHP, CATEGORYSETTINGS.PHP, ELMENTS.PHP, CREATE_ELEMENT.PHP.
  *
  * @package tiny_styles
  * @author Karri Pajarinen
  * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 /**
  * Get all categories ordered by sortorder.
@@ -576,7 +575,7 @@ function tiny_styles_load_element_for_form($elementid) {
  * @param string $style the predefined CSS class
  * @return string Given type, either inline or block
  */
-function tiny_styles_check_for_style_type($style){
+function tiny_styles_check_for_style_type($style) {
     if (strpos($style, 'alert') !== false) {
             return 'block';
     }
