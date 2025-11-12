@@ -15,6 +15,7 @@
 
 /**
  * Automatically updates the element type (inline/block) based on CSS class selection.
+ * Only for predefined classes.
  *
  * @ package tiny_styles
  * @author Karri Pajarinen
