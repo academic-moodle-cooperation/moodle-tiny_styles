@@ -1,0 +1,107 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_styles/import_page
+
+    Template for the JSON import page with instructions.
+
+    Classes required for JS:
+    * 
+
+    Data attributes required for JS:
+    *
+
+    Context variables required for this template:
+    * downloadurl - URL for downloading example.json file
+    * examplefile_label - Label for example file section
+    * examplefile_name - Name of the example file (example.json)
+    * instructions0_toggle - Text for the instructions toggle button
+    * instructions1_structure_heading - Heading for structure section
+    * instructions1_1_structure_text - Text explaining JSON structure
+    * instructions1_2_visualized_label - Label for visualization section
+    * instructions1_3_visualized_code - Code showing structure visualization
+    * instructions2_usage_heading - Heading for usage section
+    * instructions2_1_usage_text - Text explaining how to use the JSON
+    * instructions3_fill_heading - Heading for fill instructions
+    * instructions3_1_fill_note - Note about fill instructions
+    * instructions3_2_fill_code - Code example showing how to fill the JSON
+    * instructions4_expl_heading - Heading for explanations section
+    * instructions4_1_expl_intro - Introduction text for explanations
+    * instructions4_2_fields_title - Title for fields section
+    * instructions5_cat_heading - Heading for category fields
+    * instructions5_1_cat_menumode - Category menumode field description
+    * instructions5_2_cat_enabled - Category enabled field description
+    * instructions6_elem_heading - Heading for element fields
+    * instructions6_1_elem_type - Element type field description
+    * instructions6_1_1_elem_type_note - Note about element type
+    * instructions6_2_elem_cssclasses - Element cssclasses field description
+    * instructions6_2_1_elem_cssclasses_note - Note about cssclasses
+    * instructions6_3_elem_enabled - Element enabled field description
+    * instructions6_4_elem_custom - Element custom field description
+    * instructions7_good_heading - Heading for "good to know" section
+    * instructions7_1_good_list - HTML list of good to know items
+
+    Example context (json):
+    {}
+}}
+<div style="margin-bottom: 20px;">
+    <div class="form-group row">
+        <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
+            <label class="form-label">{{examplefile_label}}</label>
+        </div>
+        <div class="col-md-9">
+            <a href="{{downloadurl}}" class="btn btn-link p-0">
+                {{examplefile_name}}
+            </a>
+
+            <details class="mt-2">
+                <summary class="h3" style="cursor: pointer; text-decoration: underline; color: CornflowerBlue;">{{instructions0_toggle}}</summary>
+                <div class="mt-3 w-75">
+                    <h4>{{instructions1_usage_heading}}</h4>
+                    <p>{{instructions1_1_usage_text}}</p>
+
+                    <h4>{{instructions2_structure_heading}}</h4>
+                    <p>{{instructions2_1_structure_text}}</p>
+
+                    <p>{{{instructions3_cat_intro}}}</p>
+                    <ul>
+                        <li><strong>name:</strong> {{{instructions3_1_cat_name}}}</li>
+                        <li><strong>description:</strong> {{{instructions3_2_cat_description}}}</li>
+                        <li><strong>menumode:</strong> {{{instructions3_3_cat_menumode}}}</li>
+                        <li><strong>enabled:</strong> {{{instructions3_4_cat_enabled}}}</li>
+                    </ul>
+                    
+                    <p>{{{instructions4_elem_intro}}}</p>
+                    <ul>
+                        <li><strong>name:</strong> {{{instructions4_1_elem_name}}}</li>
+                        <li><strong>custom:</strong> {{{instructions4_2_elem_custom}}}</li>
+                        <li><strong>type:</strong> {{{instructions4_3_elem_type}}}<br><em>{{instructions6_1_1_elem_type_note}}</em></li>
+                        <li><strong>cssclasses:</strong> {{{instructions4_4_elem_cssclasses}}}</li>
+                        <li><strong>enabled:</strong> {{{instructions4_5_elem_enabled}}}</li>
+                    </ul>
+
+                    <h4>{{instructions5_example_heading}}</h4>
+                    <p>{{instructions5_1_example_note}}</p>
+                    <pre><code>{{instructions5_2_example_code}}</code></pre>
+
+                    <h4>{{instructions6_good_heading}}</h4>
+                    {{{instructions6_1_good_list}}}
+                </div>
+            </details>
+        </div>
+    </div>
+</div>

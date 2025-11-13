@@ -22,11 +22,14 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Ajax from 'core/ajax';
+import Notification from 'core/notification';
+
 /**
  * Initialize duplicate functionality
  */
 export const init = () => {
-    document.addEventListener('click', (event) => {
+    document.addEventListener('click', async(event) => {
         const button = event.target.closest('.duplicate-element');
         if (!button) {
             return;
@@ -37,42 +40,31 @@ export const init = () => {
         // Disable the button
         button.disabled = true;
 
-        const elementId = button.dataset.id;
+        const elementId = parseInt(button.dataset.id);
         const catid = M.cfg.catid || new URLSearchParams(window.location.search).get('catid');
         if (!catid) {
             button.disabled = false;
             return;
         }
 
-        const payload = {
-            action: 'duplicate',
-            elementids: [elementId],
-            categoryid: parseInt(catid)
-        };
-
-        const ajaxUrl = M.cfg.wwwroot +
-            '/lib/editor/tiny/plugins/styles/ajax/bulk_element_action.php?sesskey=' +
-            encodeURIComponent(M.cfg.sesskey);
-
-        fetch(ajaxUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-            credentials: 'same-origin'
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
+        try {
+            const response = await Ajax.call([{
+                methodname: 'tiny_styles_bulk_element_action',
+                args: {
+                    action: 'duplicate',
+                    elementids: [elementId],
+                    categoryid: parseInt(catid)
                 }
-            })
-            .catch(() => {
-                alert('Failed to duplicate element');
-            })
-            .finally(() => {
-                button.disabled = false;
-            });
+            }])[0];
+
+            if (response.success) {
+                location.reload();
+            }
+
+        } catch (error) {
+            Notification.exception(error);
+        } finally {
+            button.disabled = false;
+        }
     });
 };

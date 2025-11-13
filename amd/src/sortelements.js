@@ -22,7 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define([], function() {
+define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
     const moveRow = (row, direction) => {
         const sibling = direction === 'up' ? row.previousElementSibling : row.nextElementSibling;
         if (!row || !sibling || sibling.nodeType !== 1) {
@@ -59,29 +59,18 @@ define([], function() {
                     return;
                 }
 
-                const payload = {
-                    elementid: elementid,
-                    categoryid: parseInt(catid),
-                    direction: direction
-                };
-
                 try {
-                    const ajaxUrl = M.cfg.wwwroot +
-                        '/lib/editor/tiny/plugins/styles/ajax/sortelements.php?sesskey=' +
-                        encodeURIComponent(M.cfg.sesskey);
+                    await Ajax.call([{
+                        methodname: 'tiny_styles_sort_elements',
+                        args: {
+                            elementid: elementid,
+                            categoryid: parseInt(catid),
+                            direction: direction
+                        }
+                    }])[0];
 
-                    await fetch(ajaxUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify(payload),
-                        credentials: 'same-origin'
-                    });
-
-                } catch (e) {
-                    alert(e.message);
+                } catch (error) {
+                    Notification.exception(error);
                 }
             });
         });

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin administration: category editing and creation
+ * Plugin administration: category editing and creation (REFACTORED VERSION)
  *
  * @package tiny_styles
  * @author Karri Pajarinen
@@ -36,7 +36,7 @@ $PAGE->set_pagelayout('admin');
 $tinystylesaction = optional_param('tiny_styles_action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
-$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
+$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category2.php', [
     'tiny_styles_action' => $tinystylesaction,
     'id' => $id,
 ]));
@@ -61,6 +61,7 @@ class category_form extends moodleform {
      * @return void
      */
     public function definition() {
+        global $OUTPUT, $CFG;
         $mform = $this->_form;
 
         $mform->addElement('header', 'generalsettings', get_string('generalsettings', 'admin'));
@@ -90,39 +91,13 @@ class category_form extends moodleform {
         $mform->setType('description', PARAM_TEXT);
         $mform->addRule('description', get_string('maximumchars', '', 400), 'maxlength', 400, 'client');
 
-        $mform->addElement('html', '<div class="form-group row">
-            <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
-                <label for="icon-search-input">' . get_string('selecticon', 'tiny_styles') . '</label>
-            </div>
-            <div class="col-md-9" style="position: relative;" id="search-container">
-                <input type="text" id="icon-search-input"
-                placeholder="' . get_string('searchplaceholder', 'tiny_styles') . '"
-                style="width: 300px; cursor: text;" class="form-control">
-            </div>
-        </div>');
-
-        // The popup with search functionality.
-        global $CFG;
+        // Prepare icon selector data.
         $iconpath = $CFG->dirroot . '/lib/editor/tiny/plugins/styles/pix';
         $iconurlbase = $CFG->wwwroot . '/lib/editor/tiny/plugins/styles/pix';
 
-        $iconpopuphtml = '<div id="icon-popup" style="display:none; position:absolute; top:100%; left:0;
-        width:400px; max: height 450px; background-color:#fff;
-        border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15);
-        z-index:1000; overflow:hidden; padding:0; margin-top:5px;">';
-
-        $iconpopuphtml .= '<div style="padding:20px; border-bottom:1px solid #eee; display:flex;
-            justify-content:space-between; align-items:center;">
-            <h4 style="margin:0;">' . get_string('selectanicon', 'tiny_styles') . '</h4>
-            <button type="button" id="clear-search-btn" class="btn btn-secondary btn-sm">'
-            . get_string('clearsearch', 'tiny_styles') . '</button>
-            </div>';
-
-        $iconpopuphtml .= '<div id="icon-grid-container" style="max-height:300px; overflow-y:auto; padding:20px;">
-            <div id="icon-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap:10px;">';
-
-        // Icons and names for the popup.
+        $icons = [];
         $iconnames = [];
+
         if (is_dir($iconpath)) {
             $files = scandir($iconpath);
             foreach ($files as $file) {
@@ -132,46 +107,31 @@ class category_form extends moodleform {
                 $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
                 if ($ext === 'svg') {
                     $iconnames[] = $file;
-                    $iconurl = $iconurlbase . '/' . $file;
                     $iconname = pathinfo($file, PATHINFO_FILENAME);
-
-                    $iconpopuphtml .= '<div class="icon-grid-item" data-icon="' . s($file) . '"
-                        data-icon-name="' . s($iconname) . '"
-                        style="cursor:pointer; display:flex; flex-direction:column; align-items:center;
-                        justify-content:center; padding:12px; border-radius:12px;"
-                        title="' . s($iconname) . '">';
-
-                    $iconpopuphtml .= '<img src="' . $iconurl . '" alt="' . s($file) . '"
-                        style="width:24px; height:24px; display:block; margin: 0 auto;" />';
-                    $iconpopuphtml .= '<div style="font-size:0.75em; margin-top:4px;
-                        color:#666; text-align:center;">' . s($iconname) . '</div>';
-                    $iconpopuphtml .= '<style>
-                        #icon-grid .icon-grid-item:hover {
-                            background-color: #e7f1ff;
-                            border-color: #007bff;
-                        }
-                    </style>';
-                    $iconpopuphtml .= '</div>';
+                    $icons[] = [
+                        'file' => $file,
+                        'url' => $iconurlbase . '/' . $file,
+                        'name' => $iconname,
+                    ];
                 }
             }
         }
 
-        $iconpopuphtml .= '</div>
-            <div id="no-icons-found" style="display:none; text-align:center; padding:20px; color:#666;">
-            ' . get_string('noiconsfound', 'tiny_styles') . '
-            </div>
-            </div>';
+        // Prepare template context for icon selector.
+        $iconselectorcontext = [
+            'selecticon_label' => get_string('selecticon', 'tiny_styles'),
+            'searchplaceholder' => get_string('searchplaceholder', 'tiny_styles'),
+            'selectanicon_label' => get_string('selectanicon', 'tiny_styles'),
+            'clearsearch_label' => get_string('clearsearch', 'tiny_styles'),
+            'noiconsfound_label' => get_string('noiconsfound', 'tiny_styles'),
+            'close_label' => get_string('close', 'tiny_styles'),
+            'icons' => $icons,
+            'iconnames_json' => json_encode($iconnames),
+        ];
 
-        // Close button for popup.
-        $iconpopuphtml .= '<div style="padding:15px 20px; border-top:1px solid #eee;
-             display:flex; justify-content:center; align-items:center;">
-            <button type="button" id="close-icon-popup" class="btn btn-primary">'
-            . get_string('close', 'tiny_styles') . '</button>
-            </div>';
-        $iconpopuphtml .= '</div>';
-
-        // Add popup HTML to form.
-        $mform->addElement('html', $iconpopuphtml);
+        // Render icon selector using template.
+        $iconselectorhtml = $OUTPUT->render_from_template('tiny_styles/icon_selector', $iconselectorcontext);
+        $mform->addElement('html', $iconselectorhtml);
 
         $menumodeoptions = [
             'submenu' => get_string('submenu', 'tiny_styles'),
@@ -198,9 +158,6 @@ class category_form extends moodleform {
         // Hidden selected icon field for storing to db.
         $mform->addElement('hidden', 'selectedicon', '');
         $mform->setType('selectedicon', PARAM_TEXT);
-
-        // Add available icon names as a data attribute for JavaScript validation.
-        $mform->addElement('html', '<script>window.availableIcons = ' . json_encode($iconnames) . ';</script>');
 
         $this->add_action_buttons(true, get_string('savechanges'));
     }
@@ -289,7 +246,7 @@ if ($tinystylesaction === 'edit' && $id > 0) {
         $mform->set_data($formdata);
     } else {
         // TODO: edit this.
-        throw new moodle_exception('Invalid category ID');
+        throw new moodle_exception(get_string('invalidid', 'tiny_styles'));
     }
 } else {
     // Ensures hidden fields are set.

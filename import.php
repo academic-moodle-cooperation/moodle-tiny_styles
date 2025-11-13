@@ -57,8 +57,6 @@ if (optional_param('download_example', false, PARAM_BOOL)) {
 
 /**
  * Standard moodle filepicker
- * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_import_form extends moodleform {
     /**
@@ -122,76 +120,38 @@ if ($mform->is_cancelled()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('importdata', 'tiny_styles'));
+
+// Prepare template data.
 $downloadurl = new moodle_url($PAGE->url, ['download_example' => 1, 'sesskey' => sesskey()]);
-?>
-<div style="margin-bottom: 20px;">
-    <div class="row align-items-center">
-        <div class="col-md-3">
-            <label class="form-label mb-0"><?php echo get_string('examplefile', 'tiny_styles'); ?></label>
-        </div>
-        <div class="col-md-9">
-            <a href="<?php echo $downloadurl->out(); ?>" class="btn btn-link p-0">
-                example.json
-            </a>
-            <details class="mt-2">
-                <summary style="cursor: pointer;"><?php echo get_string('instructions_toggle', 'tiny_styles'); ?></summary>
-                <div class="mt-2 p-2 bg-light border rounded">
-                    <p><strong><?php echo get_string('instructions_heading', 'tiny_styles'); ?></strong></p>
+$templatedata = [
+    'downloadurl' => $downloadurl->out(false),
+    'examplefile_label' => get_string('examplefile', 'tiny_styles'),
+    'examplefile_name' => 'example.json',
+    'instructions0_toggle' => get_string('instructions_0_toggle', 'tiny_styles'),
+    'instructions1_usage_heading' => get_string('instructions_1_usage_heading', 'tiny_styles'),
+    'instructions1_1_usage_text' => get_string('instructions_1_1_usage_text', 'tiny_styles'),
+    'instructions2_structure_heading' => get_string('instructions_2_structure_heading', 'tiny_styles'),
+    'instructions2_1_structure_text' => get_string('instructions_2_1_structure_text', 'tiny_styles'),
+    'instructions3_cat_intro' => get_string('instructions_3_cat_intro', 'tiny_styles'),
+    'instructions3_1_cat_name' => get_string('instructions_3_1_cat_name', 'tiny_styles'),
+    'instructions3_2_cat_description' => get_string('instructions_3_2_cat_description', 'tiny_styles'),
+    'instructions3_3_cat_menumode' => get_string('instructions_3_3_cat_menumode', 'tiny_styles'),
+    'instructions3_4_cat_enabled' => get_string('instructions_3_4_cat_enabled', 'tiny_styles'),
+    'instructions4_elem_intro' => get_string('instructions_4_elem_intro', 'tiny_styles'),
+    'instructions4_1_elem_name' => get_string('instructions_4_1_elem_name', 'tiny_styles'),
+    'instructions4_2_elem_custom' => get_string('instructions_4_2_elem_custom', 'tiny_styles'),
+    'instructions4_3_elem_type' => get_string('instructions_4_3_elem_type', 'tiny_styles'),
+    'instructions4_4_elem_cssclasses' => get_string('instructions_4_4_elem_cssclasses', 'tiny_styles'),
+    'instructions4_5_elem_enabled' => get_string('instructions_4_5_elem_enabled', 'tiny_styles'),
+    'instructions5_example_heading' => get_string('instructions_5_example_heading', 'tiny_styles'),
+    'instructions5_1_example_note' => get_string('instructions_5_1_example_note', 'tiny_styles'),
+    'instructions5_2_example_code' => get_string('instructions_5_2_example_code', 'tiny_styles'),
+    'instructions6_good_heading' => get_string('instructions_6_good_heading', 'tiny_styles'),
+    'instructions6_1_good_list' => get_string('instructions_6_1_good_list', 'tiny_styles'),
+];
 
-                    <h3><?php echo get_string('instr_structure_heading', 'tiny_styles'); ?></h3>
-                    <p><?php echo get_string('instr_structure_text', 'tiny_styles'); ?></p>
-                    
-                    <p><strong><?php echo get_string('instr_visualized_label', 'tiny_styles'); ?></strong></p>
-                    <pre><code><?php echo get_string('instr_visualized_code', 'tiny_styles'); ?></code></pre>
-                    
-                    <h3><?php echo get_string('instr_usage_heading', 'tiny_styles'); ?></h3>
-                    <p><?php echo get_string('instr_usage_text', 'tiny_styles'); ?></p>
-                    
-                    <h4><?php echo get_string('instr_fill_heading', 'tiny_styles'); ?></h4>
-                    <p><?php echo get_string('instr_fill_note', 'tiny_styles'); ?></p>
-                    <pre><code><?php echo get_string('instr_fill_code', 'tiny_styles'); ?></code></pre>
-                    
-                    <h3><?php echo get_string('instr_expl_heading', 'tiny_styles'); ?></h3>
-                    <p><?php echo get_string('instr_expl_intro', 'tiny_styles'); ?></p>
-                    <p><strong><?php echo get_string('instr_fields_title', 'tiny_styles'); ?></strong></p>
-                    
-                    <h5><?php echo get_string('instr_cat_heading', 'tiny_styles'); ?></h5>
-                    <?php echo get_string('instr_cat_list', 'tiny_styles'); ?>
+// Render template.
+echo $OUTPUT->render_from_template('tiny_styles/import_page', $templatedata);
 
-                    <h5><?php echo get_string('instr_elem_heading', 'tiny_styles'); ?></h5>
-                    <?php echo get_string('instr_elem_list', 'tiny_styles'); ?>
-                    <hr>
-                    <h3><?php echo get_string('instr_good_heading', 'tiny_styles'); ?></h3>
-                    <?php echo get_string('instr_good_list', 'tiny_styles'); ?>
-
-                </div>
-            </details>
-        </div>
-    </div>
-</div>
-<?php
-// This file is part of Moodle - https://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
-
-/**
- * Repeated for the AMC pipeline
- *
- * @package tiny_styles
- * @author Karri Pajarinen
- * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 $mform->display();
 echo $OUTPUT->footer();
