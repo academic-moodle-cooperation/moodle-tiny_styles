@@ -15,17 +15,17 @@
       "elements": [
         {
           "name": "Red Label",
+          "custom": 0,
           "type": "block",
           "cssclasses": "alert alert-danger",
-          "enabled": 1,
-          "custom": 0
+          "enabled": 1
         },
         {
           "name": "Green Text",
+          "custom": 1,
           "type": "inline",
           "cssclasses": "color: green; font-weight:bold;",
-          "enabled": 0,
-          "custom": 1
+          "enabled": 0
         }
       ]
     }
