@@ -38,7 +38,6 @@ $catelements = $DB->get_records('tiny_styles_cat_elements', null, 'sortorder ASC
 $exportcategories = [];
 foreach ($categories as $cat) {
     $exportcategories[$cat->id] = [
-        'id'          => $cat->id,
         'name'        => $cat->name,
         'description' => $cat->description,
         'symbol'      => $cat->symbol,
@@ -62,10 +61,10 @@ foreach ($catelements as $ce) {
     $exportcategories[$categoryid]['elements'][] = [
         'id'        => $elements[$elementid]->id,
         'name'      => $elements[$elementid]->name,
+        'custom'    => $elements[$elementid]->custom,
         'type'      => $elements[$elementid]->type,
         'cssclasses' => $elements[$elementid]->cssclasses,
         'enabled'   => $elements[$elementid]->enabled,
-        'custom'    => $elements[$elementid]->custom,
     ];
 }
 
