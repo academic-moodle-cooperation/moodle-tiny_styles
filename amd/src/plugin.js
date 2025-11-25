@@ -30,6 +30,56 @@ import {getSetup as getCommandSetup} from './commands';
 import {editCustomStyles} from './commands';
 import * as Configuration from './configuration';
 
+/**
+ * Injects Bootstrap styles bundled with the plugin into the editor iframe.
+ * This makes sure that the predefined elements render properly.
+ *
+ * Direct DOM manipulation with appending a link element to iframe head.
+ *
+ * @param {Object} editor - The tinyMCE editor
+ */
+const injectEditorStyles = (editor) => {
+    try {
+        // Get iframe.
+        const doc = editor.getDoc();
+        if (!doc || !doc.head) {
+            console.error('[tiny_styles] Cannot access iframe doc or head.');
+            return;
+        }
+
+        const cssLinkId = 'tiny-styles-injected-css';
+
+        if (doc.getElementById(cssLinkId)) {
+            console.log('[tiny_styles] CSS already injected.');
+            return;
+        }
+
+        // Config file path.
+        const pluginCssUrl = M.cfg.wwwroot + 'lib/editor/tiny/plugins/styles/css/styles.css';
+
+        // Link to iframe head with unique ID.
+        const link = doc.createElement('link');
+        link.id = cssLinkId;
+        link.rel = 'stylesheet';
+        link.href = pluginCssUrl;
+        doc.head.appendChild(link);
+
+        console.log('[tiny_styles] Injected plugin CSS into iframe.');
+
+        setTimeout(()=> {
+            if (doc.getElementById(cssLinkId)) {
+                console.log('[tiny_styles] CSS injection success:', cssLinkId, 'found');
+            } else {
+                console.log('[tiny_styles] CSS injection failed');
+            }
+
+        }, 500);
+    } catch (e) {
+        console.error('[tiny_styles] Injection Error.');
+    }
+}
+
+
 // eslint-disable-next-line no-async-promise-executor
 export default new Promise(async(resolve) => {
     try {
@@ -47,8 +97,9 @@ export default new Promise(async(resolve) => {
             registerOptions(editor);
             setupCommands(editor);
 
-            // Runs a check on the editor text to update custom in text styles.
             editor.on('init', async() => {
+                injectEditorStyles(editor);
+                // Runs a check on the editor text to update custom in text styles.
                 await editCustomStyles(editor);
             });
             return pluginMetadata;

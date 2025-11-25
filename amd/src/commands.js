@@ -979,6 +979,210 @@ export const getSetup = async() => {
             remove: 'removeIcon',
         };
 
+        /**
+         * Helper to creates an empty paragraph for visibility.
+         * @param {Object} editor TinyMCE editor instance
+         * @returns {HTMLElement} New paragraph element
+         */
+        const createEmptyParagraph = (editor) => {
+            const newPara = editor.dom.create('p');
+            newPara.appendChild(editor.dom.create('br'));
+            return newPara;
+        };
+
+        /**
+         * Helper to positions cursor in element.
+         * @param {Object} editor TinyMCE editor instance
+         * @param {HTMLElement} element Element to position cursor in
+         */
+        const focusParagraph = (editor, element) => {
+            editor.selection.setCursorLocation(element, 0);
+            editor.focus();
+        };
+
+        /**
+         * Helper to checks if cursor has content before and after in current block.
+         * @param {Object} editor TinyMCE editor instance
+         * @param {Object} range Current selection range
+         * @param {HTMLElement} currentBlock Current block element
+         * @returns {Object} Object with contentBefore and contentAfter strings
+         */
+        const getContentAroundCursor = (editor, range, currentBlock) => {
+            const beforeRange = editor.dom.createRng();
+            beforeRange.setStart(currentBlock, 0);
+            beforeRange.setEnd(range.startContainer, range.startOffset);
+            const contentBefore = beforeRange.toString().trim();
+
+            const afterRange = editor.dom.createRng();
+            afterRange.setStart(range.endContainer, range.endOffset);
+            afterRange.setEnd(currentBlock, currentBlock.childNodes.length);
+            const contentAfter = afterRange.toString().trim();
+
+            return {contentBefore, contentAfter};
+        };
+
+        /**
+         * Helper to copy styling from source to target element.
+         * @param {HTMLElement} sourceElement Element to copy styling from
+         * @param {HTMLElement} targetElement Element to apply styling to
+         */
+        const copyElementStyling = (sourceElement, targetElement) => {
+            if (sourceElement.className) {
+                targetElement.className = sourceElement.className;
+            }
+            if (sourceElement.style.cssText) {
+                targetElement.style.cssText = sourceElement.style.cssText;
+            }
+        };
+
+        /**
+         * Exits styled block.
+         * @param {Object} editor TinyMCE editor instance
+         * @param {HTMLElement} styledBlock Current block element
+         */
+        const handleExitBlock = (editor, styledBlock) => {
+            const newPara = createEmptyParagraph(editor);
+            editor.dom.insertAfter(newPara, styledBlock);
+            focusParagraph(editor, newPara);
+        };
+
+        /**
+         * Adds a paragraph after current block within container.
+         * @param {Object} editor TinyMCE editor instance
+         * @param {HTMLElement} currentBlock Current block element
+         */
+        const handleInsertAfterBlock = (editor, currentBlock) => {
+            const newPara = createEmptyParagraph(editor);
+            currentBlock.parentNode.insertBefore(newPara, currentBlock.nextSibling);
+            focusParagraph(editor, newPara);
+        };
+
+        /**
+         * Splits block at cursor position with unstyled paragraph.
+         * @param {Object} editor TinyMCE editor instance
+         * @param {Object} range Current selection range
+         * @param {HTMLElement} currentBlock Current block element
+         * @param {HTMLElement} styledBlock Sytled block element
+         */
+        const handleSplitBlock = (editor, range, currentBlock, styledBlock) => {
+            // Extracts content after cursor.
+            const afterRange = editor.dom.createRng();
+            afterRange.setStart(range.endContainer, range.endOffset);
+            afterRange.setEnd(currentBlock, currentBlock.childNodes.length);
+            const afterContent = afterRange.extractContents();
+
+            const newPara = createEmptyParagraph(editor);
+
+            // Create new styled block with extracted content.
+            const newBlock = editor.dom.create(currentBlock.nodeName);
+            copyElementStyling(currentBlock, newBlock);
+            newBlock.appendChild(afterContent);
+
+            if (styledBlock === currentBlock) {
+                editor.dom.insertAfter(newPara, currentBlock);
+                editor.dom.insertAfter(newBlock, newPara);
+            } else {
+                currentBlock.parentNode.insertBefore(newPara, currentBlock.nextSibling);
+                currentBlock.parentNode.insertBefore(newBlock, newPara.nextSibling);
+            }
+
+            focusParagraph(editor, newPara);
+        };
+
+        /**
+         * Pushes styled block down.
+         * @param {Object} editor TinyMCE editor
+         * @param {HTMLElement} currentBlock Current block element
+         */
+        const handlePushBlockDown = (editor, styledBlock) => {
+            const newPara = createEmptyParagraph(editor);
+            styledBlock.parentNode.insertBefore(newPara, styledBlock);
+            focusParagraph(editor, newPara);
+        };
+
+        // Handle Enter key in styled blocks.
+        editor.on('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                const node = editor.selection.getNode();
+
+                // Find the closest styled block element.
+                const styledBlock = editor.dom.getParent(node, (el) => {
+                    return isStyledBlockElement(el);
+                }, editor.getBody());
+
+                if (!styledBlock) {
+                    return;
+                }
+
+                // Check if a block element.
+                const currentBlock = editor.dom.getParent(node, 'p,h1,h2,h3,h4,h5,h6,li');
+                if (!currentBlock) {
+                    return;
+                }
+
+                const selection = editor.selection;
+                const range = selection.getRng();
+
+                // Check if at end of block.
+                let isAtEnd = false;
+                if (range.collapsed) {
+                    // Double check if endContainer is text and at its end.
+                    const check = range.endContainer.nodeType === Node.TEXT_NODE &&
+                        range.endOffset === range.endContainer.length;
+
+                    const testRange = editor.dom.createRng();
+                    testRange.setStart(range.endContainer, range.endOffset);
+                    testRange.setEnd(currentBlock, currentBlock.childNodes.length);
+                    const contentAfter = testRange.toString().trim();
+
+                    // At end if: check OR no trimmed content after cursor.
+                    isAtEnd = check || contentAfter.length === 0;
+                }
+
+                // Check if the last block in the styled container.
+                let isLastBlock = false;
+                if (styledBlock === currentBlock) {
+                    isLastBlock = true;
+                } else {
+                    const blockChildren = Array.from(styledBlock.children).filter(child =>
+                        child.nodeType === Node.ELEMENT_NODE
+                    );
+                    const lastChild = blockChildren.length > 0 ? blockChildren[blockChildren.length - 1] : null;
+
+                    // Direct match: currentBlock is the last child of styledBlock.
+                    if (lastChild === currentBlock) {
+                        isLastBlock = true;
+                    }
+                    // List case.
+                    else if (currentBlock.tagName === 'LI' && lastChild && (lastChild.tagName === 'UL' || lastChild.tagName === 'OL')) {
+                        return;
+                    }
+                }
+
+                // Intercepts Enter in styled blocks.
+                e.preventDefault();
+
+                if (isAtEnd && isLastBlock) {
+                    // Case 1: At END of last block, exit down.
+                    handleExitBlock(editor, styledBlock);
+                } else if (isAtEnd) {
+                    // Case 2: At END of middle block, inserts paragraph after current block.
+                    handleInsertAfterBlock(editor, currentBlock);
+                } else {
+                    // Not at end, check middle or beginning.
+                    const {contentBefore, contentAfter} = getContentAroundCursor(editor, range, currentBlock);
+
+                    if (contentBefore.length > 0 && contentAfter.length > 0) {
+                        // Case 3: In MIDDLE of block, splits at cursor with unstyled paragraph.
+                        handleSplitBlock(editor, range, currentBlock, styledBlock);
+                    } else {
+                        // Case 4: At BEGINNING of block, creates paragraph before.
+                        handlePushBlockDown(editor, styledBlock);
+                    }
+                }
+            }
+        });
+
         editor.ui.registry.addMenuButton('tiny_styles_button', {
             icon: icon,
             tooltip: mainMenuLabel,
