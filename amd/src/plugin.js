@@ -43,14 +43,12 @@ const injectEditorStyles = (editor) => {
         // Get iframe.
         const doc = editor.getDoc();
         if (!doc || !doc.head) {
-            console.error('[tiny_styles] Cannot access iframe doc or head.');
             return;
         }
 
         const cssLinkId = 'tiny-styles-injected-css';
 
         if (doc.getElementById(cssLinkId)) {
-            console.log('[tiny_styles] CSS already injected.');
             return;
         }
 
@@ -64,20 +62,10 @@ const injectEditorStyles = (editor) => {
         link.href = pluginCssUrl;
         doc.head.appendChild(link);
 
-        console.log('[tiny_styles] Injected plugin CSS into iframe.');
-
-        setTimeout(()=> {
-            if (doc.getElementById(cssLinkId)) {
-                console.log('[tiny_styles] CSS injection success:', cssLinkId, 'found');
-            } else {
-                console.log('[tiny_styles] CSS injection failed');
-            }
-
-        }, 500);
     } catch (e) {
-        console.error('[tiny_styles] Injection Error.');
+        // Console.error('[tiny_styles] Injection Error.');
     }
-}
+};
 
 
 // eslint-disable-next-line no-async-promise-executor

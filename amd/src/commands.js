@@ -1022,77 +1022,9 @@ export const getSetup = async() => {
         };
 
         /**
-         * Helper to copy styling from source to target element.
-         * @param {HTMLElement} sourceElement Element to copy styling from
-         * @param {HTMLElement} targetElement Element to apply styling to
-         */
-        const copyElementStyling = (sourceElement, targetElement) => {
-            if (sourceElement.className) {
-                targetElement.className = sourceElement.className;
-            }
-            if (sourceElement.style.cssText) {
-                targetElement.style.cssText = sourceElement.style.cssText;
-            }
-        };
-
-        /**
-         * Exits styled block.
-         * @param {Object} editor TinyMCE editor instance
-         * @param {HTMLElement} styledBlock Current block element
-         */
-        const handleExitBlock = (editor, styledBlock) => {
-            const newPara = createEmptyParagraph(editor);
-            editor.dom.insertAfter(newPara, styledBlock);
-            focusParagraph(editor, newPara);
-        };
-
-        /**
-         * Adds a paragraph after current block within container.
-         * @param {Object} editor TinyMCE editor instance
-         * @param {HTMLElement} currentBlock Current block element
-         */
-        const handleInsertAfterBlock = (editor, currentBlock) => {
-            const newPara = createEmptyParagraph(editor);
-            currentBlock.parentNode.insertBefore(newPara, currentBlock.nextSibling);
-            focusParagraph(editor, newPara);
-        };
-
-        /**
-         * Splits block at cursor position with unstyled paragraph.
-         * @param {Object} editor TinyMCE editor instance
-         * @param {Object} range Current selection range
-         * @param {HTMLElement} currentBlock Current block element
-         * @param {HTMLElement} styledBlock Sytled block element
-         */
-        const handleSplitBlock = (editor, range, currentBlock, styledBlock) => {
-            // Extracts content after cursor.
-            const afterRange = editor.dom.createRng();
-            afterRange.setStart(range.endContainer, range.endOffset);
-            afterRange.setEnd(currentBlock, currentBlock.childNodes.length);
-            const afterContent = afterRange.extractContents();
-
-            const newPara = createEmptyParagraph(editor);
-
-            // Create new styled block with extracted content.
-            const newBlock = editor.dom.create(currentBlock.nodeName);
-            copyElementStyling(currentBlock, newBlock);
-            newBlock.appendChild(afterContent);
-
-            if (styledBlock === currentBlock) {
-                editor.dom.insertAfter(newPara, currentBlock);
-                editor.dom.insertAfter(newBlock, newPara);
-            } else {
-                currentBlock.parentNode.insertBefore(newPara, currentBlock.nextSibling);
-                currentBlock.parentNode.insertBefore(newBlock, newPara.nextSibling);
-            }
-
-            focusParagraph(editor, newPara);
-        };
-
-        /**
          * Pushes styled block down.
          * @param {Object} editor TinyMCE editor
-         * @param {HTMLElement} currentBlock Current block element
+         * @param {HTMLElement} styledBlock Current block element
          */
         const handlePushBlockDown = (editor, styledBlock) => {
             const newPara = createEmptyParagraph(editor);
@@ -1100,86 +1032,139 @@ export const getSetup = async() => {
             focusParagraph(editor, newPara);
         };
 
-        // Handle Enter key in styled blocks.
+        let continuedTyping = false;
+
+        // Handles pressing Enter in styled blocks.
         editor.on('keydown', (e) => {
+            // Removes empty space after BR insertion when user continues typing.
+            if (continuedTyping && e.key.length === 1) {
+                const range = editor.selection.getRng();
+
+                // Only handles element containers.
+                if (range.startContainer.nodeType !== Node.ELEMENT_NODE) {
+                    continuedTyping = false;
+                    return;
+                }
+
+                const container = range.startContainer;
+                const offset = range.startOffset;
+
+                if (offset === 0) {
+                    continuedTyping = false;
+                    return;
+                }
+
+                const nodeBefore = container.childNodes[offset - 1];
+
+                // Checks if previous node is text node ending with nbsp.
+                if (nodeBefore?.nodeType === Node.TEXT_NODE) {
+                    const text = nodeBefore.textContent;
+
+                    if (text.length > 0 && text.charCodeAt(text.length - 1) === 160) {
+                        nodeBefore.textContent = text.substring(0, text.length - 1);
+
+                        // Re-adds BR if at end of container.
+                        if (offset >= container.childNodes.length) {
+                            editor.selection.setContent('<br>');
+                        }
+                    }
+                }
+                continuedTyping = false;
+            }
+
+            // Handles Enter key in styled text blocks.
             if (e.key === 'Enter' && !e.shiftKey) {
                 const node = editor.selection.getNode();
 
-                // Find the closest styled block element.
                 const styledBlock = editor.dom.getParent(node, (el) => {
                     return isStyledBlockElement(el);
                 }, editor.getBody());
 
                 if (!styledBlock) {
+                    continuedTyping = false;
                     return;
                 }
 
-                // Check if a block element.
-                const currentBlock = editor.dom.getParent(node, 'p,h1,h2,h3,h4,h5,h6,li');
-                if (!currentBlock) {
+                const listElement = editor.dom.getParent(node, 'ul,ol,li', editor.getBody());
+                if (listElement) {
+                    continuedTyping = false;
                     return;
                 }
 
-                const selection = editor.selection;
-                const range = selection.getRng();
+                e.preventDefault();
+                continuedTyping = false;
 
-                // Check if at end of block.
-                let isAtEnd = false;
-                if (range.collapsed) {
-                    // Double check if endContainer is text and at its end.
-                    const check = range.endContainer.nodeType === Node.TEXT_NODE &&
-                        range.endOffset === range.endContainer.length;
+                const range = editor.selection.getRng();
 
-                    const testRange = editor.dom.createRng();
-                    testRange.setStart(range.endContainer, range.endOffset);
-                    testRange.setEnd(currentBlock, currentBlock.childNodes.length);
-                    const contentAfter = testRange.toString().trim();
+                // Check if we're in an empty paragraph inside a styled block.
+                const currentPara = editor.dom.getParent(node, 'p', styledBlock);
+                if (currentPara && currentPara !== styledBlock) {
+                    const paraText = currentPara.textContent.trim();
+                    const onlyHasBR = currentPara.childNodes.length === 1 &&
+                        currentPara.childNodes[0].nodeName === 'BR';
 
-                    // At end if: check OR no trimmed content after cursor.
-                    isAtEnd = check || contentAfter.length === 0;
-                }
+                    if (paraText === '' || onlyHasBR) {
+                        editor.dom.remove(currentPara);
 
-                // Check if the last block in the styled container.
-                let isLastBlock = false;
-                if (styledBlock === currentBlock) {
-                    isLastBlock = true;
-                } else {
-                    const blockChildren = Array.from(styledBlock.children).filter(child =>
-                        child.nodeType === Node.ELEMENT_NODE
-                    );
-                    const lastChild = blockChildren.length > 0 ? blockChildren[blockChildren.length - 1] : null;
-
-                    // Direct match: currentBlock is the last child of styledBlock.
-                    if (lastChild === currentBlock) {
-                        isLastBlock = true;
-                    }
-                    // List case.
-                    else if (currentBlock.tagName === 'LI' && lastChild && (lastChild.tagName === 'UL' || lastChild.tagName === 'OL')) {
+                        const newPara = createEmptyParagraph(editor);
+                        editor.dom.insertAfter(newPara, styledBlock);
+                        focusParagraph(editor, newPara);
                         return;
                     }
                 }
 
-                // Intercepts Enter in styled blocks.
-                e.preventDefault();
+                const {contentBefore, contentAfter} = getContentAroundCursor(editor, range, styledBlock);
 
-                if (isAtEnd && isLastBlock) {
-                    // Case 1: At END of last block, exit down.
-                    handleExitBlock(editor, styledBlock);
-                } else if (isAtEnd) {
-                    // Case 2: At END of middle block, inserts paragraph after current block.
-                    handleInsertAfterBlock(editor, currentBlock);
-                } else {
-                    // Not at end, check middle or beginning.
-                    const {contentBefore, contentAfter} = getContentAroundCursor(editor, range, currentBlock);
+                // Beginning of styled block creates a paragraph before.
+                if (contentBefore.length === 0 && contentAfter.length > 0) {
+                    handlePushBlockDown(editor, styledBlock);
+                    return;
+                }
 
-                    if (contentBefore.length > 0 && contentAfter.length > 0) {
-                        // Case 3: In MIDDLE of block, splits at cursor with unstyled paragraph.
-                        handleSplitBlock(editor, range, currentBlock, styledBlock);
+                // Checks for trailing BR to exit the block.
+                let elementToCheck = styledBlock;
+                if (currentPara && currentPara !== styledBlock) {
+                    elementToCheck = currentPara;
+                }
+
+                const children = Array.from(elementToCheck.childNodes);
+                let hasTrailingBR = false;
+
+                for (let i = children.length - 1; i >= 0; i--) {
+                    const child = children[i];
+                    if (child.nodeName === 'BR') {
+                        hasTrailingBR = true;
+                        break;
+                    } else if (child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '') {
+                        continue;
                     } else {
-                        // Case 4: At BEGINNING of block, creates paragraph before.
-                        handlePushBlockDown(editor, styledBlock);
+                        break;
                     }
                 }
+
+                const isAtEnd = contentAfter.length === 0;
+
+                if (hasTrailingBR && isAtEnd) {
+                    // Second Enter at end exits the styled block.
+                    for (let i = children.length - 1; i >= 0; i--) {
+                        const child = children[i];
+                        if (child.nodeName === 'BR' ||
+                            (child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '')) {
+                            editor.dom.remove(child);
+                        } else {
+                            break;
+                        }
+                    }
+
+                    const newPara = createEmptyParagraph(editor);
+                    editor.dom.insertAfter(newPara, styledBlock);
+                    focusParagraph(editor, newPara);
+                    return;
+                }
+
+                // Inserts BR and an empty space to stay in the styled paragraph.
+                editor.selection.setContent('<br>&nbsp;');
+                continuedTyping = true;
             }
         });
 
