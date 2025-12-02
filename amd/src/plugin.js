@@ -53,7 +53,7 @@ const injectEditorStyles = (editor) => {
         }
 
         // Config file path.
-        const pluginCssUrl = M.cfg.wwwroot + 'lib/editor/tiny/plugins/styles/css/styles.css';
+        const pluginCssUrl = M.cfg.wwwroot + '/lib/editor/tiny/plugins/styles/css/styles.css';
 
         // Link to iframe head with unique ID.
         const link = doc.createElement('link');
@@ -63,7 +63,7 @@ const injectEditorStyles = (editor) => {
         doc.head.appendChild(link);
 
     } catch (e) {
-        // Console.error('[tiny_styles] Injection Error.');
+        // console.error('Error initializing TinyMCE plugin:', e);
     }
 };
 

@@ -594,24 +594,14 @@ function applyBlockStyle(editor, styleDef) {
             editor.dom.remove(block);
         });
 
-        // Create a new paragraph after to avoid continuous styling
-        const nextSibling = newParagraph.nextSibling;
-        const needsNewParagraph = !nextSibling ||
-                                  nextSibling.nodeType !== Node.ELEMENT_NODE ||
-                                  nextSibling.tagName !== 'P' ||
-                                  (nextSibling.textContent && nextSibling.textContent.trim()) ||
-                                  nextSibling.innerHTML.trim();
-
-        if (needsNewParagraph) {
-            const nextParagraph = editor.dom.create('p', {}, '');
-            editor.dom.insertAfter(nextParagraph, newParagraph);
-            selection.setCursorLocation(nextParagraph, 0);
-        } else {
-            // Use the existing empty paragraph
-            selection.setCursorLocation(nextSibling, 0);
+        // Position cursor at the end of the styled block so user can continue typing
+        const lastChild = newParagraph.lastChild;
+        if (lastChild) {
+            if (lastChild.nodeType === Node.TEXT_NODE) {
+                selection.setCursorLocation(lastChild, lastChild.length);
+            }
         }
     }
-
     editor.focus();
 }
 
