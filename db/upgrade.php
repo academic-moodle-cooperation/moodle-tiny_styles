@@ -70,5 +70,21 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         upgrade_plugin_savepoint(true, 2025073002, 'tiny', 'styles');
     }
 
+    if ($oldversion < 2025080602.04) {
+        $table = new xmldb_table('tiny_styles_categories');
+
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'id');
+        $dbman->change_field_precision($table, $field);
+
+        $field = new xmldb_field('description', XMLDB_TYPE_TEXT, '1000', null, false, null, null, 'name');
+        $dbman->change_field_precision($table, $field);
+
+        $table = new xmldb_table('tiny_styles_elements');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'id');
+        $dbman->change_field_precision($table, $field);
+
+        upgrade_plugin_savepoint(true, 2025080602.04, 'tiny', 'styles');
+    }
+
     return true;
 }

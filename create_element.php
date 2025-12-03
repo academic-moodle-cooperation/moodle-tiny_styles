@@ -70,11 +70,11 @@ class element_form extends moodleform {
             'text',
             'name',
             get_string('name'),
-            ['size' => 50, 'style' => 'width: 400px;', 'maxlength' => 100]
+            ['size' => 50, 'style' => 'width: 400px;', 'maxlength' => 255]
         );
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
-        $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $categories = tiny_styles_get_categories_for_dropdown(true);
 

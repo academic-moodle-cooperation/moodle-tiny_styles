@@ -78,9 +78,9 @@ class fetch_categories extends external_api {
             if (!isset($categories[$catid])) {
                 $categories[$catid] = [
                     'id' => $catid,
-                    'name' => $r->name,
+                    'name' => format_string($r->name, true, ['context' => $context]),
                     'symbol' => $r->symbol,
-                    'description' => $r->description,
+                    'description' => format_string($r->description, true, ['context' => $context]),
                     'menumode' => $r->menumode,
                     'elements' => [],
                 ];
@@ -88,7 +88,7 @@ class fetch_categories extends external_api {
             if (!empty($r->elemid)) {
                 $categories[$catid]['elements'][] = [
                     'id'         => $r->elemid,
-                    'name'       => $r->elemname,
+                    'name'       => format_string($r->elemname, true, ['context' => $context]),
                     'type'       => $r->type,
                     'cssclasses' => $r->cssclasses,
                     'custom'     => $r->custom,

@@ -130,8 +130,8 @@ foreach ($records as $category) {
         $categorydata[] = [
             'id' => $category->id,
             'enabled' => $category->enabled,
-            'name' => $category->name,
-            'description' => $category->description,
+            'name' => format_string($category->name, true, ['context' => context_system::instance()]),
+            'description' => format_string($category->description, true, ['context' => context_system::instance()]),
             'menumode' => $category->menumode,
             'elementsurl' => '#',
             'elementsiconstyle' => 'color: gray; pointer-events: none;',
@@ -146,8 +146,8 @@ foreach ($records as $category) {
         $categorydata[] = [
             'id' => $category->id,
             'enabled' => $category->enabled,
-            'name' => $category->name,
-            'description' => $category->description,
+            'name' => format_string($category->name, true, ['context' => context_system::instance()]),
+            'description' => format_string($category->description, true, ['context' => context_system::instance()]),
             'menumode' => $category->menumode,
             'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                 'catid' => $category->id,

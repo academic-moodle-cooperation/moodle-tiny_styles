@@ -112,7 +112,7 @@ export const init = () => {
         try {
             const modal = await ModalFactory.create({
                 type: ModalFactory.types.DEFAULT,
-                title: `${previewVal} "${nameVal}"`,
+                title: `${previewVal}`,
                 body: previewhtml
             });
 

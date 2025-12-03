@@ -10,8 +10,8 @@
         <TABLE NAME="tiny_styles_categories" COMMENT="Tiny Styles Categories of styles">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key"/>
-                <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true"  SEQUENCE="false" COMMENT="Category name"/>
-                <FIELD NAME="description" TYPE="text" LENGTH="400" NOTNULL="false" SEQUENCE="false" COMMENT="Full text description of the category"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"  SEQUENCE="false" COMMENT="Category name"/>
+                <FIELD NAME="description" TYPE="text" LENGTH="1000" NOTNULL="false" SEQUENCE="false" COMMENT="Full text description of the category"/>
                 <FIELD NAME="showdesc" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="never" SEQUENCE="false" COMMENT="never/helptext/tooltip"/>
                 <FIELD NAME="symbol" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" COMMENT="Optional FA icon e.g. 'fa fa-bolt'"/>
                 <FIELD NAME="menumode" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="submenu" SEQUENCE="false" COMMENT="submenu/inline/divider"/>
@@ -30,7 +30,7 @@
         <TABLE NAME="tiny_styles_elements" COMMENT="Tiny Styles Definition of each style element">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Element name"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Element name"/>
                 <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="inline" SEQUENCE="false" COMMENT="inline/block/other"/>
                 <FIELD NAME="cssclasses" TYPE="char" LENGTH="1024" NOTNULL="true" SEQUENCE="false" COMMENT="CSS classes e.g. 'badge badge-success'"/>
                 <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Global on/off"/>
