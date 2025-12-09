@@ -43,43 +43,42 @@ $PAGE->requires->js_call_amd('tiny_styles/toggle_category', 'init');
 $tinystylesaction = optional_param('tiny_styles_action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
+// Handle delete action.
 if ($tinystylesaction === 'delete' && $id > 0) {
     require_sesskey();
     require_capability('moodle/site:config', context_system::instance());
 
-    // All bridging records for category.
-    $bridges = $DB->get_records('tiny_styles_cat_elements', ['categoryid' => $id]);
-
-    // Check each element in this category if used elsewhere.
-    foreach ($bridges as $bridge) {
-        $count = $DB->count_records('tiny_styles_cat_elements', ['elementid' => $bridge->elementid]);
-        if ($count <= 1) {
-            // Delete element if it is only associated with this category.
-            $DB->delete_records('tiny_styles_elements', ['id' => $bridge->elementid]);
-        }
+    try {
+        tiny_styles_delete_category_with_cleanup($id);
+        redirect(
+            $pageurl,
+            get_string('categorydeleted', 'tiny_styles'),
+            1
+        );
+    } catch (Exception $e) {
+        redirect(
+            $pageurl,
+            get_string('error') . ': ' . $e->getMessage(),
+            1,
+            \core\output\notification::NOTIFY_ERROR
+        );
     }
-
-    // Delete category and all bridging records for this category.
-    $DB->delete_records('tiny_styles_cat_elements', ['categoryid' => $id]);
-    $DB->delete_records('tiny_styles_categories', ['id' => $id]);
-
-    redirect(
-        $pageurl,
-        get_string('categorydeleted', 'tiny_styles'),
-        1
-    );
     exit;
-} else if ($tinystylesaction === 'export') {
+}
+
+// Handle export action.
+if ($tinystylesaction === 'export') {
     require_once(__DIR__ . '/exporthandler.php');
     exit;
 }
 
-global $DB, $OUTPUT;
+global $OUTPUT;
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('categories', 'tiny_styles'));
 
-$records = $DB->get_records('tiny_styles_categories', null, 'sortorder ASC');
+// Get all categories from database.
+$records = tiny_styles_get_all_categories();
 $categorydata = [];
 
 // Categories prepared for the template.

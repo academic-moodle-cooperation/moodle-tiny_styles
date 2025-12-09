@@ -24,6 +24,7 @@
  */
 
 require_once(__DIR__ . '/../../../../../config.php');
+require_once('locallib.php');
 require_login();
 
 $context = context_system::instance();
@@ -36,7 +37,7 @@ $PAGE->set_pagelayout('admin');
 $tinystylesaction = optional_param('tiny_styles_action', 'create', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
 
-$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category2.php', [
+$PAGE->set_url(new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
     'tiny_styles_action' => $tinystylesaction,
     'id' => $id,
 ]));
@@ -185,71 +186,44 @@ if ($mform->is_cancelled()) {
 }
 
 if ($data = $mform->get_data()) {
-    global $DB;
+    try {
+        // Prepare category record from form data.
+        $record = tiny_styles_prepare_category_for_save($data, $data->tiny_styles_action);
 
-    $record = new stdClass();
-    $record->name         = $data->name;
-    $record->description  = $data->description;
-    $record->showdesc     = 'null';
-    $record->symbol       = $data->selectedicon;
-    $record->menumode = $data->menumode;
-    $record->timemodified = time();
-
-    // UPDATE of existing category.
-    if ($data->tiny_styles_action === 'edit' && !empty($data->id)) {
-        if ($old = $DB->get_record('tiny_styles_categories', ['id' => $data->id], '*', MUST_EXIST)) {
-            $record->id          = $old->id;
-            $record->enabled     = $old->enabled;
-            $record->sortorder   = $old->sortorder;
-            $record->timecreated = $old->timecreated;
-
-            $DB->update_record('tiny_styles_categories', $record);
-            redirect(
-                new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php'),
-                get_string('category_saved', 'tiny_styles'),
-                2
-            );
+        if ($data->tiny_styles_action === 'edit' && !empty($data->id)) {
+            // Update existing category.
+            tiny_styles_update_category($record);
+        } else {
+            // Create new category.
+            tiny_styles_insert_category($record);
         }
-        // TODO: edit this.
-        throw new moodle_exception(get_string('invalidid', 'tiny_styles'));
-    } else {
-        // CREATE new category.
-        $maxsort = $DB->get_field_sql("SELECT MAX(sortorder)
-                                 FROM {tiny_styles_categories}");
-        $record->enabled     = 0;
-        $record->sortorder   = $maxsort + 1;
-        $record->timecreated = time();
-        $newid = $DB->insert_record('tiny_styles_categories', $record);
+
         redirect(
             new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php'),
             get_string('category_saved', 'tiny_styles'),
             2
         );
+    } catch (Exception $e) {
+        redirect(
+            new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php'),
+            get_string('error') . ': ' . $e->getMessage(),
+            2,
+            \core\output\notification::NOTIFY_ERROR
+        );
     }
     exit;
 }
 
-// Get the category from db and set row to form data.
+// Load category data for editing.
 if ($tinystylesaction === 'edit' && $id > 0) {
-    global $DB;
-    if ($category = $DB->get_record('tiny_styles_categories', ['id' => $id], '*', MUST_EXIST)) {
-        $formdata = new stdClass();
-        $formdata->id           = $category->id;
-        $formdata->tiny_styles_action       = 'edit';
-        $formdata->name         = $category->name;
-        $formdata->description  = $category->description;
-        // To uncommment: $formdata->showdesc     = $category->showdesc;.
-        // Removed for not being implemented in editor.
-        $formdata->selectedicon = $category->symbol;
-        $formdata->menumode = $category->menumode;
-
+    try {
+        $formdata = tiny_styles_load_category_for_form($id);
         $mform->set_data($formdata);
-    } else {
-        // TODO: edit this.
-        throw new moodle_exception(get_string('invalidid', 'tiny_styles'));
+    } catch (Exception $e) {
+        throw new moodle_exception('invalidid', 'tiny_styles');
     }
 } else {
-    // Ensures hidden fields are set.
+    // Set default values for create form.
     $formdata = new stdClass();
     $formdata->id = 0;
     $formdata->tiny_styles_action = 'create';

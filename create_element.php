@@ -25,6 +25,7 @@
 // phpcs:disable moodle.Commenting.MissingDocblock
 
 require_once(__DIR__ . '/../../../../../config.php');
+require_once($CFG->dirroot . '/lib/editor/tiny/plugins/styles/locallib.php');
 require_login();
 
 $context = context_system::instance();
@@ -62,7 +63,6 @@ class element_form extends moodleform {
      */
     // PHPMD:suppress ExcessiveMethodLength.
     public function definition() {
-        global $DB;
         $mform = $this->_form;
 
         // Name.
@@ -76,15 +76,7 @@ class element_form extends moodleform {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
 
-        $categories = $DB->get_records_menu('tiny_styles_categories', null, 'sortorder ASC', 'id,name');
-
-        // TODO: remove the divider more efficiently by a conditional query.
-        foreach ($categories as $id => $name) {
-            $menumode = $DB->get_field('tiny_styles_categories', 'menumode', ['id' => $id]);
-            if ($menumode === 'divider') {
-                unset($categories[$id]);
-            }
-        }
+        $categories = tiny_styles_get_categories_for_dropdown(true);
 
         $mform->addElement(
             'select',
@@ -98,16 +90,7 @@ class element_form extends moodleform {
         $mform->addHelpButton('categoryid', 'categoryhelp', 'tiny_styles');
 
         // CSS classes.
-        $elements = $DB->get_fieldset_sql("
-            SELECT cssclasses
-            FROM (
-                SELECT cssclasses
-                FROM {tiny_styles_elements}
-                GROUP BY cssclasses
-                ORDER BY MIN(id) ASC
-                LIMIT 16
-            ) sub
-        ");
+        $elements = tiny_styles_get_css_classes();
 
         $cssoptions = [
             '_manual' => get_string('manualstyle', 'tiny_styles'),
@@ -240,112 +223,41 @@ if ($mform->is_cancelled()) {
 }
 
 if ($data = $mform->get_data()) {
-    global $DB;
-    $record = new stdClass();
-
-    if (!isset($data->manualconfig)) {
-        $data->manualconfig = '';
-    }
-
-    if ($data->cssclasses == '_manual') {
-        $record->cssclasses = $data->manualconfig;
-        $record->custom     = 1;
-        $record->type       = $data->type;
-    } else {
-        $record->cssclasses = $data->cssclasses;
-        $record->custom = 0;
-        if (strpos($record->cssclasses, 'alert') !== false) {
-            $record->type = 'block';
-        } else {
-            $record->type = 'inline';
-        }
-    }
-
-    $record->name       = $data->name;
-    $record->timemodified = time();
-
-    if ($data->tiny_styles_action === 'edit' && !empty($data->id)) {
-        if ($old = $DB->get_record('tiny_styles_elements', ['id' => $data->id], '*', MUST_EXIST)) {
-            $record->id          = $old->id;
-            $record->enabled     = $old->enabled;
-            $record->sortorder   = $old->sortorder;
-            $record->timecreated = $old->timecreated;
-
-            $DB->update_record('tiny_styles_elements', $record);
-
-            redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-                'catid' => $data->categoryid,
-            ])
-            )->out(false), get_string('elementupdated', 'tiny_styles'), 2);
-        }
-        throw new moodle_exception('invalidelementid', 'tiny_styles');
-    } else {
-        // New element addition.
-        $catid = $data->categoryid;
-        $exists = $DB->record_exists('tiny_styles_cat_elements', ['categoryid' => $catid]);
-
-        if ($exists) {
-            $maxsort = $DB->get_field_sql(
-                "SELECT MAX(sortorder)
-                FROM {tiny_styles_cat_elements}
-                WHERE categoryid = ?",
-                [$catid]
+    try {
+        if ($data->tiny_styles_action === 'edit' && !empty($data->id)) {
+            tiny_styles_update_element_full($data);
+            redirect(
+                new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+                    'catid' => $data->categoryid,
+                ]),
+                get_string('elementupdated', 'tiny_styles'),
+                2
             );
         } else {
-            $maxsort = 0;
+            tiny_styles_create_element_with_bridge($data, $data->categoryid);
+            redirect(
+                new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
+                    'catid' => $data->categoryid,
+                ]),
+                get_string('elementcreated', 'tiny_styles'),
+                2
+            );
         }
-        $record->enabled     = 0;
-        $record->sortorder   = $maxsort + 1;
-        $record->timecreated = time();
-        $elemid = $DB->insert_record('tiny_styles_elements', $record);
-
-        // Bridging table logic.
-        if (!empty($data->categoryid)) {
-            $link = new stdClass();
-            $link->categoryid   = $data->categoryid;
-            $link->elementid    = $elemid;
-            $link->enabled      = 1;
-            $link->sortorder    = $maxsort + 1;
-            $link->timecreated  = time();
-            $link->timemodified = time();
-            $DB->insert_record('tiny_styles_cat_elements', $link);
-        }
-
-        redirect((new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-            'catid' => $data->categoryid,
-        ])
-        )->out(false), get_string('elementcreated', 'tiny_styles'), 2);
+    } catch (Exception $e) {
+        redirect(
+            new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $catid]),
+            get_string('error') . ': ' . $e->getMessage(),
+            1,
+            \core\output\notification::NOTIFY_ERROR
+        );
     }
     exit;
 }
 
 // Loading data for editing an existing element.
 if ($tinystylesaction === 'edit' && $id > 0) {
-    if ($element = $DB->get_record('tiny_styles_elements', ['id' => $id], '*', MUST_EXIST)) {
-        $formdata = new stdClass();
-        $formdata->id          = $element->id;
-        $formdata->tiny_styles_action      = 'edit';
-        $formdata->name        = $element->name;
-        $formdata->type        = $element->type;
-
-        if ($element->custom === '1') {
-            $formdata->cssclasses = '_manual';
-            $formdata->manualconfig = $element->cssclasses;
-        } else {
-            $formdata->cssclasses  = $element->cssclasses;
-        }
-
-        $catlink = $DB->get_record('tiny_styles_cat_elements', ['elementid' => $element->id], '*', IGNORE_MULTIPLE);
-        if ($catlink) {
-            $formdata->categoryid = $catlink->categoryid;
-        } else {
-            $formdata->categoryid = 0;
-        }
-
-        $mform->set_data($formdata);
-    } else {
-        throw new moodle_exception('invalidelementid', 'tiny_styles');
-    }
+    $formdata = tiny_styles_load_element_for_form($id);
+    $mform->set_data($formdata);
 } else {
     // Create new style element.
     $formdata = new stdClass();
@@ -366,56 +278,7 @@ $PAGE->requires->js_call_amd(
     ['#btn-preview-element'],
 );
 
-$PAGE->requires->js_amd_inline("
-// Vanilla JS solution that mimics jQuery pattern very closely
-require([], function() {
-    function checkForAlertClass() {
-        var selectedClass = document.getElementById('id_cssclasses').value;
-        if (selectedClass && selectedClass.indexOf('alert') !== -1) {
-            document.getElementById('id_type').value = 'block';
-        }
-        if (selectedClass && selectedClass.indexOf('badge') !== -1) {
-            document.getElementById('id_type').value = 'inline';
-        }
-    }
-
-    // $(document).ready()
-    function docReady(fn) {
-        // If document is already loaded, run the function
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            setTimeout(fn, 1); // Slight delay to ensure DOM is fully available
-            return;
-        }
-
-        // Otherwise, wait for DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', fn);
-    }
-
-    // Equivalent to $(document).ready(function() {...})
-    docReady(function() {
-        var cssClassesField = document.getElementById('id_cssclasses');
-
-        if (cssClassesField) {
-            cssClassesField.addEventListener('change', function() {
-                checkForAlertClass();
-            });
-
-            // Run immediately after DOM is ready
-            checkForAlertClass();
-        } else {
-            // If the element wasn't found, run again after a short delay
-            setTimeout(function() {
-                cssClassesField = document.getElementById('id_cssclasses');
-                if (cssClassesField) {
-                    cssClassesField.addEventListener('change', function() {
-                        checkForAlertClass();
-                    });
-                    checkForAlertClass();
-                }
-            }, 100);
-        }
-    });
-});
-");
+// Automatically update the cssclass type inline/block for predefined elements.
+$PAGE->requires->js_call_amd('tiny_styles/element_type', 'init');
 
 echo $OUTPUT->footer();

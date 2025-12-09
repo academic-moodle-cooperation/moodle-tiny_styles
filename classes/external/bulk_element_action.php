@@ -125,33 +125,31 @@ class bulk_element_action extends external_api {
                         continue;
                     }
 
+                    // Get the current maximum sort order for this category.
+                    $maxsort = $DB->get_field_sql(
+                        "SELECT MAX(sortorder)
+                           FROM {tiny_styles_cat_elements}
+                          WHERE categoryid = ?",
+                        [$params['categoryid']]
+                    );
+                    $maxsort = $maxsort === null ? 0 : $maxsort;
+                    $newsortorder = $maxsort + 1;
+
                     // Duplicate the element.
                     $newelement = clone $element;
                     unset($newelement->id);
                     $newelement->enabled = 0;
+                    $newelement->sortorder = $newsortorder;
                     $newelement->timecreated = time();
                     $newelement->timemodified = time();
                     $newelementid = $DB->insert_record('tiny_styles_elements', $newelement);
-
-                    // Get the current maximum sort order for this category.
-                    $exists = $DB->record_exists('tiny_styles_cat_elements', ['categoryid' => $params['categoryid']]);
-                    if ($exists) {
-                        $maxsort = $DB->get_field_sql(
-                            "SELECT MAX(sortorder)
-                               FROM {tiny_styles_cat_elements}
-                              WHERE categoryid = ?",
-                            [$params['categoryid']]
-                        );
-                    } else {
-                        $maxsort = 0;
-                    }
 
                     // Create linking record in bridge table.
                     $link = new \stdClass();
                     $link->categoryid = $params['categoryid'];
                     $link->elementid = $newelementid;
                     $link->enabled = 1;
-                    $link->sortorder = $maxsort + 1;
+                    $link->sortorder = $newsortorder;
                     $link->timecreated = time();
                     $link->timemodified = time();
                     $DB->insert_record('tiny_styles_cat_elements', $link);
