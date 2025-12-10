@@ -28,7 +28,6 @@
 const disableEmptyOption = () => {
     const select = document.querySelector('select[name="cssclasses"]');
     if (select) {
-        // Find and disable the empty option (at the bottom of the list).
         for (let i = 0; i < select.options.length; i++) {
             if (select.options[i].value === '') {
                 select.options[i].disabled = true;
@@ -45,11 +44,10 @@ const disableEmptyOption = () => {
 const docReady = (fn) => {
     // If document is already loaded, run the function
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        setTimeout(fn, 1); // Slight delay to ensure DOM is fully available
+        setTimeout(fn, 1);
         return;
     }
-
-    // Otherwise, wait for DOMContentLoaded
+    // Wait for document.
     document.addEventListener('DOMContentLoaded', fn);
 };
 
