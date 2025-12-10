@@ -147,11 +147,17 @@ function applyStyle(editor, styleDef) {
     const {className, block, custom, id} = styleDef;
 
     const selectedHtml = editor.selection.getContent({format: 'html'});
-    if (!selectedHtml.trim() && !block) {
+    const selectedNode = editor.selection.getNode();
+
+    // Check if cursor is inside a styled span BEFORE early return
+    const styledSpanParent = !block ? editor.dom.getParent(selectedNode, function(node) {
+        return isStyledInlineElement(node);
+    }) : null;
+
+    // Only return early if no selection AND not in a styled span AND not a block style
+    if (!selectedHtml.trim() && !block && !styledSpanParent) {
         return;
     }
-
-    const selectedNode = editor.selection.getNode();
 
     if (block) {
         const listParent = editor.dom.getParent(selectedNode, 'UL,OL');
@@ -179,10 +185,7 @@ function applyStyle(editor, styleDef) {
         return applyListItemStyle(editor, styleDef, selectedNode);
     }
 
-    const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
-        return isStyledInlineElement(node);
-    });
-
+    // Use the styledSpanParent already checked earlier
     if (styledSpanParent) {
         const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
 
@@ -387,6 +390,38 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
         const cleanSelectedHtml = editor.selection.getContent({format: 'html'});
         applyInlineStyle(editor, styleDef, cleanSelectedHtml);
         return true;
+    } else if (!selectedHtml.trim() && selectedListItems.length === 1) {
+        // No selection but cursor might be in a styled span
+        const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
+            return isStyledInlineElement(node);
+        });
+
+        if (styledSpanParent) {
+            // Replace existing styled span even without selection
+            const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
+            const newWrapper = document.createElement('span');
+
+            if (custom) {
+                newWrapper.style.cssText = className;
+                newWrapper.style.setProperty('--tiny-styles-custom-id', id.toString());
+            } else {
+                newWrapper.className = className;
+            }
+
+            newWrapper.textContent = spanTextContent;
+            editor.dom.replace(newWrapper, styledSpanParent);
+
+            // Position cursor after the styled span
+            const spaceNode = document.createTextNode('\u00A0');
+            editor.dom.insertAfter(spaceNode, newWrapper);
+            const range = editor.dom.createRng();
+            range.setStartAfter(spaceNode);
+            range.setEndAfter(spaceNode);
+            editor.selection.setRng(range);
+
+            editor.focus();
+            return true;
+        }
     }
     return false;
 }
