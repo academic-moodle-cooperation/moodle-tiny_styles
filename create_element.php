@@ -89,20 +89,26 @@ class element_form extends moodleform {
         $mform->setDefault('categoryid', 'catid');
         $mform->addHelpButton('categoryid', 'categoryhelp', 'tiny_styles');
 
-        // CSS classes.
+        // CSS classes - using hierarchical array for optgroups.
         $elements = tiny_styles_get_css_classes();
 
+        // Build options array with optgroup structure.
         $cssoptions = [
-            '_manual' => get_string('manualstyle', 'tiny_styles'),
-            '' => '',
+            get_string('manualstyle', 'tiny_styles') => [
+                '_manual' => get_string('inlinecss', 'tiny_styles'),
+            ],
+            get_string('bootstrapclasses', 'tiny_styles') => [],
         ];
 
         foreach ($elements as $element) {
-            $cssoptions[$element] = $element;
+            $cssoptions[get_string('bootstrapclasses', 'tiny_styles')][$element] = $element;
         }
 
+        // Add empty placeholder option at the bottom.
+        $cssoptions[] = ['' => ''];
+
         $mform->addElement(
-            'select',
+            'selectgroups',
             'cssclasses',
             get_string('bootstrapclass', 'tiny_styles'),
             $cssoptions,
@@ -271,6 +277,7 @@ if ($tinystylesaction === 'edit' && $id > 0) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($formtitle);
 $mform->display();
+
 // Require form preview js for the preview dialog.
 $PAGE->requires->js_call_amd(
     'tiny_styles/form_preview',
@@ -280,5 +287,8 @@ $PAGE->requires->js_call_amd(
 
 // Automatically update the cssclass type inline/block for predefined elements.
 $PAGE->requires->js_call_amd('tiny_styles/element_type', 'init');
+
+// Disable the empty placeholder option in the dropdown.
+$PAGE->requires->js_call_amd('tiny_styles/disable_placeholder', 'init');
 
 echo $OUTPUT->footer();
