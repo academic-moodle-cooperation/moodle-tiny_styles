@@ -295,23 +295,24 @@ function applyListBlockStyle(editor, styleDef, listParent) {
     if (parentDiv && parentDiv.tagName === 'DIV' && isStyledBlockElement(parentDiv)) {
         // Update existing wrapper's styling
         if (custom) {
-            parentDiv.style.cssText = className;
-            parentDiv.style.setProperty('--tiny-styles-custom-id', id.toString());
-            parentDiv.removeAttribute('class');
+            const newCss = className + '; --tiny-styles-custom-id: ' + id;
+            editor.dom.setAttrib(parentDiv, 'style', newCss);
+            editor.dom.setAttrib(parentDiv, 'data-mce-style', newCss);
+            editor.dom.removeAttrib(parentDiv, 'class');
         } else {
-            parentDiv.className = className;
-            if (parentDiv.hasAttribute('style')) {
-                parentDiv.removeAttribute('style');
-            }
+            editor.dom.setAttrib(parentDiv, 'class', className);
+            editor.dom.removeAttrib(parentDiv, 'style');
+            editor.dom.removeAttrib(parentDiv, 'data-mce-style');
         }
     } else {
         const wrapperDiv = editor.dom.create('div');
 
         if (custom) {
-            wrapperDiv.style.cssText = className;
-            wrapperDiv.style.setProperty('--tiny-styles-custom-id', id.toString());
+            const newCss = className + '; --tiny-styles-custom-id: ' + id;
+            editor.dom.setAttrib(wrapperDiv, 'style', newCss);
+            editor.dom.setAttrib(wrapperDiv, 'data-mce-style', newCss);
         } else {
-            wrapperDiv.className = className;
+            editor.dom.setAttrib(wrapperDiv, 'class', className);
         }
 
         editor.dom.insertAfter(wrapperDiv, listParent);
