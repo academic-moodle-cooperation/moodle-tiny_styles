@@ -74,7 +74,7 @@ function buildCategoryItems(editor, categories, icons, clearlabel) {
                             className: elem.cssclasses,
                             block: (elem.type === 'block'),
                             custom: (elem.custom === 1),
-                            id: elem.name,
+                            id: elem.id,
                         });
                     }
                 });
@@ -93,7 +93,7 @@ function buildCategoryItems(editor, categories, icons, clearlabel) {
                             className: elem.cssclasses,
                             block: (elem.type === 'block'),
                             custom: (elem.custom === 1),
-                            id: elem.name,
+                            id: elem.id,
                         });
                     }
                 });
@@ -141,7 +141,7 @@ function buildCategoryItems(editor, categories, icons, clearlabel) {
  * @param {string} styleDef.className The CSS class or custom CSS to apply.
  * @param {boolean} styleDef.block Whether the style is a block-level element.
  * @param {boolean} styleDef.custom Whether the style uses custom CSS properties.
- * @param {string} styleDef.id A unique identifier for the style.
+ * @param {int} styleDef.id A unique identifier for the style.
  */
 function applyStyle(editor, styleDef) {
     const {className, block, custom, id} = styleDef;
@@ -191,7 +191,7 @@ function applyStyle(editor, styleDef) {
 
         if (custom) {
             newWrapper.style.cssText = className;
-            newWrapper.style.setProperty('--custom-style-id', id);
+            newWrapper.style.setProperty('--tiny-styles-custom-id', id.toString());
         } else {
             newWrapper.className = className;
         }
@@ -256,7 +256,7 @@ function applyMixedBlockStyle(editor, styleDef, selectedBlocks) {
     const wrapperDiv = editor.dom.create('div');
     if (custom) {
         wrapperDiv.style.cssText = className;
-        wrapperDiv.style.setProperty('--custom-style-id', id);
+        wrapperDiv.style.setProperty('--tiny-styles-custom-id', id.toString());
     } else {
         wrapperDiv.className = className;
     }
@@ -293,7 +293,7 @@ function applyListBlockStyle(editor, styleDef, listParent) {
         // Update existing wrapper's styling
         if (custom) {
             parentDiv.style.cssText = className;
-            parentDiv.style.setProperty('--custom-style-id', id);
+            parentDiv.style.setProperty('--tiny-styles-custom-id', id.toString());
             parentDiv.removeAttribute('class');
         } else {
             parentDiv.className = className;
@@ -306,7 +306,7 @@ function applyListBlockStyle(editor, styleDef, listParent) {
 
         if (custom) {
             wrapperDiv.style.cssText = className;
-            wrapperDiv.style.setProperty('--custom-style-id', id);
+            wrapperDiv.style.setProperty('--tiny-styles-custom-id', id.toString());
         } else {
             wrapperDiv.className = className;
         }
@@ -363,7 +363,7 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
 
             if (custom) {
                 newWrapper.style.cssText = className;
-                newWrapper.style.setProperty('--custom-style-id', id);
+                newWrapper.style.setProperty('--tiny-styles-custom-id', id.toString());
             } else {
                 newWrapper.className = className;
             }
@@ -417,7 +417,7 @@ function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
         const span = editor.dom.create('span');
         if (custom) {
             span.style.cssText = className;
-            span.style.setProperty('--custom-style-id', id);
+            span.style.setProperty('--tiny-styles-custom-id', id.toString());
         } else {
             span.className = className;
         }
@@ -498,14 +498,14 @@ function isStyledBlockElement(node) {
 }
 
     // Check style property
-    if (node.style && node.style.getPropertyValue('--custom-style-id')) {
+    if (node.style && node.style.getPropertyValue('--tiny-styles-custom-id')) {
  return true;
 }
 
     // Check data-mce-style attribute for custom style ID
     if (node.getAttribute && node.getAttribute('data-mce-style')) {
         const dataMceStyle = node.getAttribute('data-mce-style');
-        if (dataMceStyle.includes('--custom-style-id')) {
+        if (dataMceStyle.includes('--tiny-styles-custom-id')) {
  return true;
 }
     }
@@ -531,14 +531,14 @@ function isStyledInlineElement(node) {
 }
 
     // Check style property
-    if (node.style && node.style.getPropertyValue('--custom-style-id')) {
+    if (node.style && node.style.getPropertyValue('--tiny-styles-custom-id')) {
  return true;
 }
 
     // Check data-mce-style attribute for custom style ID
     if (node.getAttribute && node.getAttribute('data-mce-style')) {
         const dataMceStyle = node.getAttribute('data-mce-style');
-        if (dataMceStyle.includes('--custom-style-id')) {
+        if (dataMceStyle.includes('--tiny-styles-custom-id')) {
  return true;
 }
     }
@@ -581,7 +581,7 @@ function applyBlockStyle(editor, styleDef) {
         // Apply styling to the new paragraph
         if (custom) {
             newParagraph.style.cssText = className;
-            newParagraph.style.setProperty('--custom-style-id', id);
+            newParagraph.style.setProperty('--tiny-styles-custom-id', id.toString());
         } else {
             newParagraph.className = className;
         }
@@ -634,7 +634,7 @@ function applyInlineStyle(editor, styleDef, selectedHtml) {
 
     if (custom) {
         newWrapper.style.cssText = className;
-        newWrapper.style.setProperty('--custom-style-id', id);
+        newWrapper.style.setProperty('--tiny-styles-custom-id', id.toString());
     } else {
         newWrapper.className = className;
     }
@@ -837,18 +837,18 @@ export async function editCustomStyles(editor) {
         if (Array.isArray(cat.elements)) {
             cat.elements.forEach(elem => {
                 if (elem.custom === 1) {
-                    customStylesMap[elem.name] = elem;
+                    customStylesMap[elem.id] = elem;
                 }
             });
         }
     });
 
-    const customElements = editor.getBody().querySelectorAll('[style*="--custom-style-id"]');
+    const customElements = editor.getBody().querySelectorAll('[style*="--tiny-styles-custom-id"]');
 
     customElements.forEach(element => {
         // Custom style identifier by computed style.
         const computed = window.getComputedStyle(element);
-        const customStyleId = computed.getPropertyValue('--custom-style-id').trim();
+        const customStyleId = computed.getPropertyValue('--tiny-styles-custom-id').trim();
 
         if (!customStyleId) {
             return;
@@ -858,7 +858,7 @@ export async function editCustomStyles(editor) {
         const styleDefinition = customStylesMap[customStyleId];
         if (!styleDefinition) {
             // Keeps the id in the styling for recovering hidden styles.
-            const minimalCss = `--custom-style-id: ${customStyleId};`;
+            const minimalCss = `--tiny-styles-custom-id: ${customStyleId};`;
             editor.dom.setAttrib(element, 'style', minimalCss);
             editor.dom.setAttrib(element, 'data-mce-style', minimalCss);
 
@@ -869,7 +869,7 @@ export async function editCustomStyles(editor) {
         } else {
             // If inline style does not match it's updated.
             if (element.style.cssText !== styleDefinition.cssclasses) {
-                const newCss = styleDefinition.cssclasses + '; --custom-style-id: ' + styleDefinition.name;
+                const newCss = styleDefinition.cssclasses + '; --tiny-styles-custom-id: ' + styleDefinition.id;
                 editor.dom.setAttrib(element, 'style', newCss);
                 editor.dom.setAttrib(element, 'data-mce-style', newCss);
             }
