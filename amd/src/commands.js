@@ -301,11 +301,11 @@ function applyListBlockStyle(editor, styleDef, listParent) {
             const newCss = className + '; --tiny-styles-custom-id: ' + id;
             editor.dom.setAttrib(parentDiv, 'style', newCss);
             editor.dom.setAttrib(parentDiv, 'data-mce-style', newCss);
-            editor.dom.removeAttrib(parentDiv, 'class');
+            editor.dom.setAttrib(parentDiv, 'class','');
         } else {
             editor.dom.setAttrib(parentDiv, 'class', className);
-            editor.dom.removeAttrib(parentDiv, 'style');
-            editor.dom.removeAttrib(parentDiv, 'data-mce-style');
+            editor.dom.setAttrib(parentDiv, 'style','');
+            editor.dom.setAttrib(parentDiv, 'data-mce-style','');
         }
     } else {
         const wrapperDiv = editor.dom.create('div');
