@@ -70,6 +70,9 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         upgrade_plugin_savepoint(true, 2025073002, 'tiny', 'styles');
     }
 
+    /**
+     * Increases the input limits for allowing multilang filtering.
+     */
     if ($oldversion < 2025080602.04) {
         $table = new xmldb_table('tiny_styles_categories');
 
