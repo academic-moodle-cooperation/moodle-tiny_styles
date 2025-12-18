@@ -594,24 +594,14 @@ function applyBlockStyle(editor, styleDef) {
             editor.dom.remove(block);
         });
 
-        // Create a new paragraph after to avoid continuous styling
-        const nextSibling = newParagraph.nextSibling;
-        const needsNewParagraph = !nextSibling ||
-                                  nextSibling.nodeType !== Node.ELEMENT_NODE ||
-                                  nextSibling.tagName !== 'P' ||
-                                  (nextSibling.textContent && nextSibling.textContent.trim()) ||
-                                  nextSibling.innerHTML.trim();
-
-        if (needsNewParagraph) {
-            const nextParagraph = editor.dom.create('p', {}, '');
-            editor.dom.insertAfter(nextParagraph, newParagraph);
-            selection.setCursorLocation(nextParagraph, 0);
-        } else {
-            // Use the existing empty paragraph
-            selection.setCursorLocation(nextSibling, 0);
+        // Position cursor at the end of the styled block so user can continue typing
+        const lastChild = newParagraph.lastChild;
+        if (lastChild) {
+            if (lastChild.nodeType === Node.TEXT_NODE) {
+                selection.setCursorLocation(lastChild, lastChild.length);
+            }
         }
     }
-
     editor.focus();
 }
 
@@ -978,6 +968,195 @@ export const getSetup = async() => {
             folder: 'folderIcon',
             remove: 'removeIcon',
         };
+
+        /**
+         * Helper to creates an empty paragraph for visibility.
+         * @param {Object} editor TinyMCE editor instance
+         * @returns {HTMLElement} New paragraph element
+         */
+        const createEmptyParagraph = (editor) => {
+            const newPara = editor.dom.create('p');
+            newPara.appendChild(editor.dom.create('br'));
+            return newPara;
+        };
+
+        /**
+         * Helper to positions cursor in element.
+         * @param {Object} editor TinyMCE editor instance
+         * @param {HTMLElement} element Element to position cursor in
+         */
+        const focusParagraph = (editor, element) => {
+            editor.selection.setCursorLocation(element, 0);
+            editor.focus();
+        };
+
+        /**
+         * Helper to checks if cursor has content before and after in current block.
+         * @param {Object} editor TinyMCE editor instance
+         * @param {Object} range Current selection range
+         * @param {HTMLElement} currentBlock Current block element
+         * @returns {Object} Object with contentBefore and contentAfter strings
+         */
+        const getContentAroundCursor = (editor, range, currentBlock) => {
+            const beforeRange = editor.dom.createRng();
+            beforeRange.setStart(currentBlock, 0);
+            beforeRange.setEnd(range.startContainer, range.startOffset);
+            const contentBefore = beforeRange.toString().trim();
+
+            const afterRange = editor.dom.createRng();
+            afterRange.setStart(range.endContainer, range.endOffset);
+            afterRange.setEnd(currentBlock, currentBlock.childNodes.length);
+            const contentAfter = afterRange.toString().trim();
+
+            return {contentBefore, contentAfter};
+        };
+
+        /**
+         * Pushes styled block down.
+         * @param {Object} editor TinyMCE editor
+         * @param {HTMLElement} styledBlock Current block element
+         */
+        const handlePushBlockDown = (editor, styledBlock) => {
+            const newPara = createEmptyParagraph(editor);
+            styledBlock.parentNode.insertBefore(newPara, styledBlock);
+            focusParagraph(editor, newPara);
+        };
+
+        let continuedTyping = false;
+
+        // Handles pressing Enter in styled blocks.
+        editor.on('keydown', (e) => {
+            // Removes empty space after BR insertion when user continues typing.
+            if (continuedTyping && e.key.length === 1) {
+                const range = editor.selection.getRng();
+
+                // Only handles element containers.
+                if (range.startContainer.nodeType !== Node.ELEMENT_NODE) {
+                    continuedTyping = false;
+                    return;
+                }
+
+                const container = range.startContainer;
+                const offset = range.startOffset;
+
+                if (offset === 0) {
+                    continuedTyping = false;
+                    return;
+                }
+
+                const nodeBefore = container.childNodes[offset - 1];
+
+                // Checks if previous node is text node ending with nbsp.
+                if (nodeBefore?.nodeType === Node.TEXT_NODE) {
+                    const text = nodeBefore.textContent;
+
+                    if (text.length > 0 && text.charCodeAt(text.length - 1) === 160) {
+                        nodeBefore.textContent = text.substring(0, text.length - 1);
+
+                        // Re-adds BR if at end of container.
+                        if (offset >= container.childNodes.length) {
+                            editor.selection.setContent('<br>');
+                        }
+                    }
+                }
+                continuedTyping = false;
+            }
+
+            // Handles Enter key in styled text blocks.
+            if (e.key === 'Enter' && !e.shiftKey) {
+                const node = editor.selection.getNode();
+
+                const styledBlock = editor.dom.getParent(node, (el) => {
+                    return isStyledBlockElement(el);
+                }, editor.getBody());
+
+                if (!styledBlock) {
+                    continuedTyping = false;
+                    return;
+                }
+
+                const listElement = editor.dom.getParent(node, 'ul,ol,li', editor.getBody());
+                if (listElement) {
+                    continuedTyping = false;
+                    return;
+                }
+
+                e.preventDefault();
+                continuedTyping = false;
+
+                const range = editor.selection.getRng();
+
+                // Check if we're in an empty paragraph inside a styled block.
+                const currentPara = editor.dom.getParent(node, 'p', styledBlock);
+                if (currentPara && currentPara !== styledBlock) {
+                    const paraText = currentPara.textContent.trim();
+                    const onlyHasBR = currentPara.childNodes.length === 1 &&
+                        currentPara.childNodes[0].nodeName === 'BR';
+
+                    if (paraText === '' || onlyHasBR) {
+                        editor.dom.remove(currentPara);
+
+                        const newPara = createEmptyParagraph(editor);
+                        editor.dom.insertAfter(newPara, styledBlock);
+                        focusParagraph(editor, newPara);
+                        return;
+                    }
+                }
+
+                const {contentBefore, contentAfter} = getContentAroundCursor(editor, range, styledBlock);
+
+                // Beginning of styled block creates a paragraph before.
+                if (contentBefore.length === 0 && contentAfter.length > 0) {
+                    handlePushBlockDown(editor, styledBlock);
+                    return;
+                }
+
+                // Checks for trailing BR to exit the block.
+                let elementToCheck = styledBlock;
+                if (currentPara && currentPara !== styledBlock) {
+                    elementToCheck = currentPara;
+                }
+
+                const children = Array.from(elementToCheck.childNodes);
+                let hasTrailingBR = false;
+
+                for (let i = children.length - 1; i >= 0; i--) {
+                    const child = children[i];
+                    if (child.nodeName === 'BR') {
+                        hasTrailingBR = true;
+                        break;
+                    } else if (child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '') {
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+
+                const isAtEnd = contentAfter.length === 0;
+
+                if (hasTrailingBR && isAtEnd) {
+                    // Second Enter at end exits the styled block.
+                    for (let i = children.length - 1; i >= 0; i--) {
+                        const child = children[i];
+                        if (child.nodeName === 'BR' ||
+                            (child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '')) {
+                            editor.dom.remove(child);
+                        } else {
+                            break;
+                        }
+                    }
+
+                    const newPara = createEmptyParagraph(editor);
+                    editor.dom.insertAfter(newPara, styledBlock);
+                    focusParagraph(editor, newPara);
+                    return;
+                }
+
+                // Inserts BR and an empty space to stay in the styled paragraph.
+                editor.selection.setContent('<br>&nbsp;');
+                continuedTyping = true;
+            }
+        });
 
         editor.ui.registry.addMenuButton('tiny_styles_button', {
             icon: icon,

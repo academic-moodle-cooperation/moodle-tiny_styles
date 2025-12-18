@@ -135,6 +135,7 @@ $templatedata = [
     'instructions3_cat_intro' => get_string('instructions_3_cat_intro', 'tiny_styles'),
     'instructions3_1_cat_name' => get_string('instructions_3_1_cat_name', 'tiny_styles'),
     'instructions3_2_cat_description' => get_string('instructions_3_2_cat_description', 'tiny_styles'),
+    'instructions3_2_2_cat_symbol' => get_string('instructions_3_2_2_cat_symbol', 'tiny_styles'),
     'instructions3_3_cat_menumode' => get_string('instructions_3_3_cat_menumode', 'tiny_styles'),
     'instructions3_4_cat_enabled' => get_string('instructions_3_4_cat_enabled', 'tiny_styles'),
     'instructions4_elem_intro' => get_string('instructions_4_elem_intro', 'tiny_styles'),

@@ -1,0 +1,287 @@
+/*
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+/**
+ * CSS definitions for editor iframe injection to ensure proper rendering.
+ *
+ * @ package tiny_styles
+ * @author Karri Pajarinen
+ * @copyright Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+/*Badges - Labels*/
+
+
+/* Blue Badge (Primary) */
+span.badge.bg-primary,
+.badge.bg-primary {
+    display: inline-block !important;
+    padding: 0.35em 0.65em !important;
+    font-size: 0.75em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #fff !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: 0.375rem !important;
+    background-color: #0d6efd !important;
+}
+
+
+/* Info Badge (Cyan) */
+span.badge.bg-info,
+.badge.bg-info {
+    display: inline-block !important;
+    padding: 0.35em 0.65em !important;
+    font-size: 0.75em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #000 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: 0.375rem !important;
+    background-color: rgb(13, 202, 240) !important;
+}
+
+
+/* Green Badge (Success) */
+span.badge.bg-success,
+.badge.bg-success {
+    display: inline-block !important;
+    padding: 0.35em 0.65em !important;
+    font-size: 0.75em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #fff !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: 0.375rem !important;
+    background-color: rgb(25, 135, 84) !important;
+}
+
+
+/* Yellow Badge (Warning) */
+span.badge.bg-warning,
+.badge.bg-warning {
+    display: inline-block !important;
+    padding: 0.35em 0.65em !important;
+    font-size: 0.75em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #000 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: 0.375rem !important;
+    background-color: #ffc107 !important;
+}
+
+
+/* Red Badge (Danger) */
+span.badge.bg-danger,
+.badge.bg-danger {
+    display: inline-block !important;
+    padding: 0.35em 0.65em !important;
+    font-size: 0.75em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #fff !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: 0.375rem !important;
+    background-color: #dc3545 !important;
+}
+
+
+/* Dark Badge */
+span.badge.bg-dark,
+.badge.bg-dark {
+    display: inline-block !important;
+    padding: 0.35em 0.65em !important;
+    font-size: 0.75em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #fff !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: 0.375rem !important;
+    background-color: rgb(33, 37, 41) !important;
+}
+
+
+/* Gray Badge (Secondary) */
+span.badge.bg-secondary,
+.badge.bg-secondary {
+    display: inline-block !important;
+    padding: 0.35em 0.65em !important;
+    font-size: 0.75em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #000 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: 0.375rem !important;
+    background-color: rgb(108, 117, 125) !important;
+}
+
+
+/* Light Badge */
+span.badge.bg-light,
+.badge.bg-light {
+    display: inline-block !important;
+    padding: 0.35em 0.65em !important;
+    font-size: 0.75em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #000 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: 0.375rem !important;
+    background-color: rgb(248, 249, 250) !important;
+}
+
+
+/* Alerts - Blocks*/
+
+
+/* Blue Alert (Primary) */
+div.alert.alert-primary,
+p.alert.alert-primary,
+.alert.alert-primary {
+    display: block !important;
+    position: relative !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid #b6d4fe !important;
+    border-radius: 0.375rem !important;
+    color: #084298 !important;
+    background-color: #cfe2ff !important;
+}
+
+
+/* Info Alert (Cyan) */
+div.alert.alert-info,
+p.alert.alert-info,
+.alert.alert-info {
+    display: block !important;
+    position: relative !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid #9eeaf9 !important;
+    border-radius: 0.375rem !important;
+    color: #055160 !important;
+    background-color: #cff4fc !important;
+}
+
+
+/* Green Alert (Success) */
+div.alert.alert-success,
+p.alert.alert-success,
+.alert.alert-success {
+    display: block !important;
+    position: relative !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid #a3cfbb !important;
+    border-radius: 0.375rem !important;
+    color: #0a3622 !important;
+    background-color: #d1e7dd !important;
+}
+
+
+/* Yellow Alert (Warning) */
+div.alert.alert-warning,
+p.alert.alert-warning,
+.alert.alert-warning {
+    display: block !important;
+    position: relative !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid #ffecb5 !important;
+    border-radius: 0.375rem !important;
+    color: #664d03 !important;
+    background-color: #fff3cd !important;
+}
+
+
+/* Red Alert (Danger) */
+div.alert.alert-danger,
+p.alert.alert-danger,
+.alert.alert-danger {
+    display: block !important;
+    position: relative !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid #f1aeb5 !important;
+    border-radius: 0.375rem !important;
+    color: #58151c !important;
+    background-color: #f8d7da !important;
+}
+
+
+/* Dark Alert */
+div.alert.alert-dark,
+p.alert.alert-dark,
+.alert.alert-dark {
+    display: block !important;
+    position: relative !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid #adb5bd !important;
+    border-radius: 0.375rem !important;
+    color: #495057 !important;
+    background-color: #ced4da !important;
+}
+
+
+/* Gray Alert (Secondary) */
+div.alert.alert-secondary,
+p.alert.alert-secondary,
+.alert.alert-secondary {
+    display: block !important;
+    position: relative !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid #c4c8cb !important;
+    border-radius: 0.375rem !important;
+    color: #2b2f32 !important;
+    background-color: #e2e3e5 !important;
+}
+
+
+/* Light Alert */
+div.alert.alert-light,
+p.alert.alert-light,
+.alert.alert-light {
+    display: block !important;
+    position: relative !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 0.375rem !important;
+    color: #495057 !important;
+    background-color: #fcfcfd !important;
+}
