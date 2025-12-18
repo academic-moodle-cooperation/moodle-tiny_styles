@@ -206,12 +206,7 @@ function applyStyle(editor, styleDef) {
         editor.dom.replace(newWrapper, styledSpanParent);
 
         // Space after the new span and position cursor after the space
-        const spaceNode = document.createTextNode('\u00A0');
-        editor.dom.insertAfter(spaceNode, newWrapper);
-        const range = editor.dom.createRng();
-        range.setStartAfter(spaceNode);
-        range.setEndAfter(spaceNode);
-        editor.selection.setRng(range);
+        handleSpaceAfterInlineSpan(editor, newWrapper);
 
         editor.focus();
         return;
@@ -850,6 +845,43 @@ function clearStyling(editor) {
         return true;
     }
     return false;
+}
+
+/**
+ * Handles space insertion after inline styled spans to prevent multiple spaces
+ * from accumulating when users change styles repeatedly.
+ *
+ * @param {Object} editor TinyMCE editor instance.
+ * @param {HTMLElement} spanElement The styled span element.
+ */
+function handleSpaceAfterInlineSpan(editor, spanElement) {
+    const nextNode = spanElement.nextSibling;
+
+    if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
+        const textContent = nextNode.textContent;
+
+        // Check if there are at least two spaces
+        if (textContent.length >= 2 &&
+            (textContent[0] === '\u00A0' || textContent[0] === ' ') &&
+            (textContent[1] === '\u00A0' || textContent[1] === ' ')) {
+            editor.selection.setCursorLocation(nextNode, 2);
+            return;
+        }
+
+        // If only one space adds another
+        if (textContent.length >= 1 &&
+            (textContent[0] === '\u00A0' || textContent[0] === ' ')) {
+            const newText = textContent.substring(0, 1) + '\u00A0' + textContent.substring(1);
+            nextNode.textContent = newText;
+            editor.selection.setCursorLocation(nextNode, 2);
+            return;
+        }
+    }
+
+    // No spaces adds a space and positions cursor
+    const spaceNode = document.createTextNode('\u00A0');
+    editor.dom.insertAfter(spaceNode, spanElement);
+    editor.selection.setCursorLocation(spaceNode, 1);
 }
 
 /**
