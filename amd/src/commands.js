@@ -323,7 +323,6 @@ function applyListBlockStyle(editor, styleDef, listParent) {
 
 /**
  * Applies inline styling to list items with proper span replacement logic
- * Now handles multiple selected list items properly
  * @param {Object} editor TinyMCE editor instance
  * @param {Object} styleDef Style definition object
  * @param {Node} selectedNode The currently selected node
@@ -376,12 +375,7 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
             editor.dom.replace(newWrapper, styledSpanParent);
 
             // Position cursor after the styled span
-            const spaceNode = document.createTextNode('\u00A0');
-            editor.dom.insertAfter(spaceNode, newWrapper);
-            const range = editor.dom.createRng();
-            range.setStartAfter(spaceNode);
-            range.setEndAfter(spaceNode);
-            editor.selection.setRng(range);
+            handleSpaceAfterInlineSpan(editor, newWrapper);;
 
             editor.focus();
             return true;
@@ -415,12 +409,7 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
             editor.dom.replace(newWrapper, styledSpanParent);
 
             // Position cursor after the styled span
-            const spaceNode = document.createTextNode('\u00A0');
-            editor.dom.insertAfter(spaceNode, newWrapper);
-            const range = editor.dom.createRng();
-            range.setStartAfter(spaceNode);
-            range.setEndAfter(spaceNode);
-            editor.selection.setRng(range);
+            handleSpaceAfterInlineSpan(editor, newWrapper);
 
             editor.focus();
             return true;
@@ -860,17 +849,12 @@ function handleSpaceAfterInlineSpan(editor, spanElement) {
     if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
         const textContent = nextNode.textContent;
 
-        // Check if there are at least two spaces
-        if (textContent.length >= 2 &&
-            (textContent[0] === '\u00A0' || textContent[0] === ' ') &&
-            (textContent[1] === '\u00A0' || textContent[1] === ' ')) {
-            editor.selection.setCursorLocation(nextNode, 2);
-            return;
-        }
-
         // If only one space adds another
         if (textContent.length >= 1 &&
             (textContent[0] === '\u00A0' || textContent[0] === ' ')) {
+            editor.selection.setCursorLocation(nextNode, 2);
+            return;
+        } else {
             const newText = textContent.substring(0, 1) + '\u00A0' + textContent.substring(1);
             nextNode.textContent = newText;
             editor.selection.setCursorLocation(nextNode, 2);
