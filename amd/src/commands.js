@@ -375,7 +375,7 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
             editor.dom.replace(newWrapper, styledSpanParent);
 
             // Position cursor after the styled span
-            handleSpaceAfterInlineSpan(editor, newWrapper);;
+            handleSpaceAfterInlineSpan(editor, newWrapper);
 
             editor.focus();
             return true;
