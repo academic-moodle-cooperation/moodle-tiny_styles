@@ -852,12 +852,12 @@ function handleSpaceAfterInlineSpan(editor, spanElement) {
         // If only one space adds another
         if (textContent.length >= 1 &&
             (textContent[0] === '\u00A0' || textContent[0] === ' ')) {
-            editor.selection.setCursorLocation(nextNode, 2);
+            editor.selection.setCursorLocation(nextNode, 1);
             return;
         } else {
             const newText = textContent.substring(0, 1) + '\u00A0' + textContent.substring(1);
             nextNode.textContent = newText;
-            editor.selection.setCursorLocation(nextNode, 2);
+            editor.selection.setCursorLocation(nextNode, 1);
             return;
         }
     }
