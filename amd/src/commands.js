@@ -147,11 +147,17 @@ function applyStyle(editor, styleDef) {
     const {className, block, custom, id} = styleDef;
 
     const selectedHtml = editor.selection.getContent({format: 'html'});
-    if (!selectedHtml.trim() && !block) {
+    const selectedNode = editor.selection.getNode();
+
+    // Check if cursor is inside a styled span BEFORE early return
+    const styledSpanParent = !block ? editor.dom.getParent(selectedNode, function(node) {
+        return isStyledInlineElement(node);
+    }) : null;
+
+    // Only return early if no selection AND not in a styled span AND not a block style
+    if (!selectedHtml.trim() && !block && !styledSpanParent) {
         return;
     }
-
-    const selectedNode = editor.selection.getNode();
 
     if (block) {
         const listParent = editor.dom.getParent(selectedNode, 'UL,OL');
@@ -179,34 +185,28 @@ function applyStyle(editor, styleDef) {
         return applyListItemStyle(editor, styleDef, selectedNode);
     }
 
-    const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
-        return isStyledInlineElement(node);
-    });
-
+    // Use the styledSpanParent already checked earlier
     if (styledSpanParent) {
         const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
 
         // Replace the entire span with new styling
-        const newWrapper = document.createElement('span');
-
-        if (custom) {
-            newWrapper.style.cssText = className;
-            newWrapper.style.setProperty('--tiny-styles-custom-id', id.toString());
-        } else {
-            newWrapper.className = className;
-        }
+        const newWrapper = editor.dom.create('span');
 
         // Original span's text content to preserve formatting
         newWrapper.textContent = spanTextContent;
+
+        if (custom) {
+            const newCss = className + '; --tiny-styles-custom-id: ' + id;
+            editor.dom.setAttrib(newWrapper, 'style', newCss);
+            editor.dom.setAttrib(newWrapper, 'data-mce-style', newCss);
+        } else {
+            editor.dom.setAttrib(newWrapper, 'class', className);
+        }
+
         editor.dom.replace(newWrapper, styledSpanParent);
 
         // Space after the new span and position cursor after the space
-        const spaceNode = document.createTextNode('\u00A0');
-        editor.dom.insertAfter(spaceNode, newWrapper);
-        const range = editor.dom.createRng();
-        range.setStartAfter(spaceNode);
-        range.setEndAfter(spaceNode);
-        editor.selection.setRng(range);
+        handleSpaceAfterInlineSpan(editor, newWrapper);
 
         editor.focus();
         return;
@@ -255,10 +255,11 @@ function applyMixedBlockStyle(editor, styleDef, selectedBlocks) {
 
     const wrapperDiv = editor.dom.create('div');
     if (custom) {
-        wrapperDiv.style.cssText = className;
-        wrapperDiv.style.setProperty('--tiny-styles-custom-id', id.toString());
+        const newCss = className + '; --tiny-styles-custom-id: ' + id;
+        editor.dom.setAttrib(wrapperDiv, 'style', newCss);
+        editor.dom.setAttrib(wrapperDiv, 'data-mce-style', newCss);
     } else {
-        wrapperDiv.className = className;
+        editor.dom.setAttrib(wrapperDiv, 'class', className);
     }
 
     // Insert wrapper after the last element
@@ -292,23 +293,24 @@ function applyListBlockStyle(editor, styleDef, listParent) {
     if (parentDiv && parentDiv.tagName === 'DIV' && isStyledBlockElement(parentDiv)) {
         // Update existing wrapper's styling
         if (custom) {
-            parentDiv.style.cssText = className;
-            parentDiv.style.setProperty('--tiny-styles-custom-id', id.toString());
-            parentDiv.removeAttribute('class');
+            const newCss = className + '; --tiny-styles-custom-id: ' + id;
+            editor.dom.setAttrib(parentDiv, 'style', newCss);
+            editor.dom.setAttrib(parentDiv, 'data-mce-style', newCss);
+            editor.dom.setAttrib(parentDiv, 'class','');
         } else {
-            parentDiv.className = className;
-            if (parentDiv.hasAttribute('style')) {
-                parentDiv.removeAttribute('style');
-            }
+            editor.dom.setAttrib(parentDiv, 'class', className);
+            editor.dom.setAttrib(parentDiv, 'style','');
+            editor.dom.setAttrib(parentDiv, 'data-mce-style','');
         }
     } else {
         const wrapperDiv = editor.dom.create('div');
 
         if (custom) {
-            wrapperDiv.style.cssText = className;
-            wrapperDiv.style.setProperty('--tiny-styles-custom-id', id.toString());
+            const newCss = className + '; --tiny-styles-custom-id: ' + id;
+            editor.dom.setAttrib(wrapperDiv, 'style', newCss);
+            editor.dom.setAttrib(wrapperDiv, 'data-mce-style', newCss);
         } else {
-            wrapperDiv.className = className;
+            editor.dom.setAttrib(wrapperDiv, 'class', className);
         }
 
         editor.dom.insertAfter(wrapperDiv, listParent);
@@ -321,7 +323,6 @@ function applyListBlockStyle(editor, styleDef, listParent) {
 
 /**
  * Applies inline styling to list items with proper span replacement logic
- * Now handles multiple selected list items properly
  * @param {Object} editor TinyMCE editor instance
  * @param {Object} styleDef Style definition object
  * @param {Node} selectedNode The currently selected node
@@ -359,25 +360,22 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
         if (styledSpanParent) {
             // Replace existing styled span
             const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
-            const newWrapper = document.createElement('span');
-
-            if (custom) {
-                newWrapper.style.cssText = className;
-                newWrapper.style.setProperty('--tiny-styles-custom-id', id.toString());
-            } else {
-                newWrapper.className = className;
-            }
+            const newWrapper = editor.dom.create('span');
 
             newWrapper.textContent = spanTextContent;
+
+            if (custom) {
+                const newCss = className + '; --tiny-styles-custom-id: ' + id;
+                editor.dom.setAttrib(newWrapper, 'style', newCss);
+                editor.dom.setAttrib(newWrapper, 'data-mce-style', newCss);
+            } else {
+                editor.dom.setAttrib(newWrapper, 'class', className);
+            }
+
             editor.dom.replace(newWrapper, styledSpanParent);
 
             // Position cursor after the styled span
-            const spaceNode = document.createTextNode('\u00A0');
-            editor.dom.insertAfter(spaceNode, newWrapper);
-            const range = editor.dom.createRng();
-            range.setStartAfter(spaceNode);
-            range.setEndAfter(spaceNode);
-            editor.selection.setRng(range);
+            handleSpaceAfterInlineSpan(editor, newWrapper);
 
             editor.focus();
             return true;
@@ -387,6 +385,35 @@ function applyListItemStyle(editor, styleDef, selectedNode) {
         const cleanSelectedHtml = editor.selection.getContent({format: 'html'});
         applyInlineStyle(editor, styleDef, cleanSelectedHtml);
         return true;
+    } else if (!selectedHtml.trim() && selectedListItems.length === 1) {
+        // No selection but cursor might be in a styled span
+        const styledSpanParent = editor.dom.getParent(selectedNode, function(node) {
+            return isStyledInlineElement(node);
+        });
+
+        if (styledSpanParent) {
+            // Replace existing styled span even without selection
+            const spanTextContent = styledSpanParent.textContent || styledSpanParent.innerText;
+            const newWrapper = editor.dom.create('span');
+
+            newWrapper.textContent = spanTextContent;
+
+            if (custom) {
+                const newCss = className + '; --tiny-styles-custom-id: ' + id;
+                editor.dom.setAttrib(newWrapper, 'style', newCss);
+                editor.dom.setAttrib(newWrapper, 'data-mce-style', newCss);
+            } else {
+                editor.dom.setAttrib(newWrapper, 'class', className);
+            }
+
+            editor.dom.replace(newWrapper, styledSpanParent);
+
+            // Position cursor after the styled span
+            handleSpaceAfterInlineSpan(editor, newWrapper);
+
+            editor.focus();
+            return true;
+        }
     }
     return false;
 }
@@ -415,13 +442,15 @@ function applyStyleToMultipleListItems(editor, styleDef, selectedListItems) {
         });
 
         const span = editor.dom.create('span');
-        if (custom) {
-            span.style.cssText = className;
-            span.style.setProperty('--tiny-styles-custom-id', id.toString());
-        } else {
-            span.className = className;
-        }
         span.innerHTML = li.innerHTML;
+
+        if (custom) {
+            const newCss = className + '; --tiny-styles-custom-id: ' + id;
+            editor.dom.setAttrib(span, 'style', newCss);
+            editor.dom.setAttrib(span, 'data-mce-style', newCss);
+        } else {
+            editor.dom.setAttrib(span, 'class', className);
+        }
         li.innerHTML = '';
         li.appendChild(span);
     });
@@ -580,10 +609,11 @@ function applyBlockStyle(editor, styleDef) {
 
         // Apply styling to the new paragraph
         if (custom) {
-            newParagraph.style.cssText = className;
-            newParagraph.style.setProperty('--tiny-styles-custom-id', id.toString());
+            const newCss = className + '; --tiny-styles-custom-id: ' + id;
+            editor.dom.setAttrib(newParagraph, 'style', newCss);
+            editor.dom.setAttrib(newParagraph, 'data-mce-style', newCss);
         } else {
-            newParagraph.className = className;
+            editor.dom.setAttrib(newParagraph, 'class', className);
         }
 
         // Replace the selected blocks
@@ -804,6 +834,38 @@ function clearStyling(editor) {
         return true;
     }
     return false;
+}
+
+/**
+ * Handles space insertion after inline styled spans to prevent multiple spaces
+ * from accumulating when users change styles repeatedly.
+ *
+ * @param {Object} editor TinyMCE editor instance.
+ * @param {HTMLElement} spanElement The styled span element.
+ */
+function handleSpaceAfterInlineSpan(editor, spanElement) {
+    const nextNode = spanElement.nextSibling;
+
+    if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
+        const textContent = nextNode.textContent;
+
+        // If only one space adds another
+        if (textContent.length >= 1 &&
+            (textContent[0] === '\u00A0' || textContent[0] === ' ')) {
+            editor.selection.setCursorLocation(nextNode, 1);
+            return;
+        } else {
+            const newText = textContent.substring(0, 1) + '\u00A0' + textContent.substring(1);
+            nextNode.textContent = newText;
+            editor.selection.setCursorLocation(nextNode, 1);
+            return;
+        }
+    }
+
+    // No spaces adds a space and positions cursor
+    const spaceNode = document.createTextNode('\u00A0');
+    editor.dom.insertAfter(spaceNode, spanElement);
+    editor.selection.setCursorLocation(spaceNode, 1);
 }
 
 /**

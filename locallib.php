@@ -327,15 +327,23 @@ function tiny_styles_get_categories_for_dropdown($excludedividers = true) {
                   FROM {tiny_styles_categories}
                  WHERE menumode != 'divider'
                  ORDER BY sortorder ASC";
-        return $DB->get_records_sql_menu($sql);
+        $records = $DB->get_records_sql($sql);
     } else {
-        return $DB->get_records_menu(
+        $records = $DB->get_records(
             'tiny_styles_categories',
             null,
             'sortorder ASC',
             'id, name'
         );
     }
+
+    // Apply format_string to category names.
+    $formatted = [];
+    foreach ($records as $record) {
+        $formatted[$record->id] = format_string($record->name, true, ['context' => context_system::instance()]);
+    }
+
+    return $formatted;
 }
 
 /**

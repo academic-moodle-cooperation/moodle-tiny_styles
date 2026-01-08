@@ -31,6 +31,25 @@ namespace tiny_styles;
  */
 class importhandler {
     /**
+     * Truncate string to maximum length and log if truncated.
+     *
+     * @param string $value The string to truncate
+     * @param int $maxlength Maximum allowed length
+     * @param string $fieldname Field name for logging
+     * @return string Truncated string
+     */
+    private static function truncate_field($value, $maxlength, $fieldname) {
+        if (strlen($value) > $maxlength) {
+            debugging(
+                "Import: {$fieldname} truncated from " . strlen($value) . " to {$maxlength} characters",
+                DEBUG_DEVELOPER
+            );
+            return substr($value, 0, $maxlength);
+        }
+        return $value;
+    }
+
+    /**
      * Process the imported JSON data.
      *
      * @param array $data The decoded JSON data
@@ -66,8 +85,8 @@ class importhandler {
             $time = time();
             foreach ($data['categories'] as $catarr) {
                 $catobj = new \stdClass();
-                $catobj->name = $catarr['name'] ?? 'no name';
-                $catobj->description = $catarr['description'] ?? '';
+                $catobj->name = self::truncate_field($catarr['name'] ?? 'no name', 255, 'Category name');
+                $catobj->description = self::truncate_field($catarr['description'] ?? '', 1000, 'Category description');
                 $catobj->symbol = $catarr['symbol'] ?? '';
                 $catobj->menumode = $catarr['menumode'] ?? 'submenu';
                 $catobj->enabled = $catarr['enabled'] ?? 0;
@@ -127,7 +146,7 @@ class importhandler {
 
                 foreach ($catarr['elements'] as $elemarr) {
                     $elemobj = new \stdClass();
-                    $elemobj->name = $elemarr['name'] ?? 'no name';
+                    $elemobj->name = self::truncate_field($elemarr['name'] ?? 'no name', 255, 'Element name');
                     $elemobj->type = $elemarr['type'] ?? 'inline';
                     $elemobj->cssclasses = $elemarr['cssclasses'] ?? '';
                     $elemobj->enabled = $elemarr['enabled'] ?? 0;

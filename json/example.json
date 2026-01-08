@@ -5,6 +5,12 @@
     "info.svg", "label.svg", "laptop.svg", "magnify.svg", "paint.svg",
     "pen.svg", "preview.svg", "remove.svg", "school.svg", "square.svg"
   ],
+  "_multilang_info": [" All text fields support multilang filtering:",
+    "FOR EXAMPLE:",
+    "name: {mlang en}English name{mlang}{mlang de}Name auf Deutsch{mlang}",
+    "description: {mlang en}English description{mlang}{mlang de}Beschreibung auf Deutsch{mlang}",
+    "For further information see: https://moodle.org/plugins/filter_multilang2"
+  ],
   "categories": [
     {
       "name": "Category name here.",

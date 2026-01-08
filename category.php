@@ -71,11 +71,11 @@ class category_form extends moodleform {
             'text',
             'name',
             get_string('name'),
-            ['size' => 1, 'style' => 'width: 400px;', 'maxlength' => 100],
+            ['size' => 1, 'style' => 'width: 400px;', 'maxlength' => 255],
         );
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
-        $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement(
             'textarea',
@@ -86,11 +86,11 @@ class category_form extends moodleform {
                 'rows' => 4,
                 'cols' => 30,
                 'style' => 'width: 400px;',
-                'maxlength' => 400,
+                'maxlength' => 1000,
             ]
         );
         $mform->setType('description', PARAM_TEXT);
-        $mform->addRule('description', get_string('maximumchars', '', 400), 'maxlength', 400, 'client');
+        $mform->addRule('description', get_string('maximumchars', '', 1000), 'maxlength', 1000, 'client');
 
         // Prepare icon selector data.
         $iconpath = $CFG->dirroot . '/lib/editor/tiny/plugins/styles/pix';

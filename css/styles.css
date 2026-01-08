@@ -138,7 +138,7 @@ span.badge.bg-secondary,
     font-size: 0.75em !important;
     font-weight: 700 !important;
     line-height: 1 !important;
-    color: #000 !important;
+    color: #000a !important;
     text-align: center !important;
     white-space: nowrap !important;
     vertical-align: baseline !important;
@@ -205,9 +205,9 @@ p.alert.alert-success,
     position: relative !important;
     padding: 1rem !important;
     margin-bottom: 1rem !important;
-    border: 1px solid #a3cfbb !important;
+    border: 1px solid #badbcc !important;
     border-radius: 0.375rem !important;
-    color: #0a3622 !important;
+    color: #0f5132 !important;
     background-color: #d1e7dd !important;
 }
 
@@ -220,7 +220,7 @@ p.alert.alert-warning,
     position: relative !important;
     padding: 1rem !important;
     margin-bottom: 1rem !important;
-    border: 1px solid #ffecb5 !important;
+    border: 1px solid #ffe69c !important;
     border-radius: 0.375rem !important;
     color: #664d03 !important;
     background-color: #fff3cd !important;
@@ -235,9 +235,9 @@ p.alert.alert-danger,
     position: relative !important;
     padding: 1rem !important;
     margin-bottom: 1rem !important;
-    border: 1px solid #f1aeb5 !important;
+    border: 1px solid #f5c2c7 !important;
     border-radius: 0.375rem !important;
-    color: #58151c !important;
+    color: #842029 !important;
     background-color: #f8d7da !important;
 }
 
