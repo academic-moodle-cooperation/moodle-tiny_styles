@@ -71,7 +71,7 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
     }
 
     // Increases the input limits for allowing multilang filtering.
-    if ($oldversion < 2025080602.05) {
+    if ($oldversion < 2025080603) {
         $table = new xmldb_table('tiny_styles_categories');
 
         $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'id');
@@ -84,7 +84,7 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'id');
         $dbman->change_field_precision($table, $field);
 
-        upgrade_plugin_savepoint(true, 2025080602.05, 'tiny', 'styles');
+        upgrade_plugin_savepoint(true, 2025080603, 'tiny', 'styles');
     }
 
     return true;

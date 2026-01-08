@@ -1,6 +1,22 @@
 CHANGELOG
 =========
 
+5.1.0 (2026-1-8)
+-----------------
+* [FIXED] #61 Fix pressing enter in a formatted paragraph creates a new formatted paragraph
+* [FIXED] #66 Fix adding a blank paragraph after a formatted paragraph is not possible
+* [FIXED] \#111 Fix list custom block styling not updating
+* [FIXED] \#112 Fix extra blank space after adding inline style
+* [FEATURE] #20 Add Multi-Language Content 2 filter support
+* [FEATURE] #64 Add ability to update styling on a styled text without highlighting 
+* [FEATURE] #79 Add Export & Import templates to include information on order + symbol
+* [FEATURE] #90 Update Ajax implementation to External Services
+* [FEATURE] #92 Add transition to templates
+* [FEATURE] \#105 Add structure in the dropdown for manual styles and bootstrap classes (elements)
+* [FEATURE] \#109  Add unique ids for custom styles
+* [FEATURE] \#110  Update Import instructions
+* [FEATURE] \#109  Add unique ids for custom styles
+
 5.0.2 (2025-10-16)
 -----------------
 * [FIXED] #84 Fix editor list styling behavior [github #14]
