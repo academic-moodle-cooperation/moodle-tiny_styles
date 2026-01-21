@@ -352,18 +352,26 @@ function tiny_styles_get_categories_for_dropdown($excludedividers = true) {
  * @return array Array of the CSS class strings
  */
 function tiny_styles_get_css_classes() {
-    global $DB;
-
-    return $DB->get_fieldset_sql("
-        SELECT cssclasses
-        FROM (
-            SELECT cssclasses
-            FROM {tiny_styles_elements}
-            GROUP BY cssclasses
-            ORDER BY MIN(id) ASC
-            LIMIT 16
-        ) sub
-    ");
+    return [
+        // Labels.
+        'badge bg-primary text-white',
+        'badge bg-info text-dark',
+        'badge bg-success text-white',
+        'badge bg-warning text-dark',
+        'badge bg-danger text-white',
+        'badge bg-dark text-white',
+        'badge bg-secondary text-dark',
+        'badge bg-light text-dark',
+        // Boxes.
+        'alert alert-primary',
+        'alert alert-info',
+        'alert alert-success',
+        'alert alert-warning',
+        'alert alert-danger',
+        'alert alert-dark',
+        'alert alert-secondary',
+        'alert alert-light',
+    ];
 }
 
 /**
