@@ -1,21 +1,24 @@
 CHANGELOG
 =========
 
-5.1.0 (2026-1-8)
+5.1.0 (2026-01-22)
 -----------------
-* [FIXED] #61 Fix pressing enter in a formatted paragraph creates a new formatted paragraph
-* [FIXED] #66 Fix adding a blank paragraph after a formatted paragraph is not possible
-* [FIXED] \#111 Fix list custom block styling not updating
-* [FIXED] \#112 Fix extra blank space after adding inline style
-* [FEATURE] #20 Add Multi-Language Content 2 filter support
-* [FEATURE] #64 Add ability to update styling on a styled text without highlighting 
-* [FEATURE] #79 Add Export & Import templates to include information on order + symbol
-* [FEATURE] #90 Update Ajax implementation to External Services
-* [FEATURE] #92 Add transition to templates
-* [FEATURE] \#105 Add structure in the dropdown for manual styles and bootstrap classes (elements)
-* [FEATURE] \#109  Add unique ids for custom styles
-* [FEATURE] \#110  Update Import instructions
-* [FEATURE] \#109  Add unique ids for custom styles
+* Moodle 5.1 compatible version
+* [FIXED] #111 Fix list custom block styling not updating
+* [FIXED] #112 Fix extra blank space after adding inline style
+* [FIXED] #115 Fix removal of default bootstrap class
+* [FEATURE] #20 Add support for multilang filter v2
+* [FEATURE] #57 Update import instructions
+* [FEATURE] #61 Implement simple way to create newline within box style [github #8]
+* [FEATURE] #64 Add ability to update styling on a styled text without highlighting [github #4]
+* [FEATURE] #66 Implement way to create newline after box style [github #9]
+* [FEATURE] #79 Add export & import templates to include information on category order and symbol
+* [FEATURE] #90 Update ajax implementation to external services [github #24]
+* [FEATURE] #92 Add transition to templates [github #20]
+* [FEATURE] #96 Add export template to include information on element order and visibility
+* [FEATURE] #105 Add structure in the dropdown for manual styles and bootstrap classes (elements)
+* [FEATURE] #109  Add unique ids for custom styles
+* [FEATURE] #110  Update import instructions
 
 5.0.2 (2025-10-16)
 -----------------
