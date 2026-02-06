@@ -3,8 +3,8 @@ CHANGELOG
 
 5.1.1 (2026-02-06)
 -----------------
-* [FEATURE] #117 Removed German langstrings from the repository. Now located in AMOS.
-* [FEATURE] #118 Updated ReadMe to include information on creating categories and elements, importing and exporting, and thesupport of Multilang filtering.
+* [FEATURE] #117 Removed German langstrings from the repository (now located in AMOS).
+* [FEATURE] #118 Updated readme to include information on creating categories and elements, importing and exporting, and the support of multilang filter v2.
 
 5.1.0 (2026-01-22)
 -----------------
@@ -22,8 +22,8 @@ CHANGELOG
 * [FEATURE] #92 Add transition to templates [github #20]
 * [FEATURE] #96 Add export template to include information on element order and visibility
 * [FEATURE] #105 Add structure in the dropdown for manual styles and bootstrap classes (elements)
-* [FEATURE] #109  Add unique ids for custom styles
-* [FEATURE] #110  Update import instructions
+* [FEATURE] #109 Add unique ids for custom styles
+* [FEATURE] #110 Update import instructions
 
 5.0.2 (2025-10-16)
 -----------------
