@@ -27,6 +27,7 @@ A teacher wants to organise a course more clearly. For this purpose, they format
 selecting a text in the TinyMCE view and choosing a suitable style out of the predefined list.
 For example, they mark additional notes on a topic with the style 'Blue box'.
 
+
 ## Export and Import
 
 ### Exporting Styles
@@ -110,6 +111,21 @@ This displays:
   "description": "{mlang en}Use for important warnings{mlang}{mlang de}Fur wichtige Warnungen verwenden{mlang}"
 }
 ```
+
+
+Changing Applied Style Elements
+------------------------------
+
+### Bootstrap Classes
+
+Any changes (edit, hide, delete) to a bootstrap class style will have no effect on any text that already had the style applied to it.
+
+### Custom CSS Classes
+
+Any changes (edit, hide, delete) to a custom CSS class style will have no effect on any text that already had the style applied to it **until the text is newly saved**. Only then will the change take effect:
+
+* **Style was edited:** The text will be displayed styled with the edited custom CSS class.
+* **Style was hidden or deleted:** The text will no longer be displayed styled with that custom CSS class.
 
 
 Installation
