@@ -23,9 +23,109 @@ Default styles are:
 Usage
 -------
 
-A teacher wants to organise a course more clearly. For this purpose, she formats the content in a standardised way by
+A teacher wants to organise a course more clearly. For this purpose, they format the content in a standardised way by
 selecting a text in the TinyMCE view and choosing a suitable style out of the predefined list.
-For example, she marks additional notes on a topic with the style 'Blue box'.
+For example, they mark additional notes on a topic with the style 'Blue box'.
+
+
+## Export and Import
+
+### Exporting Styles
+
+To backup or share your style configuration:
+
+1. Go to **Site administration > Plugins > Text editors > TinyMCE editor > Styles**
+2. Click the **Export** button
+3. A JSON file (`tiny_styles_export.json`) will be downloaded containing all categories and elements (visible and hidden)
+
+### Importing Styles
+
+To restore or import a style configuration:
+
+1. Go to **Site administration > Plugins > Text editors > TinyMCE editor > Styles**
+2. Click the **Import** button
+3. Upload a valid JSON file with the required file structure (see "JSON Format" below)
+4. The import will add the categories and elements from the file
+
+**Please note:**
+* Importing does not delete or overwrite existing styles; it adds the imported styles alongside them.
+* If a category is imported with an already existing category name in the category overview, it will be added unchanged, i.e. there will be two categories with the same name.
+* There is a **template JSON file** available for download in the import area (`example.json`) containing the required structure, as well as a list of all available category symbols (e.g. "book.svg", "box.svg", etc.).
+
+
+### JSON Format
+
+The import/export file uses this structure:
+
+```json
+{
+  "categories": [
+    {
+      "name": "My Category",
+      "description": "Optional description",
+      "symbol": "book.svg",
+      "menumode": "submenu",
+      "enabled": 1,
+      "elements": [
+        {
+          "name": "Red Box",
+          "custom": 0,
+          "type": "block",
+          "cssclasses": "alert alert-danger",
+          "enabled": 1
+        }
+      ]
+    }
+  ]
+}
+```
+
+
+## Multilanguage Support (Multilang Filter v2)
+
+Category names, descriptions, and element names support the Multilang filter v2 syntax for multilingual content.
+
+### Requirements
+
+The [Multi-Language Content (v2)](https://moodle.org/plugins/filter_multilang2) plugin must be installed and enabled on your Moodle site.
+
+### Usage
+
+Use the `{mlang}` syntax in text fields:
+
+```
+{mlang en}Blue Label{mlang}{mlang de}Blaues Etikett{mlang}{mlang fr}Etiquette bleue{mlang}
+```
+
+This displays:
+
+- "Blue Label" for English users
+- "Blaues Etikett" for German users
+- "Etiquette bleue" for French users
+
+### Example in JSON Import
+
+```json
+{
+  "name": "{mlang en}Warning Box{mlang}{mlang de}Warnhinweis{mlang}",
+  "description": "{mlang en}Use for important warnings{mlang}{mlang de}Fur wichtige Warnungen verwenden{mlang}"
+}
+```
+
+
+Changing Applied Style Elements
+------------------------------
+
+### Bootstrap Classes
+
+Any changes (edit, hide, delete) to a bootstrap class style will have no effect on any text that already had the style applied to it.
+
+### Custom CSS Classes
+
+Any changes (edit, hide, delete) to a custom CSS class style will have no effect on any text that already had the style applied to it **until the text is newly saved**. Only then will the change take effect:
+
+* **Style was edited:** The text will be displayed styled with the edited custom CSS class.
+* **Style was hidden or deleted:** The text will no longer be displayed styled with that custom CSS class.
 
 
 Installation
