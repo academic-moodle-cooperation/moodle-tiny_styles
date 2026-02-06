@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+5.1.1 (2026-02-06)
+-----------------
+* [FEATURE] #117 Removed German langstrings from the repository. Now located in AMOS.
+* [FEATURE] #118 Updated ReadMe to include information on creating categories and elements, importing and exporting, and thesupport of Multilang filtering.
+
 5.1.0 (2026-01-22)
 -----------------
 * Moodle 5.1 compatible version
