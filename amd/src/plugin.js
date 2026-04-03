@@ -52,8 +52,9 @@ const injectEditorStyles = (editor) => {
             return;
         }
 
-        // Config file path.
-        const pluginCssUrl = M.cfg.wwwroot + '/lib/editor/tiny/plugins/styles/css/styles.css';
+        // Config file path. 
+        // The 'themerev'' parameter busts browser cache when Moodle caches are purged to force css style updates.
+        const pluginCssUrl = M.cfg.wwwroot + '/lib/editor/tiny/plugins/styles/css/styles.css?rev=' + (M.cfg.themerev || 1);
 
         // Link to iframe head with unique ID.
         const link = doc.createElement('link');
