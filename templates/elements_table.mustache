@@ -90,25 +90,26 @@
                     <td>{{type}}</td>
                     <td>{{bootstrapclass}}</td>
                     <td>
-                   
-                       <a href="#" class="toggle-enable-element"
-                          data-id="{{id}}"
-                          title="{{#enabled}}{{#str}}hide, core{{/str}}{{/enabled}}{{^enabled}}{{#str}}show, core{{/str}}{{/enabled}}"
-                          style="text-decoration: none; color: #0f6cbf;">
-                           <i class="icon fa enabled-icon {{#enabled}}fa-eye{{/enabled}}{{^enabled}}fa-eye-slash{{/enabled}} fa-fw"></i>
-                       </a>
+                        <div class="d-flex gap-2 align-items-center">
+                            <a href="#" class="toggle-enable-element text-primary text-decoration-none"
+                               data-id="{{id}}"
+                               title="{{#enabled}}{{#str}}hide, core{{/str}}{{/enabled}}{{^enabled}}{{#str}}show, core{{/str}}{{/enabled}}"
+                               >
+                                <i class="icon fa enabled-icon {{#enabled}}fa-eye{{/enabled}}{{^enabled}}fa-eye-slash{{/enabled}} fa-fw"></i>
+                            </a>
 
-                       {{{viewdetailsiconhtml}}}
-                       {{{moveupiconhtml}}}
-                       {{{movedowniconhtml}}}
+                            {{{viewdetailsiconhtml}}}
+                            {{{moveupiconhtml}}}
+                            {{{movedowniconhtml}}}
 
-                        <a href="{{editurl}}" title="Edit" class="text-decoration-none text-primary">
-                            <i class="icon fa fa-cog fa-fw"></i>
-                        </a>
-                        <a href="#" class="duplicate-element" data-id="{{id}}" title="Duplicate" style="text-decoration: none;">
-                            <i class="icon fa fa-clone fa-fw"></i>
-                        </a>
-                        {{{deleteiconhtml}}}
+                            <a href="{{editurl}}" title="Edit" class="text-decoration-none text-primary">
+                                <i class="icon fa fa-cog fa-fw"></i>
+                            </a>
+                            <a href="#" class="duplicate-element text-primary text-decoration-none" data-id="{{id}}" title="Duplicate">
+                                <i class="icon fa fa-clone fa-fw"></i>
+                            </a>
+                            {{{deleteiconhtml}}}
+                        </div>
                     </td>
                 </tr>
                 {{/elements}}

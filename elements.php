@@ -66,10 +66,10 @@ foreach ($records as $r) {
         $OUTPUT->pix_icon('t/up', get_string('moveup')),
         [
             'type'        => 'button',
-            'class'       => 'move-up btn-icon',
+            'class'       => 'move-up btn-icon text-primary',
             'data-id'     => $r->id,
             'title'       => get_string('moveup'),
-            'style'       => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;',
+            'style'       => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 
@@ -78,10 +78,10 @@ foreach ($records as $r) {
         $OUTPUT->pix_icon('t/down', get_string('movedown')),
         [
             'type'        => 'button',
-            'class'       => 'move-down btn-icon',
+            'class'       => 'move-down btn-icon text-primary',
             'data-id'     => $r->id,
             'title'       => get_string('movedown'),
-            'style'       => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;',
+            'style'       => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 

@@ -62,7 +62,7 @@ class importhandler {
 
         // Check the import for categories.
         if (empty($data['categories']) || !is_array($data['categories'])) {
-            throw new \moodle_exception('importjsoncategories', 'tiny_styles');
+            throw new \core\exception\moodle_exception('importjsoncategories', 'tiny_styles');
         }
 
         $transaction = $DB->start_delegated_transaction();
@@ -204,7 +204,7 @@ class importhandler {
             }
             $transaction->allow_commit();
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $transaction->rollback($e);
             throw $e;
         }

@@ -88,11 +88,11 @@ foreach ($records as $category) {
         $OUTPUT->pix_icon('t/up', get_string('moveup')),
         [
             'type' => 'button',
-            'class' => 'btn-icon moveup',
+            'class' => 'btn-icon moveup text-primary',
             'data-action' => 'moveup',
             'data-id' => $category->id,
             'title' => get_string('moveup'),
-            'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;',
+            'style' => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 
@@ -101,11 +101,11 @@ foreach ($records as $category) {
         $OUTPUT->pix_icon('t/down', get_string('movedown')),
         [
             'type' => 'button',
-            'class' => 'btn-icon movedown',
+            'class' => 'btn-icon movedown text-primary',
             'data-action' => 'movedown',
             'data-id' => $category->id,
             'title' => get_string('movedown'),
-            'style' => 'background: none; border: none; cursor: pointer; padding: 0; color: #0f6cbf;',
+            'style' => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 

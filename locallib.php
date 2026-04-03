@@ -161,7 +161,7 @@ function tiny_styles_delete_category_with_cleanup($categoryid) {
         tiny_styles_delete_category_record($categoryid);
 
         $transaction->allow_commit();
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         $transaction->rollback($e);
         throw $e;
     }
@@ -307,7 +307,7 @@ function tiny_styles_delete_element_with_bridges($elementid) {
         tiny_styles_delete_element_record($elementid);
 
         $transaction->allow_commit();
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         $transaction->rollback($e);
         throw $e;
     }
@@ -531,7 +531,7 @@ function tiny_styles_create_element_with_bridge($formdata, $categoryid) {
 
         $transaction->allow_commit();
         return $elementid;
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         $transaction->rollback($e);
         throw $e;
     }
