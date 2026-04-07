@@ -66,9 +66,17 @@ function buildCategoryItems(editor, categories, icons, clearlabel) {
         // Inline menumode type
         if (cat.menumode === 'inline' && Array.isArray(cat.elements)) {
             cat.elements.forEach((elem) => {
+                const isInline = elem.type !== 'block';
                 items.push({
                     type: 'menuitem',
                     text: elem.name,
+                    onSetup: isInline ? (api) => {
+                        const inStyledSpan = !!editor.dom.getParent(
+                            editor.selection.getNode(), isStyledInlineElement
+                        );
+                        api.setEnabled(isInWord(editor) || inStyledSpan);
+                        return () => {};
+                    } : undefined,
                     onAction: () => {
                         applyStyle(editor, {
                             className: elem.cssclasses,
@@ -85,9 +93,17 @@ function buildCategoryItems(editor, categories, icons, clearlabel) {
         const subItems = [];
         if (Array.isArray(cat.elements)) {
             cat.elements.forEach((elem) => {
+                const isInline = elem.type !== 'block';
                 subItems.push({
                     type: 'menuitem',
                     text: elem.name,
+                    onSetup: isInline ? (api) => {
+                        const inStyledSpan = !!editor.dom.getParent(
+                            editor.selection.getNode(), isStyledInlineElement
+                        );
+                        api.setEnabled(isInWord(editor) || inStyledSpan);
+                        return () => {};
+                    } : undefined,
                     onAction: () => {
                         applyStyle(editor, {
                             className: elem.cssclasses,
@@ -154,9 +170,11 @@ function applyStyle(editor, styleDef) {
         return isStyledInlineElement(node);
     }) : null;
 
-    // Only return early if no selection AND not in a styled span AND not a block style
+    // Only return early if no selection AND not in a word AND not a block style
     if (!selectedHtml.trim() && !block && !styledSpanParent) {
-        return;
+        if (!expandSelectionToWord(editor)) {
+            return; // double check, onSetup should disabled this path
+        }
     }
 
     if (block) {
@@ -573,6 +591,64 @@ function isStyledInlineElement(node) {
     }
 
     return false;
+}
+
+/**
+ * Returns true if the cursor is strictly inside a word .
+ *
+ * @param {Object} editor TinyMCE editor instance.
+ * @returns {boolean}
+ */
+function isInWord(editor) {
+    const range = editor.selection.getRng();
+    if (!range.collapsed) {
+        return true;
+    }
+    const container = range.startContainer;
+    if (container.nodeType !== Node.TEXT_NODE) {
+        return false;
+    }
+    const offset = range.startOffset;
+    const text = container.textContent;
+    const charBefore = offset > 0 ? text[offset - 1] : '';
+    const charAfter = offset < text.length ? text[offset] : '';
+    return /\S/.test(charBefore) && /\S/.test(charAfter);
+}
+
+/**
+ * Expands a collapsed cursor position to cover the surrounding word.
+ *
+ * @param {Object} editor TinyMCE editor instance.
+ * @returns {boolean}
+ */
+function expandSelectionToWord(editor) {
+    const range = editor.selection.getRng();
+    if (!range.collapsed) {
+        return true;
+    }
+    const container = range.startContainer;
+    if (container.nodeType !== Node.TEXT_NODE) {
+        return false;
+    }
+    const text = container.textContent;
+    const offset = range.startOffset;
+
+    let start = offset;
+    while (start > 0 && /\S/.test(text[start - 1])) {
+        start--;
+    }
+    let end = offset;
+    while (end < text.length && /\S/.test(text[end])) {
+        end++;
+    }
+    if (start === end) {
+        return false;
+    }
+    const newRange = editor.dom.createRng();
+    newRange.setStart(container, start);
+    newRange.setEnd(container, end);
+    editor.selection.setRng(newRange);
+    return true;
 }
 
 /**
