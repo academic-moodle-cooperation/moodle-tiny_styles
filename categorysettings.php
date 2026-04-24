@@ -83,29 +83,25 @@ $categorydata = [];
 
 // Categories prepared for the template.
 foreach ($records as $category) {
-    $moveupiconhtml = html_writer::tag(
-        'button',
+    $moveupiconhtml = html_writer::link(
+        '#',
         $OUTPUT->pix_icon('t/up', get_string('moveup')),
         [
-            'type'        => 'button',
-            'class'       => 'moveup text-primary',
+            'class'       => 'moveup text-primary text-decoration-none',
             'data-action' => 'moveup',
             'data-id'     => $category->id,
             'title'       => get_string('moveup'),
-            'style'       => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 
-    $movedowniconhtml = html_writer::tag(
-        'button',
+    $movedowniconhtml = html_writer::link(
+        '#',
         $OUTPUT->pix_icon('t/down', get_string('movedown')),
         [
-            'type'        => 'button',
-            'class'       => 'movedown text-primary',
+            'class'       => 'movedown text-primary text-decoration-none',
             'data-action' => 'movedown',
             'data-id'     => $category->id,
             'title'       => get_string('movedown'),
-            'style'       => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 

@@ -61,27 +61,23 @@ $catname = format_string(tiny_styles_get_category_name($catid), true, ['context'
 // Array of elements for mustache template.
 $elements = [];
 foreach ($records as $r) {
-    $moveupiconhtml = html_writer::tag(
-        'button',
+    $moveupiconhtml = html_writer::link(
+        '#',
         $OUTPUT->pix_icon('t/up', get_string('moveup')),
         [
-            'type'    => 'button',
-            'class'   => 'move-up text-primary',
+            'class'   => 'move-up text-primary text-decoration-none',
             'data-id' => $r->id,
             'title'   => get_string('moveup'),
-            'style'   => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 
-    $movedowniconhtml = html_writer::tag(
-        'button',
+    $movedowniconhtml = html_writer::link(
+        '#',
         $OUTPUT->pix_icon('t/down', get_string('movedown')),
         [
-            'type'    => 'button',
-            'class'   => 'move-down text-primary',
+            'class'   => 'move-down text-primary text-decoration-none',
             'data-id' => $r->id,
             'title'   => get_string('movedown'),
-            'style'   => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 
