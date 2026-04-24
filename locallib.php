@@ -179,8 +179,9 @@ function tiny_styles_prepare_category_for_save($formdata, $action = 'create') {
     $record = new stdClass();
     $record->name = $formdata->name;
     $record->description = $formdata->description ?? '';
-    $record->symbol = $formdata->selectedicon ?? '';
+    $record->symbol = clean_param($formdata->selectedicon ?? '', PARAM_ALPHANUMEXT);
     $record->menumode = $formdata->menumode ?? 'submenu';
+    $record->showdesc = $formdata->showdesc ?? 'never';
     $record->timemodified = time();
 
     if ($action === 'edit' && !empty($formdata->id)) {
@@ -217,6 +218,7 @@ function tiny_styles_load_category_for_form($categoryid) {
     $formdata->description = $category->description;
     $formdata->selectedicon = $category->symbol;
     $formdata->menumode = $category->menumode;
+    $formdata->showdesc = $category->showdesc;
 
     return $formdata;
 }

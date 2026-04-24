@@ -65,11 +65,11 @@ foreach ($records as $r) {
         'button',
         $OUTPUT->pix_icon('t/up', get_string('moveup')),
         [
-            'type'        => 'button',
-            'class'       => 'move-up btn-icon text-primary',
-            'data-id'     => $r->id,
-            'title'       => get_string('moveup'),
-            'style'       => 'background: none; border: none; cursor: pointer; padding: 0;',
+            'type'    => 'button',
+            'class'   => 'move-up text-primary',
+            'data-id' => $r->id,
+            'title'   => get_string('moveup'),
+            'style'   => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 
@@ -77,38 +77,45 @@ foreach ($records as $r) {
         'button',
         $OUTPUT->pix_icon('t/down', get_string('movedown')),
         [
-            'type'        => 'button',
-            'class'       => 'move-down btn-icon text-primary',
-            'data-id'     => $r->id,
-            'title'       => get_string('movedown'),
-            'style'       => 'background: none; border: none; cursor: pointer; padding: 0;',
+            'type'    => 'button',
+            'class'   => 'move-down text-primary',
+            'data-id' => $r->id,
+            'title'   => get_string('movedown'),
+            'style'   => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 
     $deleteurl = new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-        'catid'   => $catid,
-        'tiny_styles_action'  => 'delete',
-        'id'      => $r->id,
-        'sesskey' => sesskey(),
+        'catid'              => $catid,
+        'tiny_styles_action' => 'delete',
+        'id'                 => $r->id,
+        'sesskey'            => sesskey(),
     ]);
 
-    $deleteiconhtml = $OUTPUT->action_icon(
+    $deleteiconhtml = html_writer::link(
         $deleteurl,
-        new pix_icon('t/delete', get_string('delete')),
-        new confirm_action(get_string('confirmdeleteelement', 'tiny_styles')),
-        ['title' => get_string('delete')],
+        $OUTPUT->pix_icon('t/delete', get_string('delete')),
+        [
+            'class'        => 'text-primary text-decoration-none',
+            'title'        => get_string('delete'),
+            'aria-label'   => get_string('delete'),
+            'data-confirm' => get_string('confirmdeleteelement', 'tiny_styles'),
+            'onclick'      => 'return confirm(this.dataset.confirm);',
+        ]
     );
 
-    $viewdetailsattrs = [
-        'href'           => '#',
-        'class'          => 'element-preview-link',
-        'data-name'      => format_string($r->name, true, ['context' => context_system::instance()]),
-        'data-cssclass'  => $r->cssclasses,
-        'data-type'      => $r->type,
-    ];
-
-    $viewdetailsicon = new pix_icon('i/preview', get_string('preview', 'tiny_styles'));
-    $viewdetailshtml = $OUTPUT->action_icon('#', $viewdetailsicon, null, $viewdetailsattrs);
+    $viewdetailshtml = html_writer::link(
+        '#',
+        $OUTPUT->pix_icon('i/preview', get_string('preview', 'tiny_styles')),
+        [
+            'class'         => 'element-preview-link text-primary text-decoration-none',
+            'data-name'     => format_string($r->name, true, ['context' => context_system::instance()]),
+            'data-cssclass' => $r->cssclasses,
+            'data-type'     => $r->type,
+            'title'         => get_string('preview', 'tiny_styles'),
+            'aria-label'    => get_string('preview', 'tiny_styles'),
+        ]
+    );
 
     $elements[] = [
         'id'             => $r->id,

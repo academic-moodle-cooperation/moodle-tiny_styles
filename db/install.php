@@ -23,8 +23,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-
 /**
  * Custom installation logic for the default styles.
  *
@@ -39,7 +37,7 @@ function xmldb_tiny_styles_install() {
         $cat->name         = 'Labels';
         $cat->description  = 'Design Elements directly in Text';
         $cat->showdesc     = 'helptext';
-        $cat->symbol       = 'label.svg';
+        $cat->symbol       = 'tag';
         $cat->menumode = 'submenu';
         $cat->enabled      = 1;
         $cat->sortorder    = 1;
@@ -51,8 +49,8 @@ function xmldb_tiny_styles_install() {
         $cat = new stdClass();
         $cat->name         = 'Boxes';
         $cat->description  = 'Format paragraphs';
-        $cat->showdesc     = 'never';
-        $cat->symbol       = 'box.svg';
+        $cat->showdesc     = 'helptext';
+        $cat->symbol       = 'table-list';
         $cat->menumode = 'submenu';
         $cat->enabled      = 1;
         $cat->sortorder    = 2;
@@ -79,7 +77,7 @@ function xmldb_tiny_styles_install() {
         $cat->name         = 'Uni-Vorlagen';
         $cat->description  = 'Vorlagen im Corporate Design der Uni';
         $cat->showdesc     = 'tooltip';
-        $cat->symbol       = 'school.svg';
+        $cat->symbol       = 'school';
         $cat->menumode = 'inline';
         $cat->enabled      = 1;
         $cat->sortorder    = 4;

@@ -87,12 +87,12 @@ foreach ($records as $category) {
         'button',
         $OUTPUT->pix_icon('t/up', get_string('moveup')),
         [
-            'type' => 'button',
-            'class' => 'btn-icon moveup text-primary',
+            'type'        => 'button',
+            'class'       => 'moveup text-primary',
             'data-action' => 'moveup',
-            'data-id' => $category->id,
-            'title' => get_string('moveup'),
-            'style' => 'background: none; border: none; cursor: pointer; padding: 0;',
+            'data-id'     => $category->id,
+            'title'       => get_string('moveup'),
+            'style'       => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 
@@ -100,12 +100,12 @@ foreach ($records as $category) {
         'button',
         $OUTPUT->pix_icon('t/down', get_string('movedown')),
         [
-            'type' => 'button',
-            'class' => 'btn-icon movedown text-primary',
+            'type'        => 'button',
+            'class'       => 'movedown text-primary',
             'data-action' => 'movedown',
-            'data-id' => $category->id,
-            'title' => get_string('movedown'),
-            'style' => 'background: none; border: none; cursor: pointer; padding: 0;',
+            'data-id'     => $category->id,
+            'title'       => get_string('movedown'),
+            'style'       => 'background: none; border: none; cursor: pointer; padding: 0;',
         ]
     );
 
@@ -117,12 +117,16 @@ foreach ($records as $category) {
 
     $confirmstring = get_string('confirmdeletecategory', 'tiny_styles');
 
-    // Delete icon with a confirm action.
-    $deleteiconhtml = $OUTPUT->action_icon(
+    $deleteiconhtml = html_writer::link(
         $deleteurl,
-        new pix_icon('t/delete', get_string('delete')),
-        new confirm_action($confirmstring),
-        ['title' => get_string('delete')],
+        $OUTPUT->pix_icon('t/delete', get_string('delete')),
+        [
+            'class'        => 'text-primary text-decoration-none',
+            'title'        => get_string('delete'),
+            'aria-label'   => get_string('delete'),
+            'data-confirm' => $confirmstring,
+            'onclick'      => 'return confirm(this.dataset.confirm);',
+        ]
     );
 
     // Filtering dividers out.
@@ -134,7 +138,7 @@ foreach ($records as $category) {
             'description' => format_string($category->description, true, ['context' => context_system::instance()]),
             'menumode' => $category->menumode,
             'elementsurl' => '#',
-            'elementsiconstyle' => 'color: gray; pointer-events: none;',
+            'isdivider' => true,
             'moveupiconhtml'  => $moveupiconhtml,
             'movedowniconhtml' => $movedowniconhtml,
             'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
@@ -152,7 +156,7 @@ foreach ($records as $category) {
             'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                 'catid' => $category->id,
             ]))->out(false),
-            'elementsiconstyle' => '',
+            'isdivider' => false,
             'moveupiconhtml'  => $moveupiconhtml,
             'movedowniconhtml' => $movedowniconhtml,
             'editurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [

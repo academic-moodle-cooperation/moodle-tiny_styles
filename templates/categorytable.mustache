@@ -74,8 +74,9 @@
               <i class="icon fa enabled-icon {{#enabled}}fa-eye{{/enabled}}{{^enabled}}fa-eye-slash{{/enabled}} fa-fw"></i>
           </a>
 
-          <a href="{{elementsurl}}" title="{{#str}} elements, tiny_styles {{/str}}" style="text-decoration: none; {{elementsiconstyle}}">
-            <i class="fa-solid fa-list"></i>
+          <a href="{{elementsurl}}" title="{{#str}} elements, tiny_styles {{/str}}"
+             class="{{^isdivider}}text-primary{{/isdivider}}{{#isdivider}}text-muted pe-none{{/isdivider}} text-decoration-none">
+            <i class="icon fa fa-list fa-fw"></i>
           </a>
 
           {{{moveupiconhtml}}}

@@ -22,19 +22,18 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import ModalFactory from 'core/modal_factory';
-import ModalEvents from 'core/modal_events';
+import Modal from 'core/modal';
+import Notification from 'core/notification';
 
 /**
  * Builds a preview snippet with placeholder text and applies
  * a given CSS class or style preview style look.
  *
- * @param {string} name - name for the style.
  * @param {string} cssclasses - CSS string or classes to be applied.
  * @param {string} type - 'block' or 'inline'
  * @returns {string} HTML snippet to display in modal.
  */
-const buildPreviewHtml = (name, cssclasses, type) => {
+const buildPreviewHtml = (cssclasses, type) => {
     // Example snippet.
     const snippetBlock = `
         <p>Lorem ipsum <strong>dolor</strong> sit amet, consetetur sadipscing elitr,
@@ -81,6 +80,46 @@ const buildPreviewHtml = (name, cssclasses, type) => {
     }
 };
 
+/** @type {Object|null} Currently open modal instance, preview or description. */
+let currentModal = null;
+
+/**
+ * Opens a Moodle modal with the given title and body HTML.
+ *
+ * @param {string} title - Modal title.
+ * @param {string} body - Modal body HTML.
+ */
+const openModal = async(title, body) => {
+    if (currentModal) {
+        currentModal.destroy();
+        currentModal = null;
+    }
+
+    try {
+        const modal = await Modal.create({title, body});
+
+        currentModal = modal;
+
+        // Temporarily lower the custom panel.
+        const panelEl = document.querySelector('.tsm-panel');
+        if (panelEl) {
+            panelEl.style.zIndex = '1045';
+        }
+
+        modal.getRoot()[0].addEventListener('hidden.bs.modal', () => {
+            // Restore panel z-index.
+            if (panelEl) {
+                panelEl.style.zIndex = '';
+            }
+            currentModal = null;
+        });
+
+        modal.show();
+    } catch (error) {
+        Notification.exception(error);
+    }
+};
+
 /**
  * Opens a preview dialog for the given style definition.
  *
@@ -90,31 +129,32 @@ const buildPreviewHtml = (name, cssclasses, type) => {
  */
 const showPreview = async(name, cssclasses, type) => {
     const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
-    const previewhtml = buildPreviewHtml(name, cssclasses, type);
+    const previewhtml = buildPreviewHtml(cssclasses, type);
 
-    try {
-        const modal = await ModalFactory.create({
-            type: ModalFactory.types.DEFAULT,
-            title: `${name}`,
-            body: previewhtml
-        });
+    await openModal(name, previewhtml);
 
-        if (isFullCssDefinition) {
-            const styleEl = document.createElement('style');
-            styleEl.textContent = cssclasses;
-            modal.getRoot()[0].appendChild(styleEl);
-        }
-        modal.show();
-        modal.getRoot()[0].addEventListener(ModalEvents.hidden, () => {});
-    } catch (error) {
-        alert(error);
+    // Inject the custom styles into the modal so the preview renders correctly.
+    if (isFullCssDefinition && currentModal) {
+        const styleEl = document.createElement('style');
+        styleEl.textContent = cssclasses;
+        currentModal.getRoot()[0].appendChild(styleEl);
     }
 };
 
 /**
- * Initialize preview functionality for selected elements
+ * Opens a description modal for a category.
  *
- * @param {string} selector - CSS selector for clickable preview elements
+ * @param {string} title - Category name.
+ * @param {string} body - Category description HTML.
+ */
+const showDescription = async(title, body) => {
+    await openModal(title, body);
+};
+
+/**
+ * Initialises preview functionality for the admin elements list page.
+ *
+ * @param {string} selector - CSS selector for clickable preview links.
  */
 export const init = (selector) => {
     document.addEventListener('click', (e) => {
@@ -133,7 +173,7 @@ export const init = (selector) => {
     });
 };
 
-// Export showPreview for external use
 export const previewElement = {
-    showPreview
+    showPreview,
+    showDescription
 };

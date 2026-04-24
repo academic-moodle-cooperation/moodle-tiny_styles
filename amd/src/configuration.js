@@ -34,7 +34,7 @@ import {
  * @return {String|Array} updated toolbar setting
  */
 const getToolbarConfiguration = (instanceConfig) => {
-   let toolbar = instanceConfig.toolbar;
+    let toolbar = instanceConfig.toolbar;
     toolbar = addToolbarButtons(toolbar, 'formatting', ['tiny_styles_button']);
     return toolbar;
 };
@@ -47,7 +47,6 @@ const getToolbarConfiguration = (instanceConfig) => {
  */
 const getMenuConfiguration = (instanceConfig) => {
     let menu = instanceConfig.menu;
-
     menu = addMenubarItem(menu, 'format', ['tiny_styles_nestedmenu']);
     return menu;
 };
