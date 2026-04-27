@@ -635,13 +635,13 @@ function positionPanel(panel, editor) {
 
     if (anchor) {
         const rect = anchor.getBoundingClientRect();
-        panel.style.top = (rect.bottom + scrollY) + 'px';
-        panel.style.left = (rect.left + scrollX) + 'px';
+        panel.style.top  = Math.round(rect.bottom + scrollY) + 'px';
+        panel.style.left = Math.round(rect.left + scrollX) + 'px';
     } else {
         const container = editor.getContainer();
         const rect = container.getBoundingClientRect();
-        panel.style.top = (rect.top + scrollY + 40) + 'px';
-        panel.style.left = (rect.left + scrollX) + 'px';
+        panel.style.top  = Math.round(rect.top + scrollY + 40) + 'px';
+        panel.style.left = Math.round(rect.left + scrollX) + 'px';
     }
 
     // After first paint clamps to viewport if needed.
@@ -651,11 +651,11 @@ function positionPanel(panel, editor) {
         }
         const panelRect = panel.getBoundingClientRect();
         if (panelRect.right > window.innerWidth) {
-            panel.style.left = Math.max(0, window.innerWidth - panelRect.width + scrollX) + 'px';
+            panel.style.left = Math.round(Math.max(0, window.innerWidth - panelRect.width + scrollX)) + 'px';
         }
         if (panelRect.bottom > window.innerHeight && anchor) {
             const rect = anchor.getBoundingClientRect();
-            panel.style.top = (rect.top + scrollY - panelRect.height) + 'px';
+            panel.style.top = Math.round(rect.top + scrollY - panelRect.height) + 'px';
         }
     });
 }

@@ -73,7 +73,8 @@ export const init = () => {
             item.className = 'icon-grid-item';
             item.dataset.iconName = name;
             item.style.cssText = 'cursor:pointer; display:flex; flex-direction:column; align-items:center;'
-                + ' justify-content:flex-start; padding:8px; border-radius:12px; box-sizing:border-box;';
+                + ' justify-content:flex-start; padding:8px; border-radius:12px; box-sizing:border-box;'
+                + ' min-width:0;';
             item.title = name;
 
             const i = document.createElement('i');
