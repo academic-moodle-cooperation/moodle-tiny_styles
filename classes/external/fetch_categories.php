@@ -33,7 +33,6 @@ use external_function_parameters;
 use external_single_structure;
 use external_multiple_structure;
 use external_value;
-use external_iterator;
 use stdClass;
 use context_system;
 

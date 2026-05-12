@@ -22,8 +22,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import ModalFactory from 'core/modal_factory';
-import ModalEvents from 'core/modal_events';
+import Modal from 'core/modal';
+import Notification from 'core/notification';
 
 /**
  * Returns the snippet with Lorem Ipsum text, in a dialog
@@ -110,8 +110,7 @@ export const init = () => {
         const previewhtml = buildPreviewHtml(nameVal, cssVal, typeVal);
 
         try {
-            const modal = await ModalFactory.create({
-                type: ModalFactory.types.DEFAULT,
+            const modal = await Modal.create({
                 title: `${previewVal}`,
                 body: previewhtml
             });
@@ -119,33 +118,12 @@ export const init = () => {
             if (isFullCssDefinition) {
                 const styleEl = document.createElement('style');
                 styleEl.textContent = cssVal;
-
-                // Trying to access dom element
-                const modalRoot = modal.getRoot();
-                if (modalRoot && modalRoot[0]) {
-                    modalRoot[0].appendChild(styleEl);
-                } else if (modalRoot) {
-                    // Already a dom element
-                    modalRoot.appendChild(styleEl);
-                }
+                modal.getRoot()[0].appendChild(styleEl);
             }
 
             modal.show();
-
-            const modalElement = modal.getRoot();
-            if (modalElement && modalElement[0]) {
-                // JQuery object
-                modalElement[0].addEventListener(ModalEvents.hidden, () => {
-                    // Intentionally empty
-                });
-            } else if (modalElement) {
-                // DOM element
-                modalElement.addEventListener(ModalEvents.hidden, () => {
-                    // Intentionally empty
-                });
-            }
         } catch (error) {
-            alert(error);
+            Notification.exception(error);
         }
     });
 };
