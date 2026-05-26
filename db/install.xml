@@ -19,6 +19,8 @@
                 <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="visibility_admin" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="all" SEQUENCE="false" COMMENT="all/admins_only/non_admins"/>
+                <FIELD NAME="visibility_roles" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON-encoded array of role IDs; null or empty = no restriction"/>
 
             </FIELDS>
             <KEYS>
@@ -38,6 +40,8 @@
                 <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="visibility_admin" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="all" SEQUENCE="false" COMMENT="all/admins_only/non_admins"/>
+                <FIELD NAME="visibility_roles" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON-encoded array of role IDs; null or empty = no restriction"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

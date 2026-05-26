@@ -184,6 +184,11 @@ function tiny_styles_prepare_category_for_save($formdata, $action = 'create') {
     $record->showdesc = $formdata->showdesc ?? 'never';
     $record->timemodified = time();
 
+    $adminrestriction = $formdata->visibility_admin ?? 'all';
+    $record->visibility_admin = in_array($adminrestriction, ['all', 'admins_only', 'non_admins'], true)
+        ? $adminrestriction
+        : 'all';
+
     if ($action === 'edit' && !empty($formdata->id)) {
         // Editing existing category preserves existing values.
         $old = tiny_styles_get_category($formdata->id);
@@ -192,10 +197,27 @@ function tiny_styles_prepare_category_for_save($formdata, $action = 'create') {
         $record->sortorder = $old->sortorder;
         $record->timecreated = $old->timecreated;
     } else {
+        $old = null;
         // Creating new category sets defaults.
         $record->enabled = 0;
         $record->sortorder = tiny_styles_get_max_category_sortorder() + 1;
         $record->timecreated = time();
+    }
+
+    // When admins_only is set, the role picker is disabled in the form and not submitted.
+    // Preserves the existing value so previously selected roles are retained on re-activation.
+    if ($record->visibility_admin === 'admins_only' && $old !== null) {
+        $record->visibility_roles = $old->visibility_roles ?? '';
+    } else {
+        $rawroles = is_array($formdata->visibility_roles ?? null) ? $formdata->visibility_roles : [];
+        $roleids = [];
+        foreach ($rawroles as $roleid) {
+            $cleanid = (int)$roleid;
+            if ($cleanid > 0) {
+                $roleids[] = $cleanid;
+            }
+        }
+        $record->visibility_roles = !empty($roleids) ? json_encode($roleids) : '';
     }
 
     return $record;
@@ -219,6 +241,8 @@ function tiny_styles_load_category_for_form($categoryid) {
     $formdata->selectedicon = $category->symbol;
     $formdata->menumode = $category->menumode;
     $formdata->showdesc = $category->showdesc;
+    $formdata->visibility_admin = $category->visibility_admin ?? 'all';
+    $formdata->visibility_roles = json_decode($category->visibility_roles ?? '', true) ?? [];
 
     return $formdata;
 }
@@ -492,6 +516,11 @@ function tiny_styles_prepare_element_for_save($formdata, $action = 'create') {
         $record->type = tiny_styles_check_for_style_type($formdata->cssclasses) ?? 'inline';
     }
 
+    $adminrestriction = $formdata->visibility_admin ?? 'all';
+    $record->visibility_admin = in_array($adminrestriction, ['all', 'admins_only', 'non_admins'], true)
+        ? $adminrestriction
+        : 'all';
+
     if ($action === 'edit' && !empty($formdata->id)) {
         // Editing existing element preserves existing values.
         $old = tiny_styles_get_element($formdata->id);
@@ -500,11 +529,27 @@ function tiny_styles_prepare_element_for_save($formdata, $action = 'create') {
         $record->sortorder = $old->sortorder;
         $record->timecreated = $old->timecreated;
     } else {
+        $old = null;
         // Creating new element sets defaults.
         $record->enabled = 0;
         $record->timecreated = time();
-        // Placeholder.
         $record->sortorder = 0;
+    }
+
+    // When admins_only is set, the role picker is disabled in the form and not submitted.
+    // Preserves the existing value so previously selected roles are retained on re-activation.
+    if ($record->visibility_admin === 'admins_only' && $old !== null) {
+        $record->visibility_roles = $old->visibility_roles ?? '';
+    } else {
+        $rawroles = is_array($formdata->visibility_roles ?? null) ? $formdata->visibility_roles : [];
+        $roleids = [];
+        foreach ($rawroles as $roleid) {
+            $cleanid = (int)$roleid;
+            if ($cleanid > 0) {
+                $roleids[] = $cleanid;
+            }
+        }
+        $record->visibility_roles = !empty($roleids) ? json_encode($roleids) : '';
     }
 
     return $record;
@@ -576,6 +621,9 @@ function tiny_styles_load_element_for_form($elementid) {
         $formdata->manualconfig = '';
     }
 
+    $formdata->visibility_admin = $element->visibility_admin ?? 'all';
+    $formdata->visibility_roles = json_decode($element->visibility_roles ?? '', true) ?? [];
+
     // Get category link.
     $catlink = tiny_styles_get_element_category_link($element->id);
     if ($catlink) {
@@ -585,6 +633,35 @@ function tiny_styles_load_element_for_form($elementid) {
     }
 
     return $formdata;
+}
+
+/**
+ * Checks whether the current user can see a category or element based on visibility settings.
+ *
+ * @param array $record Array with visibility_admin and visibility_roles keys
+ * @param bool $isadmin Whether the current user is a site admin
+ * @param array $userroleids All role IDs the user holds across any context on the site
+ * @return bool
+ */
+function tiny_styles_user_can_see(array $record, bool $isadmin, array $userroleids): bool {
+    $adminrestriction = $record['visibility_admin'] ?? 'all';
+
+    if ($adminrestriction === 'admins_only' && !$isadmin) {
+        return false;
+    }
+    if ($adminrestriction === 'non_admins' && $isadmin) {
+        return false;
+    }
+
+    // Role check is skipped when admins_only.
+    if ($adminrestriction !== 'admins_only') {
+        $allowedroles = json_decode($record['visibility_roles'] ?? '', true) ?? [];
+        if (!empty($allowedroles) && empty(array_intersect($userroleids, $allowedroles))) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**

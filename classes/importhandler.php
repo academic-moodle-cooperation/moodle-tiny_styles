@@ -95,6 +95,20 @@ class importhandler {
                 $currentcatorder++;
                 $catobj->sortorder = $currentcatorder;
 
+                $catobj->visibility_admin = $catarr['visibility_admin'] ?? 'all';
+                if (!in_array($catobj->visibility_admin, ['all', 'admins_only', 'non_admins'], true)) {
+                    $catobj->visibility_admin = 'all';
+                }
+                $rawroles = is_array($catarr['visibility_roles'] ?? null) ? $catarr['visibility_roles'] : [];
+                $roleids = [];
+                foreach ($rawroles as $roleid) {
+                    $cleanid = (int)$roleid;
+                    if ($cleanid > 0) {
+                        $roleids[] = $cleanid;
+                    }
+                }
+                $catobj->visibility_roles = !empty($roleids) ? json_encode($roleids) : '';
+
                 $categoriestoinsert[] = $catobj;
             }
 
@@ -156,6 +170,20 @@ class importhandler {
                     $elemobj->timemodified = $time;
                     $currentelemorder++;
                     $elemobj->sortorder = $currentelemorder;
+
+                    $elemobj->visibility_admin = $elemarr['visibility_admin'] ?? 'all';
+                    if (!in_array($elemobj->visibility_admin, ['all', 'admins_only', 'non_admins'], true)) {
+                        $elemobj->visibility_admin = 'all';
+                    }
+                    $rawroles = is_array($elemarr['visibility_roles'] ?? null) ? $elemarr['visibility_roles'] : [];
+                    $roleids = [];
+                    foreach ($rawroles as $roleid) {
+                        $cleanid = (int)$roleid;
+                        if ($cleanid > 0) {
+                            $roleids[] = $cleanid;
+                        }
+                    }
+                    $elemobj->visibility_roles = !empty($roleids) ? json_encode($roleids) : '';
 
                     $elementcategorymap[] = $newcatid;
                     $elementstoinsert[] = $elemobj;

@@ -87,12 +87,14 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         upgrade_plugin_savepoint(true, 2025080603, 'tiny', 'styles');
     }
 
-    // Migrate category symbols from *.svg filenames to raw FA icon names.
-    if ($oldversion < 2026012201.02) {
+    // Migrate category symbols from *.svg to FA icon names, fix Boxes showdesc,
+    // and add role-based visibility columns to categories and elements tables.
+    if ($oldversion < 2026052500) {
+        // Migrate *.svg symbol values to raw FA icon names.
         $symbolmap = [
             'label'    => 'tag',
             'box'      => 'table-list',
-            'default'  => 'star',
+            'default'  => 'droplet',
             'preview'  => 'eye',
             'paint'    => 'palette',
             'check'    => 'check',
@@ -122,10 +124,40 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
             $DB->set_field('tiny_styles_categories', 'symbol', $faname, ['id' => $cat->id]);
         }
 
-        // Ensures the default Boxes category has showdesc set for existing installs.
+        // Ensure the default Boxes category has showdesc set for existing installs.
         $DB->set_field('tiny_styles_categories', 'showdesc', 'helptext', ['name' => 'Boxes']);
 
-        upgrade_plugin_savepoint(true, 2026012201.02, 'tiny', 'styles');
+        // Add visibility columns to categories table.
+        $table = new xmldb_table('tiny_styles_categories');
+
+        $field = new xmldb_field('visibility_admin', XMLDB_TYPE_CHAR, '20', null,
+            XMLDB_NOTNULL, null, 'all', 'timemodified');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('visibility_roles', XMLDB_TYPE_TEXT, null, null,
+            null, null, null, 'visibility_admin');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add visibility columns to elements table.
+        $table = new xmldb_table('tiny_styles_elements');
+
+        $field = new xmldb_field('visibility_admin', XMLDB_TYPE_CHAR, '20', null,
+            XMLDB_NOTNULL, null, 'all', 'timemodified');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('visibility_roles', XMLDB_TYPE_TEXT, null, null,
+            null, null, null, 'visibility_admin');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2026052500, 'tiny', 'styles');
     }
 
     return true;

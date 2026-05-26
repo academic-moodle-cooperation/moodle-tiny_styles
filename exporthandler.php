@@ -38,12 +38,14 @@ $catelements = $DB->get_records('tiny_styles_cat_elements', null, 'sortorder ASC
 $exportcategories = [];
 foreach ($categories as $cat) {
     $exportcategories[$cat->id] = [
-        'name'        => $cat->name,
-        'description' => $cat->description,
-        'symbol'      => $cat->symbol,
-        'menumode'    => $cat->menumode,
-        'enabled'     => $cat->enabled,
-        'elements'    => [],
+        'name'             => $cat->name,
+        'description'      => $cat->description,
+        'symbol'           => $cat->symbol,
+        'menumode'         => $cat->menumode,
+        'enabled'          => $cat->enabled,
+        'visibility_admin' => $cat->visibility_admin ?? 'all',
+        'visibility_roles' => json_decode($cat->visibility_roles ?? '', true) ?? [],
+        'elements'         => [],
     ];
 }
 
@@ -59,12 +61,14 @@ foreach ($catelements as $ce) {
 
     // Adds element data to the category elements array.
     $exportcategories[$categoryid]['elements'][] = [
-        'id'        => $elements[$elementid]->id,
-        'name'      => $elements[$elementid]->name,
-        'custom'    => $elements[$elementid]->custom,
-        'type'      => $elements[$elementid]->type,
-        'cssclasses' => $elements[$elementid]->cssclasses,
-        'enabled'   => $elements[$elementid]->enabled,
+        'id'               => $elements[$elementid]->id,
+        'name'             => $elements[$elementid]->name,
+        'custom'           => $elements[$elementid]->custom,
+        'type'             => $elements[$elementid]->type,
+        'cssclasses'       => $elements[$elementid]->cssclasses,
+        'enabled'          => $elements[$elementid]->enabled,
+        'visibility_admin' => $elements[$elementid]->visibility_admin ?? 'all',
+        'visibility_roles' => json_decode($elements[$elementid]->visibility_roles ?? '', true) ?? [],
     ];
 }
 

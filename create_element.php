@@ -65,6 +65,8 @@ class element_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
+        $mform->addElement('header', 'generalsettings', get_string('generalsettings', 'admin'));
+
         // Name.
         $mform->addElement(
             'text',
@@ -160,6 +162,38 @@ class element_form extends moodleform {
         );
         $mform->hideIf('manualconfig_help', 'cssclasses', 'neq', '_manual');
 
+        // Visibility by site admin status.
+        $mform->addElement('header', 'visibilityadminsection',
+            get_string('visibility_admin_section', 'tiny_styles'));
+        $mform->setExpanded('visibilityadminsection', false);
+
+        $adminvisibilityoptions = [
+            'all'         => get_string('visibility_admin_all', 'tiny_styles'),
+            'admins_only' => get_string('visibility_admin_admins_only', 'tiny_styles'),
+            'non_admins'  => get_string('visibility_admin_non_admins', 'tiny_styles'),
+        ];
+        $mform->addElement('select', 'visibility_admin',
+            get_string('visibility_admin', 'tiny_styles'), $adminvisibilityoptions);
+        $mform->setType('visibility_admin', PARAM_ALPHANUMEXT);
+        $mform->setDefault('visibility_admin', 'all');
+        $mform->addHelpButton('visibility_admin', 'visibility_admin_element', 'tiny_styles');
+
+        // Visibility by role.
+        $mform->addElement('header', 'visibilityrolessection',
+            get_string('visibility_roles_section', 'tiny_styles'));
+        $mform->setExpanded('visibilityrolessection', false);
+
+        $mform->addElement('autocomplete', 'visibility_roles',
+            get_string('visibility_roles', 'tiny_styles'),
+            $this->_customdata['roleoptions'],
+            ['multiple' => true]);
+        $mform->setType('visibility_roles', PARAM_INT);
+        $mform->addHelpButton('visibility_roles', 'visibility_roles_element', 'tiny_styles');
+
+        // Hide the role section entirely when admins_only.
+        $mform->hideIf('visibilityrolessection', 'visibility_admin', 'eq', 'admins_only');
+        $mform->hideIf('visibility_roles', 'visibility_admin', 'eq', 'admins_only');
+
         // Hidden fields.
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -194,6 +228,7 @@ class element_form extends moodleform {
         );
 
         $mform->addGroup($buttons, 'actionar', '', [' '], false);
+        $mform->closeHeaderBefore('actionar');
     }
 
     /**
@@ -217,7 +252,13 @@ $formurl = new moodle_url('/lib/editor/tiny/plugins/styles/create_element.php', 
     'id'     => $id,
     'catid'  => $catid,
 ]);
-$mform = new element_form($formurl, ['catid' => $catid]);
+$allroles = get_all_roles();
+$roleoptions = [];
+foreach ($allroles as $role) {
+    $roleoptions[$role->id] = role_get_name($role, $context);
+}
+
+$mform = new element_form($formurl, ['catid' => $catid, 'roleoptions' => $roleoptions]);
 
 if ($mform->is_cancelled()) {
     $returnurl = new moodle_url(
