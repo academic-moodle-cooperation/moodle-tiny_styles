@@ -130,14 +130,30 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         // Add visibility columns to categories table.
         $table = new xmldb_table('tiny_styles_categories');
 
-        $field = new xmldb_field('visibility_admin', XMLDB_TYPE_CHAR, '20', null,
-            XMLDB_NOTNULL, null, 'all', 'timemodified');
+        $field = new xmldb_field(
+            'visibility_admin',
+            XMLDB_TYPE_CHAR,
+            '20',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            'all',
+            'timemodified'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        $field = new xmldb_field('visibility_roles', XMLDB_TYPE_TEXT, null, null,
-            null, null, null, 'visibility_admin');
+        $field = new xmldb_field(
+            'visibility_roles',
+            XMLDB_TYPE_TEXT,
+            null,
+            null,
+            null,
+            null,
+            null,
+            'visibility_admin'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -145,14 +161,30 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         // Add visibility columns to elements table.
         $table = new xmldb_table('tiny_styles_elements');
 
-        $field = new xmldb_field('visibility_admin', XMLDB_TYPE_CHAR, '20', null,
-            XMLDB_NOTNULL, null, 'all', 'timemodified');
+        $field = new xmldb_field(
+            'visibility_admin',
+            XMLDB_TYPE_CHAR,
+            '20',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            'all',
+            'timemodified'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        $field = new xmldb_field('visibility_roles', XMLDB_TYPE_TEXT, null, null,
-            null, null, null, 'visibility_admin');
+        $field = new xmldb_field(
+            'visibility_roles',
+            XMLDB_TYPE_TEXT,
+            null,
+            null,
+            null,
+            null,
+            null,
+            'visibility_admin'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }

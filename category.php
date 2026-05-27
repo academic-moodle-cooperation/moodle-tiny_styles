@@ -135,8 +135,11 @@ class category_form extends moodleform {
         $mform->addHelpButton('showdesc', 'showdesc', 'tiny_styles');
 
         // Visibility by site admin status.
-        $mform->addElement('header', 'visibilityadminsection',
-            get_string('visibility_admin_section', 'tiny_styles'));
+        $mform->addElement(
+            'header',
+            'visibilityadminsection',
+            get_string('visibility_admin_section', 'tiny_styles')
+        );
         $mform->setExpanded('visibilityadminsection', false);
 
         $adminvisibilityoptions = [
@@ -144,21 +147,31 @@ class category_form extends moodleform {
             'admins_only' => get_string('visibility_admin_admins_only', 'tiny_styles'),
             'non_admins'  => get_string('visibility_admin_non_admins', 'tiny_styles'),
         ];
-        $mform->addElement('select', 'visibility_admin',
-            get_string('visibility_admin', 'tiny_styles'), $adminvisibilityoptions);
+        $mform->addElement(
+            'select',
+            'visibility_admin',
+            get_string('visibility_admin', 'tiny_styles'),
+            $adminvisibilityoptions
+        );
         $mform->setType('visibility_admin', PARAM_ALPHANUMEXT);
         $mform->setDefault('visibility_admin', 'all');
         $mform->addHelpButton('visibility_admin', 'visibility_admin', 'tiny_styles');
 
         // Visibility by role.
-        $mform->addElement('header', 'visibilityrolessection',
-            get_string('visibility_roles_section', 'tiny_styles'));
+        $mform->addElement(
+            'header',
+            'visibilityrolessection',
+            get_string('visibility_roles_section', 'tiny_styles')
+        );
         $mform->setExpanded('visibilityrolessection', false);
 
-        $mform->addElement('autocomplete', 'visibility_roles',
+        $mform->addElement(
+            'autocomplete',
+            'visibility_roles',
             get_string('visibility_roles', 'tiny_styles'),
             $this->_customdata['roleoptions'],
-            ['multiple' => true]);
+            ['multiple' => true]
+        );
         $mform->setType('visibility_roles', PARAM_INT);
         $mform->addHelpButton('visibility_roles', 'visibility_roles', 'tiny_styles');
 
