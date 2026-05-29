@@ -90,6 +90,10 @@ class importhandler {
                 $catobj->symbol = $catarr['symbol'] ?? '';
                 $catobj->menumode = $catarr['menumode'] ?? 'submenu';
                 $catobj->enabled = $catarr['enabled'] ?? 0;
+                $validshowdesc = ['never', 'helptext', 'tooltip'];
+                $catobj->showdesc = in_array($catarr['showdesc'] ?? 'never', $validshowdesc, true)
+                    ? $catarr['showdesc']
+                    : 'never';
                 $catobj->timecreated = $time;
                 $catobj->timemodified = $time;
                 $currentcatorder++;

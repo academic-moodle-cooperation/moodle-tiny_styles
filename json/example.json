@@ -1,9 +1,17 @@
 {
-  "_available_symbols": [ "These are the currently available symbols:",
-    "book.svg", "box.svg", "brush.svg", "check.svg", "default.svg",
-    "download.svg", "flag.svg", "folder.svg", "graduate.svg", "icon.svg",
-    "info.svg", "label.svg", "laptop.svg", "magnify.svg", "paint.svg",
-    "pen.svg", "preview.svg", "remove.svg", "school.svg", "square.svg"
+  "_icon_info": [
+    "The 'symbol' field accepts any free Font Awesome 6 solid icon name (use the icon name without prefix or extension).",
+    "The plugin uses FA 6.7.2 as bundled with Moodle's Boost theme.",
+    "Browse all available icons at: https://fontawesome.com/search?o=r&m=free&s=solid",
+    "Example values: 'book', 'star', 'circle-info', 'graduation-cap', 'palette', 'tag', 'eye', 'flag'"
+  ],
+  "_visibility_roles_info": [
+    "The 'visibility_roles' field accepts an array of numeric Moodle role IDs.",
+    "An empty array [] means the item is visible to all roles.",
+    "Role IDs are site-specific. Find them at: Site administration > Users > Permissions > Define roles (/admin/roles/manage.php).",
+    "Typical default role IDs (exact IDs may differ on your instance):",
+    "  1 = Manager,  2 = Course creator,  3 = Teacher (editing),  4 = Non-editing teacher,",
+    "  5 = Student,  6 = Guest,  7 = Authenticated user"
   ],
   "_multilang_info": [" All text fields support multilang filtering:",
     "FOR EXAMPLE:",
@@ -15,23 +23,30 @@
     {
       "name": "Category name here.",
       "description": "Category description here. Check the import page for detailed instructions.",
-      "symbol": "book.svg",
+      "symbol": "book",
       "menumode": "submenu",
+      "showdesc": "never",
       "enabled": 1,
+      "visibility_admin": "all",
+      "visibility_roles": [],
       "elements": [
         {
           "name": "Red Label",
           "custom": 0,
           "type": "block",
           "cssclasses": "alert alert-danger",
-          "enabled": 1
+          "enabled": 1,
+          "visibility_admin": "all",
+          "visibility_roles": []
         },
         {
           "name": "Green Text",
           "custom": 1,
           "type": "inline",
           "cssclasses": "color: green; font-weight:bold;",
-          "enabled": 0
+          "enabled": 0,
+          "visibility_admin": "all",
+          "visibility_roles": []
         }
       ]
     }

@@ -34,7 +34,6 @@ $elements = $DB->get_records('tiny_styles_elements', null, 'sortorder ASC');
 $catelements = $DB->get_records('tiny_styles_cat_elements', null, 'sortorder ASC');
 
 // Associative array, each key is a category id.
-// Missing: cat->showdesc due to not being implemented on frontside.
 $exportcategories = [];
 foreach ($categories as $cat) {
     $exportcategories[$cat->id] = [
@@ -42,6 +41,7 @@ foreach ($categories as $cat) {
         'description'      => $cat->description,
         'symbol'           => $cat->symbol,
         'menumode'         => $cat->menumode,
+        'showdesc'         => $cat->showdesc ?? 'never',
         'enabled'          => $cat->enabled,
         'visibility_admin' => $cat->visibility_admin ?? 'all',
         'visibility_roles' => json_decode($cat->visibility_roles ?? '', true) ?? [],
