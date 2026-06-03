@@ -134,6 +134,28 @@ class category_form extends moodleform {
         );
         $mform->addHelpButton('showdesc', 'showdesc', 'tiny_styles');
 
+        // Restrict visibility section.
+        $mform->addElement(
+            'header',
+            'restrictvisibilitysection',
+            get_string('restrict_visibility_section', 'tiny_styles')
+        );
+        $mform->setExpanded('restrictvisibilitysection', false);
+
+        $visibilityoptions = [
+            '1' => get_string('visibility_show', 'tiny_styles'),
+            '0' => get_string('visibility_hide', 'tiny_styles'),
+        ];
+        $mform->addElement(
+            'select',
+            'enabled',
+            get_string('visibility', 'tiny_styles'),
+            $visibilityoptions
+        );
+        $mform->setType('enabled', PARAM_INT);
+        $mform->setDefault('enabled', '1');
+        $mform->addHelpButton('enabled', 'visibility', 'tiny_styles');
+
         // Visibility by site admin status.
         $mform->addElement(
             'header',
@@ -178,6 +200,12 @@ class category_form extends moodleform {
         // Hide the role section entirely when admins_only.
         $mform->hideIf('visibilityrolessection', 'visibility_admin', 'eq', 'admins_only');
         $mform->hideIf('visibility_roles', 'visibility_admin', 'eq', 'admins_only');
+
+        // Hide admin and role sections when category is set to hide in editor.
+        $mform->hideIf('visibilityadminsection', 'enabled', 'eq', '0');
+        $mform->hideIf('visibility_admin', 'enabled', 'eq', '0');
+        $mform->hideIf('visibilityrolessection', 'enabled', 'eq', '0');
+        $mform->hideIf('visibility_roles', 'enabled', 'eq', '0');
 
         // Hidden $id field for edit form.
         $mform->addElement('hidden', 'id');

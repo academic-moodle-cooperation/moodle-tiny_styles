@@ -162,13 +162,57 @@ class element_form extends moodleform {
         );
         $mform->hideIf('manualconfig_help', 'cssclasses', 'neq', '_manual');
 
-        // Read parent category visibility restrictions from custom data.
+        // Read parent category restrictions from custom data.
         $catvisiblityadmin = $this->_customdata['cat_visibility_admin'] ?? 'all';
         $catvisiblityroles = $this->_customdata['cat_visibility_roles'] ?? [];
+        $catenabledstatus = $this->_customdata['cat_enabled'] ?? 1;
         $caturl = (new moodle_url('/lib/editor/tiny/plugins/styles/category.php', [
             'tiny_styles_action' => 'edit',
             'id'                 => $this->_customdata['catid'],
         ]))->out(false);
+
+        // Restrict visibility section.
+        $mform->addElement(
+            'header',
+            'restrictvisibilitysection',
+            get_string('restrict_visibility_section', 'tiny_styles')
+        );
+        $mform->setExpanded('restrictvisibilitysection', false);
+
+        // Info alert when parent category is hidden.
+        if (!$catenabledstatus) {
+            $dismissbutton = html_writer::tag('button', '', [
+                'type'            => 'button',
+                'class'           => 'btn-close',
+                'data-bs-dismiss' => 'alert',
+                'aria-label'      => get_string('close', 'tiny_styles'),
+            ]);
+            $mform->addElement('html', html_writer::div(
+                get_string('visibility_hidden_locked', 'tiny_styles', $caturl) . $dismissbutton,
+                'alert alert-info alert-dismissible fade show',
+                ['role' => 'alert']
+            ));
+        }
+
+        $visibilityoptions = [
+            '1' => get_string('visibility_show', 'tiny_styles'),
+            '0' => get_string('visibility_hide', 'tiny_styles'),
+        ];
+        $mform->addElement(
+            'select',
+            'enabled',
+            get_string('visibility', 'tiny_styles'),
+            $visibilityoptions
+        );
+        $mform->setType('enabled', PARAM_INT);
+        $mform->setDefault('enabled', '1');
+        $mform->addHelpButton('enabled', 'visibility_element', 'tiny_styles');
+
+        // Lock to hidden when parent category is set to hide in editor.
+        if (!$catenabledstatus) {
+            $mform->setConstant('enabled', '0');
+            $mform->freeze('enabled');
+        }
 
         // Visibility by site admin status.
         $mform->addElement(
@@ -214,8 +258,11 @@ class element_form extends moodleform {
             $mform->freeze('visibility_admin');
         }
 
-        // Visibility by role — omitted entirely when category forces admins_only
-        // (role filtering is irrelevant for admin-only content).
+        // Hide admin section when element is set to hide in editor.
+        $mform->hideIf('visibilityadminsection', 'enabled', 'eq', '0');
+        $mform->hideIf('visibility_admin', 'enabled', 'eq', '0');
+
+        // Visibility by role.
         if ($catvisiblityadmin !== 'admins_only') {
             $mform->addElement(
                 'header',
@@ -252,6 +299,10 @@ class element_form extends moodleform {
             // Hide role section when user sets visibility_admin to admins_only.
             $mform->hideIf('visibilityrolessection', 'visibility_admin', 'eq', 'admins_only');
             $mform->hideIf('visibility_roles', 'visibility_admin', 'eq', 'admins_only');
+
+            // Hide role section when element is set to Hide in editor.
+            $mform->hideIf('visibilityrolessection', 'enabled', 'eq', '0');
+            $mform->hideIf('visibility_roles', 'enabled', 'eq', '0');
         }
 
         // Hidden fields.
@@ -322,6 +373,7 @@ foreach ($allroles as $role) {
 $parentcategory = ($catid > 0) ? tiny_styles_get_category($catid) : null;
 $catvisiblityadmin = $parentcategory ? ($parentcategory->visibility_admin ?? 'all') : 'all';
 $catvisiblityroles = $parentcategory ? (json_decode($parentcategory->visibility_roles ?? '', true) ?? []) : [];
+$catenabledstatus = $parentcategory ? (int)($parentcategory->enabled ?? 1) : 1;
 
 // Narrow the role picker to only the roles allowed by the parent category.
 if (!empty($catvisiblityroles)) {
@@ -333,6 +385,7 @@ $mform = new element_form($formurl, [
     'roleoptions'          => $roleoptions,
     'cat_visibility_admin' => $catvisiblityadmin,
     'cat_visibility_roles' => $catvisiblityroles,
+    'cat_enabled'          => $catenabledstatus,
 ]);
 
 if ($mform->is_cancelled()) {
