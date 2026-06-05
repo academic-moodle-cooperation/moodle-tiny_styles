@@ -175,7 +175,7 @@ class element_form extends moodleform {
         $mform->addElement(
             'header',
             'restrictvisibilitysection',
-            get_string('restrict_visibility_section', 'tiny_styles')
+            get_string('restrict_availability_section', 'tiny_styles')
         );
         $mform->setExpanded('restrictvisibilitysection', false);
 
