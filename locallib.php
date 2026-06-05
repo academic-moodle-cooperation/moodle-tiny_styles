@@ -211,7 +211,6 @@ function tiny_styles_prepare_category_for_save($formdata, $action = 'create') {
             : 'all';
 
         // When admins_only is set, the role picker is disabled in the form and not submitted.
-        // Preserves the existing value so previously selected roles are retained on re-activation.
         if ($record->visibility_admin === 'admins_only' && $old !== null) {
             $record->visibility_roles = $old->visibility_roles ?? '';
         } else {
@@ -253,33 +252,6 @@ function tiny_styles_load_category_for_form($categoryid) {
     $formdata->visibility_roles = json_decode($category->visibility_roles ?? '', true) ?? [];
 
     return $formdata;
-}
-
-/**
- * Get list of available icon files from pix directory.
- *
- * @return array Array of icon filenames (e.g. ['book.svg', 'box.svg', ...])
- */
-function tiny_styles_get_available_icons() {
-    global $CFG;
-
-    $iconpath = $CFG->dirroot . '/lib/editor/tiny/plugins/styles/pix';
-    $icons = [];
-
-    if (is_dir($iconpath)) {
-        $files = scandir($iconpath);
-        foreach ($files as $file) {
-            if ($file === '.' || $file === '..' || $file === 'icon.svg' || $file === 'remove.svg') {
-                continue;
-            }
-            $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-            if ($ext === 'svg') {
-                $icons[] = $file;
-            }
-        }
-    }
-
-    return $icons;
 }
 
 
@@ -541,7 +513,6 @@ function tiny_styles_prepare_element_for_save($formdata, $action = 'create') {
     }
 
     // When enabled=0, the visibility sections are disabled by hideIf and not submitted.
-    // Preserve existing values so they are retained when the element is re-enabled.
     if ($record->enabled == 0 && $old !== null) {
         $record->visibility_admin = $old->visibility_admin ?? 'all';
         $record->visibility_roles = $old->visibility_roles ?? '';
@@ -552,7 +523,6 @@ function tiny_styles_prepare_element_for_save($formdata, $action = 'create') {
             : 'all';
 
         // When admins_only is set, the role picker is disabled in the form and not submitted.
-        // Preserves the existing value so previously selected roles are retained on re-activation.
         if ($record->visibility_admin === 'admins_only' && $old !== null) {
             $record->visibility_roles = $old->visibility_roles ?? '';
         } else {
