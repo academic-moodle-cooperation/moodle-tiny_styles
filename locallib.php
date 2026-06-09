@@ -184,9 +184,7 @@ function tiny_styles_prepare_category_for_save($formdata, $action = 'create') {
     $record->showdesc = $formdata->showdesc ?? 'never';
     $record->timemodified = time();
 
-    // Read enabled from the Visibility dropdown.
-    $enabledval = $formdata->enabled ?? 1;
-    $record->enabled = $enabledval ? 1 : 0;
+    $record->enabled = (int)($formdata->enabled ?? 1);
 
     if ($action === 'edit' && !empty($formdata->id)) {
         // Fetch old record first so it can inform visibility preservation below.
@@ -496,9 +494,7 @@ function tiny_styles_prepare_element_for_save($formdata, $action = 'create') {
         $record->type = tiny_styles_check_for_style_type($formdata->cssclasses) ?? 'inline';
     }
 
-    // Read enabled from the Visibility dropdown (1 = Show in editor, 0 = Hide in editor).
-    $enabledval = $formdata->enabled ?? 1;
-    $record->enabled = $enabledval ? 1 : 0;
+    $record->enabled = (int)($formdata->enabled ?? 1);
 
     if ($action === 'edit' && !empty($formdata->id)) {
         // Fetch old record first so it can inform visibility preservation below.

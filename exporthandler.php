@@ -42,7 +42,7 @@ foreach ($categories as $cat) {
         'symbol'           => $cat->symbol,
         'menumode'         => $cat->menumode,
         'showdesc'         => $cat->showdesc ?? 'never',
-        'enabled'          => $cat->enabled,
+        'availability'     => $cat->enabled,
         'visibility_admin' => $cat->visibility_admin ?? 'all',
         'visibility_roles' => json_decode($cat->visibility_roles ?? '', true) ?? [],
         'elements'         => [],
@@ -66,7 +66,7 @@ foreach ($catelements as $ce) {
         'custom'           => $elements[$elementid]->custom,
         'type'             => $elements[$elementid]->type,
         'cssclasses'       => $elements[$elementid]->cssclasses,
-        'enabled'          => $elements[$elementid]->enabled,
+        'availability'     => $elements[$elementid]->enabled,
         'visibility_admin' => $elements[$elementid]->visibility_admin ?? 'all',
         'visibility_roles' => json_decode($elements[$elementid]->visibility_roles ?? '', true) ?? [],
     ];

@@ -134,13 +134,12 @@ class category_form extends moodleform {
         );
         $mform->addHelpButton('showdesc', 'showdesc', 'tiny_styles');
 
-        // Restrict visibility section.
         $mform->addElement(
             'header',
-            'restrictvisibilitysection',
+            'restrict_availability_section',
             get_string('restrict_availability_section', 'tiny_styles')
         );
-        $mform->setExpanded('restrictvisibilitysection', false);
+        $mform->setExpanded('restrict_availability_section', false);
 
         $visibilityoptions = [
             '1' => get_string('visibility_show', 'tiny_styles'),

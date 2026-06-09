@@ -171,13 +171,12 @@ class element_form extends moodleform {
             'id'                 => $this->_customdata['catid'],
         ]))->out(false);
 
-        // Restrict visibility section.
         $mform->addElement(
             'header',
-            'restrictvisibilitysection',
+            'restrict_availability_section',
             get_string('restrict_availability_section', 'tiny_styles')
         );
-        $mform->setExpanded('restrictvisibilitysection', false);
+        $mform->setExpanded('restrict_availability_section', false);
 
         // Info alert when parent category is hidden.
         if (!$catenabledstatus) {
