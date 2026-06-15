@@ -26,17 +26,17 @@
       "symbol": "book",
       "menumode": "submenu",
       "showdesc": "never",
-      "enabled": 1,
+      "availability": 1,
       "visibility_admin": "all",
       "visibility_roles": [],
       "elements": [
         {
-          "name": "Red Label",
+          "name": "Red Block",
           "custom": 0,
           "type": "block",
           "cssclasses": "alert alert-danger",
-          "enabled": 1,
-          "visibility_admin": "all",
+          "availability": 1,
+          "visibility_admin": "admins_only",
           "visibility_roles": []
         },
         {
@@ -44,9 +44,9 @@
           "custom": 1,
           "type": "inline",
           "cssclasses": "color: green; font-weight:bold;",
-          "enabled": 0,
-          "visibility_admin": "all",
-          "visibility_roles": []
+          "availability": 0,
+          "visibility_admin": "non_admins",
+          "visibility_roles": [3, 4, 5]
         }
       ]
     }
