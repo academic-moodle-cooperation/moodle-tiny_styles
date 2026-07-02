@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin administration: category editing and creation (REFACTORED VERSION)
+ * Plugin administration category editing and creation
  *
  * @package tiny_styles
  * @author Karri Pajarinen
