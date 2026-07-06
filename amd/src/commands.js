@@ -26,6 +26,8 @@ import {getButtonImage} from 'editor_tiny/utils';
 import Ajax from 'core/ajax';
 import {get_string as getString} from 'core/str';
 import {icon} from "./common";
+import {show as showMenu, hide as hideMenu, isVisible as isMenuVisible} from './menu';
+import {isStyledInlineElement} from './styleutils';
 // Import PreviewElement from "./preview_element"; // uncomment to enable preview
 
 /**
@@ -45,93 +47,6 @@ async function fetchCategories() {
     }
 }
 
-/**
- * Builds the category-based menu structure.
- *
- * @param {Object} editor TinyMCE instance.
- * @param {Array} categories List of categories.
- * @param {Object} icons Available icons for categories.
- * @param {String} clearlabel Langstring for clearing styles.
- * @returns {Array} Menu items.
- */
-function buildCategoryItems(editor, categories, icons, clearlabel) {
-    const items = [];
-
-    categories.forEach((cat) => {
-        if (cat.menumode === 'divider') {
-            items.push({type: 'separator'});
-            return;
-        }
-
-        // Inline menumode type
-        if (cat.menumode === 'inline' && Array.isArray(cat.elements)) {
-            cat.elements.forEach((elem) => {
-                items.push({
-                    type: 'menuitem',
-                    text: elem.name,
-                    onAction: () => {
-                        applyStyle(editor, {
-                            className: elem.cssclasses,
-                            block: (elem.type === 'block'),
-                            custom: (elem.custom === 1),
-                            id: elem.id,
-                        });
-                    }
-                });
-            });
-            return;
-        }
-
-        const subItems = [];
-        if (Array.isArray(cat.elements)) {
-            cat.elements.forEach((elem) => {
-                subItems.push({
-                    type: 'menuitem',
-                    text: elem.name,
-                    onAction: () => {
-                        applyStyle(editor, {
-                            className: elem.cssclasses,
-                            block: (elem.type === 'block'),
-                            custom: (elem.custom === 1),
-                            id: elem.id,
-                        });
-                    }
-                });
-            });
-        }
-        if (subItems.length > 0) {
-            let caticon = icons.default;
-
-            // Handle case if cat.symbol is missing or undefined.
-            const symbolraw = cat.symbol ? cat.symbol : '';
-            const symbolname = symbolraw.replace('.svg', '').trim();
-
-            if (icons[symbolname]) {
-                caticon = icons[symbolname];
-            }
-            items.push({
-                type: 'nestedmenuitem',
-                icon: caticon,
-                text: cat.name,
-                title: 'tooltip',
-                getSubmenuItems: () => subItems
-            });
-        }
-    });
-
-    // A separator and remove style button
-    items.push({type: 'separator'});
-    items.push({
-        type: 'menuitem',
-        text: clearlabel,
-        icon: icons.remove,
-
-        onAction: () => {
-           clearStyling(editor);
-        }
-    });
-    return items;
-}
 
 /**
  * Applies a bootstrap or custom style to the selected text.
@@ -154,9 +69,11 @@ function applyStyle(editor, styleDef) {
         return isStyledInlineElement(node);
     }) : null;
 
-    // Only return early if no selection AND not in a styled span AND not a block style
+    // Only return early if no selection AND not in a word AND not a block style
     if (!selectedHtml.trim() && !block && !styledSpanParent) {
-        return;
+        if (!expandSelectionToWord(editor)) {
+            return;
+        }
     }
 
     if (block) {
@@ -543,36 +460,39 @@ function isStyledBlockElement(node) {
 }
 
 /**
- * Checks if a DOM node is a styled inline element.
- * Now also checks data-mce-style attribute for custom style IDs.
+ * Expands a collapsed cursor position to cover the surrounding word.
  *
- * @param {Node} node The DOM node to check.
- * @returns {boolean} True if the node is a styled inline element.
+ * @param {Object} editor TinyMCE editor instance.
+ * @returns {boolean}
  */
-function isStyledInlineElement(node) {
-    if (!node || node.tagName !== 'SPAN') {
- return false;
-}
-
-    // Check className
-    if (node.className) {
- return true;
-}
-
-    // Check style property
-    if (node.style && node.style.getPropertyValue('--tiny-styles-custom-id')) {
- return true;
-}
-
-    // Check data-mce-style attribute for custom style ID
-    if (node.getAttribute && node.getAttribute('data-mce-style')) {
-        const dataMceStyle = node.getAttribute('data-mce-style');
-        if (dataMceStyle.includes('--tiny-styles-custom-id')) {
- return true;
-}
+function expandSelectionToWord(editor) {
+    const range = editor.selection.getRng();
+    if (!range.collapsed) {
+        return true;
     }
+    const container = range.startContainer;
+    if (container.nodeType !== Node.TEXT_NODE) {
+        return false;
+    }
+    const text = container.textContent;
+    const offset = range.startOffset;
 
-    return false;
+    let start = offset;
+    while (start > 0 && /\S/.test(text[start - 1])) {
+        start--;
+    }
+    let end = offset;
+    while (end < text.length && /\S/.test(text[end])) {
+        end++;
+    }
+    if (start === end) {
+        return false;
+    }
+    const newRange = editor.dom.createRng();
+    newRange.setStart(container, start);
+    newRange.setEnd(container, end);
+    editor.selection.setRng(newRange);
+    return true;
 }
 
 /**
@@ -939,97 +859,18 @@ export const getSetup = async() => {
     const [
         categories,
         buttonImage,
-        labelImage,
-        boxImage,
-        defaultImage,
         mainMenuLabel,
-        previewImage,
-        applyImage,
-        checkImage,
-        graduateImage,
-        laptopImage,
-        magnifyingImage,
-        penImage,
-        schoolImage,
-        squareImage,
-        flagImage,
-        brushImage,
-        infoImage,
-        downloadImage,
-        bookImage,
-        folderImage,
-        removeImage,
         clearLabel,
     ] = await Promise.all([
         fetchCategories(),
         getButtonImage('icon', 'tiny_styles'),
-        getButtonImage('label', 'tiny_styles'),
-        getButtonImage('box', 'tiny_styles'),
-        getButtonImage('default', 'tiny_styles'),
         getString('menuitem_styles', 'tiny_styles'),
-        getButtonImage('preview', 'tiny_styles'),
-        getButtonImage('paint', 'tiny_styles'),
-        getButtonImage('check', 'tiny_styles'),
-        getButtonImage('graduate', 'tiny_styles'),
-        getButtonImage('laptop', 'tiny_styles'),
-        getButtonImage('magnify', 'tiny_styles'),
-        getButtonImage('pen', 'tiny_styles'),
-        getButtonImage('school', 'tiny_styles'),
-        getButtonImage('square', 'tiny_styles'),
-        getButtonImage('flag', 'tiny_styles'),
-        getButtonImage('brush', 'tiny_styles'),
-        getButtonImage('info', 'tiny_styles'),
-        getButtonImage('download', 'tiny_styles'),
-        getButtonImage('book', 'tiny_styles'),
-        getButtonImage('folder', 'tiny_styles'),
-        getButtonImage('remove', 'tiny_styles'),
         getString('editor:clearstyle', 'tiny_styles'),
     ]);
 
     return (editor) => {
 
         editor.ui.registry.addIcon(icon, buttonImage.html);
-        editor.ui.registry.addIcon('labelIcon', labelImage.html);
-        editor.ui.registry.addIcon('boxIcon', boxImage.html);
-        editor.ui.registry.addIcon('defaultIcon', defaultImage.html);
-        editor.ui.registry.addIcon('previewIcon', previewImage.html);
-        editor.ui.registry.addIcon('applyIcon', applyImage.html);
-        editor.ui.registry.addIcon('checkIcon', checkImage.html);
-        editor.ui.registry.addIcon('graduateIcon', graduateImage.html);
-        editor.ui.registry.addIcon('laptopIcon', laptopImage.html);
-        editor.ui.registry.addIcon('magnifyingIcon', magnifyingImage.html);
-        editor.ui.registry.addIcon('penIcon', penImage.html);
-        editor.ui.registry.addIcon('schoolIcon', schoolImage.html);
-        editor.ui.registry.addIcon('squareIcon', squareImage.html);
-        editor.ui.registry.addIcon('flagIcon', flagImage.html);
-        editor.ui.registry.addIcon('brushIcon', brushImage.html);
-        editor.ui.registry.addIcon('infoIcon', infoImage.html);
-        editor.ui.registry.addIcon('downloadIcon', downloadImage.html);
-        editor.ui.registry.addIcon('bookIcon', bookImage.html);
-        editor.ui.registry.addIcon('folderIcon', folderImage.html);
-        editor.ui.registry.addIcon('removeIcon', removeImage.html);
-
-        const icons = {
-            label: 'labelIcon',
-            box: 'boxIcon',
-            "default": 'defaultIcon',
-            preview: 'previewIcon',
-            paint: 'applyIcon',
-            check: 'checkIcon',
-            graduate: 'graduateIcon',
-            laptop: 'laptopIcon',
-            magnify: 'magnifyingIcon',
-            pen: 'penIcon',
-            school: 'schoolIcon',
-            square: 'squareIcon',
-            flag: 'flagIcon',
-            brush: 'brushIcon',
-            info: 'infoIcon',
-            download: 'downloadIcon',
-            book: 'bookIcon',
-            folder: 'folderIcon',
-            remove: 'removeIcon',
-        };
 
         /**
          * Helper to creates an empty paragraph for visibility.
@@ -1218,20 +1059,63 @@ export const getSetup = async() => {
                 editor.selection.setContent('<br>&nbsp;');
                 continuedTyping = true;
             }
-        });
 
-        editor.ui.registry.addMenuButton('tiny_styles_button', {
-            icon: icon,
-            tooltip: mainMenuLabel,
-            fetch: (callback) => {
-                callback(buildCategoryItems(editor, categories, icons, clearLabel));
+            // Removes an empty styled block with a single Backspace.
+            if (e.key === 'Backspace') {
+                const node = editor.selection.getNode();
+
+                const styledBlock = editor.dom.getParent(node, (el) => {
+                    return isStyledBlockElement(el);
+                }, editor.getBody());
+
+                if (!styledBlock || styledBlock.textContent.trim() !== '') {
+                    return;
+                }
+
+                e.preventDefault();
+                const prev = styledBlock.previousElementSibling;
+                const parent = styledBlock.parentNode;
+                const nextSib = styledBlock.nextSibling;
+                editor.dom.remove(styledBlock);
+
+                if (prev) {
+                    const range = editor.dom.createRng();
+                    range.selectNodeContents(prev);
+                    range.collapse(false);
+                    editor.selection.setRng(range);
+                    editor.focus();
+                } else {
+                    const newPara = createEmptyParagraph(editor);
+                    parent.insertBefore(newPara, nextSib);
+                    focusParagraph(editor, newPara);
+                }
             }
         });
 
-        editor.ui.registry.addNestedMenuItem('tiny_styles_nestedmenu', {
+        const toggleStyles = () => {
+            if (isMenuVisible()) {
+                hideMenu();
+            } else {
+                showMenu(
+                    editor,
+                    categories,
+                    (styleDef) => applyStyle(editor, styleDef),
+                    () => clearStyling(editor),
+                    clearLabel
+                );
+            }
+        };
+
+        editor.ui.registry.addButton('tiny_styles_button', {
+            icon: icon,
+            tooltip: mainMenuLabel,
+            onAction: toggleStyles,
+        });
+
+        editor.ui.registry.addMenuItem('tiny_styles_nestedmenu', {
             icon: icon,
             text: mainMenuLabel,
-            getSubmenuItems: () => buildCategoryItems(editor, categories, icons, clearLabel),
+            onAction: toggleStyles,
         });
 
     };

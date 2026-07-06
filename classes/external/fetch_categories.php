@@ -33,7 +33,6 @@ use external_function_parameters;
 use external_single_structure;
 use external_multiple_structure;
 use external_value;
-use external_iterator;
 use stdClass;
 use context_system;
 
@@ -62,7 +61,7 @@ class fetch_categories extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $sql = "SELECT c.id, c.name, c.symbol, c.menumode, c.description,
+        $sql = "SELECT c.id, c.name, c.symbol, c.menumode, c.description, c.showdesc,
             e.id AS elemid, e.name AS elemname, e.type, e.cssclasses, e.custom
         FROM {tiny_styles_categories} c
         LEFT JOIN {tiny_styles_cat_elements} ce ON ce.categoryid = c.id
@@ -81,6 +80,7 @@ class fetch_categories extends external_api {
                     'name' => format_string($r->name, true, ['context' => $context]),
                     'symbol' => $r->symbol,
                     'description' => format_string($r->description, true, ['context' => $context]),
+                    'showdesc'   => $r->showdesc,
                     'menumode' => $r->menumode,
                     'elements' => [],
                 ];
@@ -112,6 +112,7 @@ class fetch_categories extends external_api {
                 'name'         => new external_value(PARAM_TEXT, 'Category name'),
                 'symbol'       => new external_value(PARAM_RAW, 'Optional FA symbol', VALUE_OPTIONAL),
                 'description'  => new external_value(PARAM_TEXT, 'Category description'),
+                'showdesc'     => new external_value(PARAM_TEXT, 'never/helptext/tooltip'),
                 'menumode' => new external_value(PARAM_TEXT, 'divider/submenu/inline/'),
                 'elements'     => new external_multiple_structure(
                     new external_single_structure([

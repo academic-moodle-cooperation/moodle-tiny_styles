@@ -62,7 +62,7 @@ class importhandler {
 
         // Check the import for categories.
         if (empty($data['categories']) || !is_array($data['categories'])) {
-            throw new \moodle_exception('importjsoncategories', 'tiny_styles');
+            throw new \core\exception\moodle_exception('importjsoncategories', 'tiny_styles');
         }
 
         $transaction = $DB->start_delegated_transaction();
@@ -118,6 +118,7 @@ class importhandler {
 
             // Prepare all elements and bridges for bulk insert.
             $elementstoinsert = [];
+            $elementcategorymap = [];
             $bridgestoinsert = [];
             $bridgesortorder = [];
 
@@ -156,8 +157,7 @@ class importhandler {
                     $currentelemorder++;
                     $elemobj->sortorder = $currentelemorder;
 
-                    // Store category and bridge info for later.
-                    $elemobj->_categoryid = $newcatid;
+                    $elementcategorymap[] = $newcatid;
                     $elementstoinsert[] = $elemobj;
                 }
             }
@@ -175,7 +175,7 @@ class importhandler {
 
                 $elemindex = 0;
                 foreach ($insertedelems as $elem) {
-                    $categoryid = $elementstoinsert[$elemindex]->_categoryid;
+                    $categoryid = $elementcategorymap[$elemindex];
 
                     // Check if bridge already exists.
                     $bridgeparams = [
@@ -204,7 +204,7 @@ class importhandler {
             }
             $transaction->allow_commit();
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $transaction->rollback($e);
             throw $e;
         }

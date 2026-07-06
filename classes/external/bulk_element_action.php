@@ -35,7 +35,7 @@ use external_single_structure;
 use external_multiple_structure;
 use external_value;
 use context_system;
-use moodle_exception;
+use core\exception\moodle_exception;
 
 /**
  * External service for bulk element actions.

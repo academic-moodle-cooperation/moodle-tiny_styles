@@ -66,24 +66,28 @@
       <td class="text-truncate" style="max-width: 350px;" data-toggle="tooltip" title="{{description}}">{{description}}</td>
       <td>{{menumode}}</td>
       <td>
-        <a href="#" class="toggle-enable"
-           data-id="{{id}}"
-           title="{{#enabled}}{{#str}}show, core{{/str}}{{/enabled}}{{^enabled}}{{#str}}hide, core{{/str}}{{/enabled}}"
-           style="text-decoration: none; color: #0f6cbf;">
-            <i class="icon fa enabled-icon {{#enabled}}fa-eye{{/enabled}}{{^enabled}}fa-eye-slash{{/enabled}} fa-fw"></i>
-        </a>
+        <div class="d-flex gap-2 align-items-center">
+          <a href="#" class="toggle-enable text-primary text-decoration-none"
+             data-id="{{id}}"
+             title="{{#enabled}}{{#str}}show, core{{/str}}{{/enabled}}{{^enabled}}{{#str}}hide, core{{/str}}{{/enabled}}"
+             >
+              <i class="icon fa enabled-icon {{#enabled}}fa-eye{{/enabled}}{{^enabled}}fa-eye-slash{{/enabled}} fa-fw"></i>
+          </a>
 
-        <a href="{{elementsurl}}" class="me-2" title="{{#str}} elements, tiny_styles {{/str}}" style="text-decoration: none; {{elementsiconstyle}}">
-          <i class="fa-solid fa-list"></i>
-        </a>
+          <a href="{{elementsurl}}" title="{{#str}} elements, tiny_styles {{/str}}"
+             class="{{^isdivider}}text-primary{{/isdivider}}{{#isdivider}}text-muted pe-none{{/isdivider}} text-decoration-none">
+            <i class="icon fa fa-list fa-fw"></i>
+          </a>
 
-        {{{moveupiconhtml}}}
-        {{{movedowniconhtml}}}
+          {{{moveupiconhtml}}}
+          {{{movedowniconhtml}}}
 
-        <a href="{{editurl}}" class="me-2" title="{{#str}} editcategory, tiny_styles {{/str}}" style="text-decoration: none;">
-          <i class="icon fa fa-cog fa-fw"></i>
-        </a>
-        {{{deleteiconhtml}}}
+          <a href="{{editurl}}" title="{{#str}} editcategory, tiny_styles {{/str}}"
+             class="text-primary text-decoration-none">
+            <i class="icon fa fa-cog fa-fw"></i>
+          </a>
+          {{{deleteiconhtml}}}
+        </div>
       </td>
     </tr>
   {{/categories}}

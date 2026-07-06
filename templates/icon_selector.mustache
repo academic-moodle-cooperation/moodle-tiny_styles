@@ -22,9 +22,6 @@
     Classes required for JS:
     * iconselector.js
 
-    Data attributes required for JS:
-    *
-
     Context variables required for this template:
     * selecticon_label - Label for the icon selector field
     * searchplaceholder - Placeholder text for search input
@@ -32,11 +29,6 @@
     * clearsearch_label - Label for clear search button
     * noiconsfound_label - Message when no icons match search
     * close_label - Label for close button
-    * icons - Array of icon objects, each containing:
-        - file: Icon filename (e.g., "alert.svg")
-        - url: Full URL to the icon file
-        - name: Display name (filename without extension)
-    * iconnames_json - JSON-encoded array of icon filenames for JavaScript validation
 
     Example context (json):
     {}
@@ -45,16 +37,17 @@
     <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
         <label for="icon-search-input">{{selecticon_label}}</label>
     </div>
-    <div class="col-md-9" style="position: relative;" id="search-container">
+    <div class="col-md-9 d-flex align-items-center gap-2" style="position: relative;" id="search-container">
         <input type="text" id="icon-search-input"
                placeholder="{{searchplaceholder}}"
                style="width: 300px; cursor: text;"
                class="form-control">
+        <i id="icon-preview" class="fa-solid fa-droplet" style="font-size: 20px; color: #555;"></i>
     </div>
 </div>
 
 <div id="icon-popup" style="display:none; position:absolute; top:100%; left:0;
-     width:400px; max-height:450px; background-color:#fff;
+     width:440px; max-height:450px; background-color:#fff;
      border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15);
      z-index:1000; overflow:hidden; padding:0; margin-top:5px;">
 
@@ -66,23 +59,8 @@
         </button>
     </div>
 
-    <div id="icon-grid-container" style="max-height:300px; overflow-y:auto; padding:20px;">
-        <div id="icon-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap:10px;">
-            {{#icons}}
-            <div class="icon-grid-item"
-                 data-icon="{{file}}"
-                 data-icon-name="{{name}}"
-                 style="cursor:pointer; display:flex; flex-direction:column; align-items:center;
-                        justify-content:center; padding:12px; border-radius:12px;"
-                 title="{{name}}"
-                 onmouseover="this.style.backgroundColor='#e7f1ff'; this.style.borderColor='#007bff';"
-                 onmouseout="this.style.backgroundColor=''; this.style.borderColor='';">
-                <img src="{{url}}" alt="{{file}}"
-                     style="width:24px; height:24px; display:block; margin: 0 auto;" />
-                <div style="font-size:0.75em; margin-top:4px;
-                     color:#666; text-align:center;">{{name}}</div>
-            </div>
-            {{/icons}}
+    <div id="icon-grid-container" style="max-height:300px; overflow-y:auto; overflow-x:hidden; padding:20px;">
+        <div id="icon-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap:10px; grid-auto-rows: 78px;">
         </div>
         <div id="no-icons-found" style="display:none; text-align:center; padding:20px; color:#666;">
             {{noiconsfound_label}}
@@ -96,7 +74,3 @@
         </button>
     </div>
 </div>
-
-<script>
-    window.availableIcons = {{{iconnames_json}}};
-</script>

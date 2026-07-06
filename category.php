@@ -92,33 +92,7 @@ class category_form extends moodleform {
         $mform->setType('description', PARAM_TEXT);
         $mform->addRule('description', get_string('maximumchars', '', 1000), 'maxlength', 1000, 'client');
 
-        // Prepare icon selector data.
-        $iconpath = $CFG->dirroot . '/lib/editor/tiny/plugins/styles/pix';
-        $iconurlbase = $CFG->wwwroot . '/lib/editor/tiny/plugins/styles/pix';
-
-        $icons = [];
-        $iconnames = [];
-
-        if (is_dir($iconpath)) {
-            $files = scandir($iconpath);
-            foreach ($files as $file) {
-                if ($file === '.' || $file === '..' || $file === 'icon.svg' || $file === 'remove.svg') {
-                    continue;
-                }
-                $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-                if ($ext === 'svg') {
-                    $iconnames[] = $file;
-                    $iconname = pathinfo($file, PATHINFO_FILENAME);
-                    $icons[] = [
-                        'file' => $file,
-                        'url' => $iconurlbase . '/' . $file,
-                        'name' => $iconname,
-                    ];
-                }
-            }
-        }
-
-        // Prepare template context for icon selector.
+        // Prepare template context for icon selector (icon list comes from the AMD module).
         $iconselectorcontext = [
             'selecticon_label' => get_string('selecticon', 'tiny_styles'),
             'searchplaceholder' => get_string('searchplaceholder', 'tiny_styles'),
@@ -126,8 +100,6 @@ class category_form extends moodleform {
             'clearsearch_label' => get_string('clearsearch', 'tiny_styles'),
             'noiconsfound_label' => get_string('noiconsfound', 'tiny_styles'),
             'close_label' => get_string('close', 'tiny_styles'),
-            'icons' => $icons,
-            'iconnames_json' => json_encode($iconnames),
         ];
 
         // Render icon selector using template.
@@ -147,6 +119,20 @@ class category_form extends moodleform {
             ['size' => 1, 'style' => 'width: 300px;']
         );
         $mform->addHelpButton('menumode', 'menumodetype', 'tiny_styles');
+
+        $showdescoptions = [
+            'never'    => get_string('showdesc_never', 'tiny_styles'),
+            'helptext' => get_string('showdesc_helptext', 'tiny_styles'),
+            'tooltip'  => get_string('showdesc_tooltip', 'tiny_styles'),
+        ];
+        $mform->addElement(
+            'select',
+            'showdesc',
+            get_string('showdesc', 'tiny_styles'),
+            $showdescoptions,
+            ['size' => 1, 'style' => 'width: 300px;']
+        );
+        $mform->addHelpButton('showdesc', 'showdesc', 'tiny_styles');
 
         // Hidden $id field for edit form.
         $mform->addElement('hidden', 'id');

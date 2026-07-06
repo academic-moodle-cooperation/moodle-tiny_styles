@@ -87,5 +87,46 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
         upgrade_plugin_savepoint(true, 2025080603, 'tiny', 'styles');
     }
 
+    // Migrate category symbols from *.svg filenames to raw FA icon names.
+    if ($oldversion < 2026012201.02) {
+        $symbolmap = [
+            'label'    => 'tag',
+            'box'      => 'table-list',
+            'default'  => 'star',
+            'preview'  => 'eye',
+            'paint'    => 'palette',
+            'check'    => 'check',
+            'graduate' => 'graduation-cap',
+            'laptop'   => 'laptop',
+            'magnify'  => 'magnifying-glass',
+            'pen'      => 'pen',
+            'school'   => 'school',
+            'square'   => 'square',
+            'flag'     => 'flag',
+            'brush'    => 'paintbrush',
+            'info'     => 'circle-info',
+            'download' => 'download',
+            'book'     => 'book',
+            'folder'   => 'folder',
+            'remove'   => 'xmark',
+        ];
+
+        $categories = $DB->get_records('tiny_styles_categories', null, '', 'id, symbol');
+        foreach ($categories as $cat) {
+            $symbol = $cat->symbol ?? '';
+            if (empty($symbol) || !str_ends_with($symbol, '.svg')) {
+                continue;
+            }
+            $base = str_replace('.svg', '', $symbol);
+            $faname = $symbolmap[$base] ?? $base;
+            $DB->set_field('tiny_styles_categories', 'symbol', $faname, ['id' => $cat->id]);
+        }
+
+        // Ensures the default Boxes category has showdesc set for existing installs.
+        $DB->set_field('tiny_styles_categories', 'showdesc', 'helptext', ['name' => 'Boxes']);
+
+        upgrade_plugin_savepoint(true, 2026012201.02, 'tiny', 'styles');
+    }
+
     return true;
 }
