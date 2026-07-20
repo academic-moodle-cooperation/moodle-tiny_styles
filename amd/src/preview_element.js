@@ -23,7 +23,9 @@
  */
 
 import Modal from 'core/modal';
+import ModalEvents from 'core/modal_events';
 import Notification from 'core/notification';
+import {get_string as getString} from 'core/str';
 
 /**
  * Builds a preview snippet with placeholder text and applies
@@ -88,26 +90,31 @@ let currentModal = null;
  *
  * @param {string} title - Modal title.
  * @param {string} body - Modal body HTML.
+ * @param {string} [footer] - Optional footer HTML (e.g. action buttons).
+ * @returns {Promise<Object|null>} The created modal instance, or null on failure.
  */
-const openModal = async(title, body) => {
+const openModal = async(title, body, footer) => {
     if (currentModal) {
         currentModal.destroy();
         currentModal = null;
     }
 
     try {
-        const modal = await Modal.create({title, body});
+        const modal = await Modal.create({title, body, footer});
 
         currentModal = modal;
 
-        // Temporarily lower the custom panel.
+        // Tag to keep the panel open while a modal is showing.
+        modal.getRoot()[0].classList.add('tsm-styles-modal');
+
         const panelEl = document.querySelector('.tsm-panel');
+        // Lowers the panel below the modal backdrop so it is greyed out with the rest of the page.
         if (panelEl) {
             panelEl.style.zIndex = '1045';
         }
 
-        modal.getRoot()[0].addEventListener('hidden.bs.modal', () => {
-            // Restore panel z-index.
+        // Restores the panel's z-index when the modal is dismissed.
+        modal.getRoot().on(ModalEvents.hidden, () => {
             if (panelEl) {
                 panelEl.style.zIndex = '';
             }
@@ -115,8 +122,10 @@ const openModal = async(title, body) => {
         });
 
         modal.show();
+        return modal;
     } catch (error) {
         Notification.exception(error);
+        return null;
     }
 };
 
@@ -126,18 +135,58 @@ const openModal = async(title, body) => {
  * @param {string} name - Name for the style.
  * @param {string} cssclasses - CSS string or classes to be applied.
  * @param {string} type - 'block' or 'inline'.
+ * @param {Function} [onApply] - Called when the "Apply style" footer button is clicked.
+ * @param {boolean} [disabled] - When true the Apply button is rendered disabled with a helptext.
  */
-const showPreview = async(name, cssclasses, type) => {
+const showPreview = async(name, cssclasses, type, onApply, disabled) => {
     const isFullCssDefinition = cssclasses.includes('{') && cssclasses.includes('}');
     const previewhtml = buildPreviewHtml(cssclasses, type);
 
-    await openModal(name, previewhtml);
+    // Builds the footer only for the editor-side preview.
+    let footer = '';
+    if (onApply) {
+        const [applyLabel, applyDisabledHelp, closeLabel] = await Promise.all([
+            getString('applystyle', 'tiny_styles'),
+            getString('applystyle_disabled_help', 'tiny_styles'),
+            getString('close', 'tiny_styles'),
+        ]);
+        // Wraps a hoverable span that carries the title.
+        const applyBtn = disabled
+            ? `<span class="d-inline-block" tabindex="0" title="${applyDisabledHelp}">`
+                + `<button type="button" class="btn btn-primary tsm-apply-style" disabled`
+                + ` style="pointer-events: none;">${applyLabel}</button></span>`
+            : `<button type="button" class="btn btn-primary tsm-apply-style">${applyLabel}</button>`;
+        footer = `<button type="button" class="btn btn-secondary tsm-close-preview">${closeLabel}</button>`
+            + applyBtn;
+    }
+
+    const modal = await openModal(name, previewhtml, footer);
+    if (!modal) {
+        return;
+    }
+
+    const root = modal.getRoot()[0];
 
     // Inject the custom styles into the modal so the preview renders correctly.
-    if (isFullCssDefinition && currentModal) {
+    if (isFullCssDefinition) {
         const styleEl = document.createElement('style');
         styleEl.textContent = cssclasses;
-        currentModal.getRoot()[0].appendChild(styleEl);
+        root.appendChild(styleEl);
+    }
+
+    // Wire the footer buttons.
+    const closeBtn = root.querySelector('.tsm-close-preview');
+    if (closeBtn) {
+        // Close only dismisses the modal and the menu stays open.
+        closeBtn.addEventListener('click', () => modal.hide());
+    }
+    const applyBtn = root.querySelector('.tsm-apply-style');
+    if (applyBtn && !disabled) {
+        applyBtn.addEventListener('click', () => {
+            // Close preview and add style.
+            modal.hide();
+            onApply();
+        });
     }
 };
 
