@@ -209,8 +209,8 @@ export function isVisible() {
  *
  * @param {Object} editor TinyMCE editor instance.
  * @param {Array} categories Fetched categories array.
- * @param {Function} applyStyleFn Callback — applyStyleFn(styleDef).
- * @param {Function} clearStylingFn Callback — clearStylingFn().
+ * @param {Function} applyStyleFn Callback  applyStyleFn(styleDef).
+ * @param {Function} clearStylingFn Callback  clearStylingFn().
  * @param {string} clearLabel Localised string for the clear-style row.
  */
 export function show(editor, categories, applyStyleFn, clearStylingFn, clearLabel) {
@@ -228,6 +228,10 @@ export function show(editor, categories, applyStyleFn, clearStylingFn, clearLabe
             if (!activePanel || activePanel.contains(e.target)) {
                 return;
             }
+            // Clicks inside preview/description modal keep the menu open.
+            if (e.target.closest('.tsm-styles-modal')) {
+                return;
+            }
             // Toolbar button's own onAction toggle handler closes the panel.
             const anchor = findAnchorEl(editor);
             if (anchor && anchor.contains(e.target)) {
@@ -236,8 +240,7 @@ export function show(editor, categories, applyStyleFn, clearStylingFn, clearLabe
             hide();
         };
         const keydown = (e) => handleKeydown(e, editor);
-        // Intercept TinyMCE toolbar/menu button clicks before TinyMCE stops propagation, closing the panel reliably.
-        // Clicks inside the TinyMCE iframe do not cross document boundaries so a separate click handler is needed for the iframe.
+        // Intercepts TinyMCE toolbar/menu button clicks before TinyMCE stops propagation.
         const iframeDoc = editor.getDoc();
         document.addEventListener('mousedown', outsideClick, true);
         document.addEventListener('keydown', keydown);
@@ -418,8 +421,15 @@ function buildCategoryRow(cat, applyStyleFn, editor) {
     };
 
     const closeSubmenu = () => {
+        // Keep the submenu open while a preview/description modal is showing.
+        if (document.body.classList.contains('modal-open')) {
+            return;
+        }
         clearTimeout(openTimer);
         closeTimer = setTimeout(() => {
+            if (document.body.classList.contains('modal-open')) {
+                return;
+            }
             submenu.classList.remove('tsm-submenu--open');
             row.setAttribute('aria-expanded', 'false');
         }, 150);
@@ -514,7 +524,22 @@ function buildElementRow(elem, applyStyleFn, editor) {
     previewBtn.appendChild(previewIcon);
     previewBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        previewElement.showPreview(elem.name, elem.cssclasses, elem.type);
+        previewElement.showPreview(
+            elem.name,
+            elem.cssclasses,
+            elem.type,
+            () => {
+                applyStyleFn({
+                    className: elem.cssclasses,
+                    block: elem.type === 'block',
+                    custom: elem.custom === 1,
+                    id: elem.id,
+                });
+                hide();
+            },
+             // Apply button is greyed out for disabled rows
+            disabled
+        );
     });
     row.appendChild(previewBtn);
 

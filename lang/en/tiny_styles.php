@@ -26,6 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['actions'] = 'Actions';
+$string['applystyle'] = 'Apply style';
+$string['applystyle_disabled_help'] = 'Select text to highlight first.';
 $string['back_overview'] = 'Back to main';
 $string['bootstrapclass'] = 'CSS style / Bootstrap class';
 $string['bootstrapclass_help'] = 'Choose which styling should be applied: a manually defined inline CSS style or a predefined Bootstrap class.';
