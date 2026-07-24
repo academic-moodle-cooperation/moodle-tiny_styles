@@ -45,6 +45,7 @@ $PAGE->requires->js_call_amd('tiny_styles/select_all', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/preview_element', 'init', ['a.element-preview-link']);
 $PAGE->requires->js_call_amd('tiny_styles/sortelements', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/duplicate', 'init');
+$PAGE->requires->js_call_amd('tiny_styles/confirm_delete', 'init');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(
@@ -95,8 +96,8 @@ foreach ($records as $r) {
             'class'        => 'text-primary text-decoration-none',
             'title'        => get_string('delete'),
             'aria-label'   => get_string('delete'),
+            'data-action'  => 'confirm-delete',
             'data-confirm' => get_string('confirmdeleteelement', 'tiny_styles'),
-            'onclick'      => 'return confirm(this.dataset.confirm);',
         ]
     );
 
@@ -168,10 +169,7 @@ if ($tinystylesaction === 'delete' && $id > 0) {
     try {
         tiny_styles_delete_element_with_bridges($id);
         redirect(
-            new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
-                'catid' => $catid,
-                'sesskey' => sesskey(),
-            ]),
+            new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', ['catid' => $catid]),
             get_string('elementdeleted', 'tiny_styles'),
             1
         );

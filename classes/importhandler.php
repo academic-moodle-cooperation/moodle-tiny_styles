@@ -89,11 +89,29 @@ class importhandler {
                 $catobj->description = self::truncate_field($catarr['description'] ?? '', 1000, 'Category description');
                 $catobj->symbol = $catarr['symbol'] ?? '';
                 $catobj->menumode = $catarr['menumode'] ?? 'submenu';
-                $catobj->enabled = $catarr['enabled'] ?? 0;
+                $catobj->enabled = $catarr['availability'] ?? $catarr['enabled'] ?? 1;
+                $validshowdesc = ['never', 'helptext', 'tooltip'];
+                $catobj->showdesc = in_array($catarr['showdesc'] ?? 'never', $validshowdesc, true)
+                    ? $catarr['showdesc']
+                    : 'never';
                 $catobj->timecreated = $time;
                 $catobj->timemodified = $time;
                 $currentcatorder++;
                 $catobj->sortorder = $currentcatorder;
+
+                $catobj->visibility_admin = $catarr['visibility_admin'] ?? 'all';
+                if (!in_array($catobj->visibility_admin, ['all', 'admins_only', 'non_admins'], true)) {
+                    $catobj->visibility_admin = 'all';
+                }
+                $rawroles = is_array($catarr['visibility_roles'] ?? null) ? $catarr['visibility_roles'] : [];
+                $roleids = [];
+                foreach ($rawroles as $roleid) {
+                    $cleanid = (int)$roleid;
+                    if ($cleanid > 0) {
+                        $roleids[] = $cleanid;
+                    }
+                }
+                $catobj->visibility_roles = !empty($roleids) ? json_encode($roleids) : '';
 
                 $categoriestoinsert[] = $catobj;
             }
@@ -111,7 +129,7 @@ class importhandler {
 
                 $catindex = 0;
                 foreach ($insertedcats as $cat) {
-                    $catmapping[$cat->name] = $cat->id;
+                    $catmapping[$catindex] = $cat->id;
                     $catindex++;
                 }
             }
@@ -123,7 +141,7 @@ class importhandler {
             $bridgesortorder = [];
 
             // Get max bridge sortorder per category.
-            foreach ($catmapping as $catname => $catid) {
+            foreach ($catmapping as $catid) {
                 $maxbridgesort = $DB->get_field_sql(
                     "SELECT MAX(sortorder)
                        FROM {tiny_styles_cat_elements}
@@ -134,28 +152,41 @@ class importhandler {
             }
 
             // Prepare elements and bridges.
-            foreach ($data['categories'] as $catarr) {
+            foreach ($data['categories'] as $catindex => $catarr) {
                 if (empty($catarr['elements']) || !is_array($catarr['elements'])) {
                     continue;
                 }
 
-                $catname = $catarr['name'];
-                if (!isset($catmapping[$catname])) {
+                if (!isset($catmapping[$catindex])) {
                     continue;
                 }
-                $newcatid = $catmapping[$catname];
+                $newcatid = $catmapping[$catindex];
 
                 foreach ($catarr['elements'] as $elemarr) {
                     $elemobj = new \stdClass();
                     $elemobj->name = self::truncate_field($elemarr['name'] ?? 'no name', 255, 'Element name');
                     $elemobj->type = $elemarr['type'] ?? 'inline';
                     $elemobj->cssclasses = $elemarr['cssclasses'] ?? '';
-                    $elemobj->enabled = $elemarr['enabled'] ?? 0;
+                    $elemobj->enabled = $elemarr['availability'] ?? $elemarr['enabled'] ?? 1;
                     $elemobj->custom = $elemarr['custom'] ?? 1;
                     $elemobj->timecreated = $time;
                     $elemobj->timemodified = $time;
                     $currentelemorder++;
                     $elemobj->sortorder = $currentelemorder;
+
+                    $elemobj->visibility_admin = $elemarr['visibility_admin'] ?? 'all';
+                    if (!in_array($elemobj->visibility_admin, ['all', 'admins_only', 'non_admins'], true)) {
+                        $elemobj->visibility_admin = 'all';
+                    }
+                    $rawroles = is_array($elemarr['visibility_roles'] ?? null) ? $elemarr['visibility_roles'] : [];
+                    $roleids = [];
+                    foreach ($rawroles as $roleid) {
+                        $cleanid = (int)$roleid;
+                        if ($cleanid > 0) {
+                            $roleids[] = $cleanid;
+                        }
+                    }
+                    $elemobj->visibility_roles = !empty($roleids) ? json_encode($roleids) : '';
 
                     $elementcategorymap[] = $newcatid;
                     $elementstoinsert[] = $elemobj;

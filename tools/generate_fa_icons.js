@@ -89,6 +89,9 @@ if (icons.length === 0) {
     process.exit(1);
 }
 
+// Sort alphabetically by icon name.
+icons.sort((a, b) => a.name.localeCompare(b.name));
+
 // Detect FA version.
 let faVersion = 'unknown';
 const solidScss = path.resolve(path.dirname(scssSource), 'solid.scss');

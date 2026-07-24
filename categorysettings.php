@@ -39,6 +39,7 @@ $PAGE->set_heading(get_string('pluginname', 'tiny_styles'));
 
 $PAGE->requires->js_call_amd('tiny_styles/sortcategories', 'init');
 $PAGE->requires->js_call_amd('tiny_styles/toggle_category', 'init');
+$PAGE->requires->js_call_amd('tiny_styles/confirm_delete', 'init');
 
 $tinystylesaction = optional_param('tiny_styles_action', '', PARAM_ALPHA);
 $id = optional_param('id', 0, PARAM_INT);
@@ -106,12 +107,10 @@ foreach ($records as $category) {
     );
 
     $deleteurl = new moodle_url('/lib/editor/tiny/plugins/styles/categorysettings.php', [
-        'tiny_styles_action'  => 'delete',
-        'id'      => $category->id,
-        'sesskey' => sesskey(),
+        'tiny_styles_action' => 'delete',
+        'id'                 => $category->id,
+        'sesskey'            => sesskey(),
     ]);
-
-    $confirmstring = get_string('confirmdeletecategory', 'tiny_styles');
 
     $deleteiconhtml = html_writer::link(
         $deleteurl,
@@ -120,8 +119,8 @@ foreach ($records as $category) {
             'class'        => 'text-primary text-decoration-none',
             'title'        => get_string('delete'),
             'aria-label'   => get_string('delete'),
-            'data-confirm' => $confirmstring,
-            'onclick'      => 'return confirm(this.dataset.confirm);',
+            'data-action'  => 'confirm-delete',
+            'data-confirm' => get_string('confirmdeletecategory', 'tiny_styles'),
         ]
     );
 

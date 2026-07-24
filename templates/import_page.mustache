@@ -30,30 +30,32 @@
     * examplefile_label - Label for example file section
     * examplefile_name - Name of the example file (example.json)
     * instructions0_toggle - Text for the instructions toggle button
-    * instructions1_structure_heading - Heading for structure section
-    * instructions1_1_structure_text - Text explaining JSON structure
-    * instructions1_2_visualized_label - Label for visualization section
-    * instructions1_3_visualized_code - Code showing structure visualization
-    * instructions2_usage_heading - Heading for usage section
-    * instructions2_1_usage_text - Text explaining how to use the JSON
-    * instructions3_fill_heading - Heading for fill instructions
-    * instructions3_1_fill_note - Note about fill instructions
-    * instructions3_2_fill_code - Code example showing how to fill the JSON
-    * instructions4_expl_heading - Heading for explanations section
-    * instructions4_1_expl_intro - Introduction text for explanations
-    * instructions4_2_fields_title - Title for fields section
-    * instructions5_cat_heading - Heading for category fields
-    * instructions5_1_cat_menumode - Category menumode field description
-    * instructions5_2_cat_enabled - Category enabled field description
-    * instructions6_elem_heading - Heading for element fields
-    * instructions6_1_elem_type - Element type field description
-    * instructions6_1_1_elem_type_note - Note about element type
-    * instructions6_2_elem_cssclasses - Element cssclasses field description
-    * instructions6_2_1_elem_cssclasses_note - Note about cssclasses
-    * instructions6_3_elem_enabled - Element enabled field description
-    * instructions6_4_elem_custom - Element custom field description
-    * instructions7_good_heading - Heading for "good to know" section
-    * instructions7_1_good_list - HTML list of good to know items
+    * instructions1_usage_heading - Heading for usage section
+    * instructions1_1_usage_text - Text explaining how to use the import feature
+    * instructions2_structure_heading - Heading for JSON structure section
+    * instructions2_1_structure_text - Text explaining the JSON structure
+    * instructions3_cat_intro - Introduction text for category fields
+    * instructions3_1_cat_name - Category name field description
+    * instructions3_2_cat_description - Category description field description
+    * instructions3_2_2_cat_symbol - Category symbol/icon field description
+    * instructions3_3_cat_menumode - Category menumode field description
+    * instructions3_4_cat_availability - Category availability field description
+    * instructions3_5_cat_showdesc - Category showdesc field description
+    * instructions3_6_cat_visibility_admin - Category visibility_admin field description
+    * instructions3_7_cat_visibility_roles - Category visibility_roles field description
+    * instructions4_elem_intro - Introduction text for element fields
+    * instructions4_1_elem_name - Element name field description
+    * instructions4_2_elem_custom - Element custom field description
+    * instructions4_3_elem_type - Element type field description
+    * instructions4_4_elem_cssclasses - Element cssclasses field description
+    * instructions4_5_elem_availability - Element availability field description
+    * instructions4_6_elem_visibility_admin - Element visibility_admin field description
+    * instructions4_7_elem_visibility_roles - Element visibility_roles field description
+    * instructions5_example_heading - Heading for example section
+    * instructions5_1_example_note - Note about the example
+    * instructions5_2_example_code - Example JSON code
+    * instructions6_good_heading - Heading for "good to know" section
+    * instructions6_1_good_list - HTML list of good to know items
 
     Example context (json):
     {}
@@ -83,16 +85,21 @@
                         <li><strong>description:</strong> {{{instructions3_2_cat_description}}}</li>
                         <li><strong>symbol:</strong> {{{instructions3_2_2_cat_symbol}}}</li>
                         <li><strong>menumode:</strong> {{{instructions3_3_cat_menumode}}}</li>
-                        <li><strong>enabled:</strong> {{{instructions3_4_cat_enabled}}}</li>
+                        <li><strong>availability:</strong> {{{instructions3_4_cat_availability}}}</li>
+                        <li><strong>showdesc:</strong> {{{instructions3_5_cat_showdesc}}}</li>
+                        <li><strong>visibility_admin:</strong> {{{instructions3_6_cat_visibility_admin}}}</li>
+                        <li><strong>visibility_roles:</strong> {{{instructions3_7_cat_visibility_roles}}}</li>
                     </ul>
                     
                     <p>{{{instructions4_elem_intro}}}</p>
                     <ul>
                         <li><strong>name:</strong> {{{instructions4_1_elem_name}}}</li>
                         <li><strong>custom:</strong> {{{instructions4_2_elem_custom}}}</li>
-                        <li><strong>type:</strong> {{{instructions4_3_elem_type}}}<br><em>{{instructions6_1_1_elem_type_note}}</em></li>
+                        <li><strong>type:</strong> {{{instructions4_3_elem_type}}}</li>
                         <li><strong>cssclasses:</strong> {{{instructions4_4_elem_cssclasses}}}</li>
-                        <li><strong>enabled:</strong> {{{instructions4_5_elem_enabled}}}</li>
+                        <li><strong>availability:</strong> {{{instructions4_5_elem_availability}}}</li>
+                        <li><strong>visibility_admin:</strong> {{{instructions4_6_elem_visibility_admin}}}</li>
+                        <li><strong>visibility_roles:</strong> {{{instructions4_7_elem_visibility_roles}}}</li>
                     </ul>
 
                     <h4>{{instructions5_example_heading}}</h4>

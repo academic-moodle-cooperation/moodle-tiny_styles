@@ -28,6 +28,7 @@ namespace tiny_styles\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
+require_once($CFG->dirroot . '/lib/editor/tiny/plugins/styles/locallib.php');
 use external_api;
 use external_function_parameters;
 use external_single_structure;
@@ -56,19 +57,22 @@ class fetch_categories extends external_api {
      * @return array Nested array of categories with associated elements
      */
     public static function execute() {
-        global $DB;
+        global $DB, $USER;
 
         $context = context_system::instance();
         self::validate_context($context);
 
         $sql = "SELECT c.id, c.name, c.symbol, c.menumode, c.description, c.showdesc,
-            e.id AS elemid, e.name AS elemname, e.type, e.cssclasses, e.custom
-        FROM {tiny_styles_categories} c
-        LEFT JOIN {tiny_styles_cat_elements} ce ON ce.categoryid = c.id
-        LEFT JOIN {tiny_styles_elements} e ON e.id = ce.elementid
-        WHERE c.enabled = 1
-        AND (e.enabled = 1 OR c.menumode = 'divider')
-        ORDER BY c.sortorder, ce.sortorder";
+                       c.visibility_admin, c.visibility_roles,
+                       e.id AS elemid, e.name AS elemname, e.type, e.cssclasses, e.custom,
+                       e.visibility_admin AS elemvisibility_admin,
+                       e.visibility_roles AS elemvisibility_roles
+                  FROM {tiny_styles_categories} c
+             LEFT JOIN {tiny_styles_cat_elements} ce ON ce.categoryid = c.id
+             LEFT JOIN {tiny_styles_elements} e ON e.id = ce.elementid
+                 WHERE c.enabled = 1
+                   AND (e.enabled = 1 OR c.menumode = 'divider')
+              ORDER BY c.sortorder, ce.sortorder";
         $recordset = $DB->get_recordset_sql($sql);
 
         $categories = [];
@@ -76,29 +80,53 @@ class fetch_categories extends external_api {
             $catid = $r->id;
             if (!isset($categories[$catid])) {
                 $categories[$catid] = [
-                    'id' => $catid,
-                    'name' => format_string($r->name, true, ['context' => $context]),
-                    'symbol' => $r->symbol,
-                    'description' => format_string($r->description, true, ['context' => $context]),
-                    'showdesc'   => $r->showdesc,
-                    'menumode' => $r->menumode,
-                    'elements' => [],
+                    'id'               => $catid,
+                    'name'             => format_string($r->name, true, ['context' => $context]),
+                    'symbol'           => $r->symbol,
+                    'description'      => format_string($r->description, true, ['context' => $context]),
+                    'showdesc'         => $r->showdesc,
+                    'menumode'         => $r->menumode,
+                    'visibility_admin' => $r->visibility_admin ?? 'all',
+                    'visibility_roles' => $r->visibility_roles ?? '',
+                    'elements'         => [],
                 ];
             }
             if (!empty($r->elemid)) {
                 $categories[$catid]['elements'][] = [
-                    'id'         => $r->elemid,
-                    'name'       => format_string($r->elemname, true, ['context' => $context]),
-                    'type'       => $r->type,
-                    'cssclasses' => $r->cssclasses,
-                    'custom'     => $r->custom,
+                    'id'               => $r->elemid,
+                    'name'             => format_string($r->elemname, true, ['context' => $context]),
+                    'type'             => $r->type,
+                    'cssclasses'       => $r->cssclasses,
+                    'custom'           => $r->custom,
+                    'visibility_admin' => $r->elemvisibility_admin ?? 'all',
+                    'visibility_roles' => $r->elemvisibility_roles ?? '',
                 ];
             }
         }
         $recordset->close();
-        $results = array_values($categories);
 
-        return $results;
+        // Determine current user's admin status and all role assignments across all contexts.
+        $isadmin = is_siteadmin($USER);
+        $userroleids = $DB->get_fieldset_sql(
+            'SELECT DISTINCT roleid FROM {role_assignments} WHERE userid = :userid',
+            ['userid' => $USER->id]
+        );
+
+        // Filter categories and their elements based on visibility settings.
+        foreach ($categories as $catid => $cat) {
+            if (!tiny_styles_user_can_see($cat, $isadmin, $userroleids)) {
+                unset($categories[$catid]);
+                continue;
+            }
+            foreach ($cat['elements'] as $elemkey => $elem) {
+                if (!tiny_styles_user_can_see($elem, $isadmin, $userroleids)) {
+                    unset($categories[$catid]['elements'][$elemkey]);
+                }
+            }
+            $categories[$catid]['elements'] = array_values($categories[$catid]['elements']);
+        }
+
+        return array_values($categories);
     }
 
     /**

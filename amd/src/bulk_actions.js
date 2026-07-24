@@ -24,11 +24,35 @@
 
 import Ajax from 'core/ajax';
 import Notification from 'core/notification';
+import {get_strings as getStrings} from 'core/str';
+
+/**
+ * Show a Moodle modal confirmation.
+ *
+ * @param {string} message The confirmation question
+ * @param {string} deleteLabel Label for the confirm button
+ * @param {string} cancelLabel Label for the cancel button
+ * @returns {Promise<boolean>}
+ */
+const confirmDelete = (message, deleteLabel, cancelLabel) => new Promise((resolve) => {
+    Notification.confirm(
+        deleteLabel,
+        message,
+        deleteLabel,
+        cancelLabel,
+        () => resolve(true),
+        () => resolve(false)
+    );
+});
 
 /**
  * Initialize bulk actions functionality
  */
-export const init = () => {
+export const init = async() => {
+    const [deleteLabel, cancelLabel] = await getStrings([
+        {key: 'delete', component: 'tiny_styles'},
+        {key: 'cancel'},
+    ]);
 
     // Reset all checkboxes on page load (fixes Firefox form state persistence)
     document.querySelectorAll('input[name="selected_elements[]"]').forEach(checkbox => {
@@ -73,10 +97,13 @@ export const init = () => {
         const stringsEl = document.getElementById('bulk-action-strings');
         const msg = stringsEl ? stringsEl.getAttribute('data-confirm-delete') : 'Are you sure you want to delete the elements?';
 
-        // Confirm deletion using native confirm dialog
-        if (action === 'delete' && !confirm(msg)) {
-            dropdown.value = '';
-            return;
+        // Confirm deletion.
+        if (action === 'delete') {
+            const confirmed = await confirmDelete(msg, deleteLabel, cancelLabel);
+            if (!confirmed) {
+                dropdown.value = '';
+                return;
+            }
         }
 
         // Get category ID from M.cfg or URL parameters
