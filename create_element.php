@@ -219,7 +219,7 @@ class element_form extends moodleform {
             'visibilityadminsection',
             get_string('visibility_admin_section', 'tiny_styles')
         );
-        $mform->setExpanded('visibilityadminsection', false);
+        $mform->setExpanded('visibilityadminsection', true);
 
         // Info alert when category locks this setting.
         if ($catvisiblityadmin !== 'all') {
@@ -268,7 +268,7 @@ class element_form extends moodleform {
                 'visibilityrolessection',
                 get_string('visibility_roles_section', 'tiny_styles')
             );
-            $mform->setExpanded('visibilityrolessection', false);
+            $mform->setExpanded('visibilityrolessection', true);
 
             // Info alert when category restricts the role pool.
             if (!empty($catvisiblityroles)) {
