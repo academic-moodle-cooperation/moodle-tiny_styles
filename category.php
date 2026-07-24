@@ -161,7 +161,7 @@ class category_form extends moodleform {
             'visibilityadminsection',
             get_string('visibility_admin_section', 'tiny_styles')
         );
-        $mform->setExpanded('visibilityadminsection', false);
+        $mform->setExpanded('visibilityadminsection', true);
 
         $adminvisibilityoptions = [
             'all'         => get_string('visibility_admin_all', 'tiny_styles'),
@@ -184,7 +184,7 @@ class category_form extends moodleform {
             'visibilityrolessection',
             get_string('visibility_roles_section', 'tiny_styles')
         );
-        $mform->setExpanded('visibilityrolessection', false);
+        $mform->setExpanded('visibilityrolessection', true);
 
         $mform->addElement(
             'autocomplete',
