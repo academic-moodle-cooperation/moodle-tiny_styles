@@ -61,6 +61,7 @@ class fetch_categories extends external_api {
     /**
      * Fetches and returns all enabled categories and associated elements.
      *
+     * @param int $contextid Context id of the page hosting the editor, for role-based visibility
      * @return array Nested array of categories with associated elements
      */
     public static function execute($contextid = 0) {
