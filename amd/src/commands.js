@@ -24,6 +24,7 @@
 
 import {getButtonImage} from 'editor_tiny/utils';
 import Ajax from 'core/ajax';
+import Config from 'core/config';
 import {get_string as getString} from 'core/str';
 import {icon} from "./common";
 import {show as showMenu, hide as hideMenu, isVisible as isMenuVisible} from './menu';
@@ -37,7 +38,7 @@ import {isStyledInlineElement} from './styleutils';
 async function fetchCategories() {
     const requests = [{
         methodname: 'tiny_styles_fetch_categories',
-        args: {},
+        args: {contextid: Config.contextid},
     }];
     try {
         const [data] = await Ajax.call(requests);

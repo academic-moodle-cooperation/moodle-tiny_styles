@@ -89,7 +89,7 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
 
     // Migrate category symbols from *.svg to FA icon names, fix Boxes showdesc,
     // and add role-based visibility columns to categories and elements tables.
-    if ($oldversion < 2026052500) {
+    if ($oldversion < 2026052501) {
         // Migrate *.svg symbol values to raw FA icon names.
         $symbolmap = [
             'label'    => 'tag',
@@ -189,7 +189,7 @@ function xmldb_tiny_styles_upgrade($oldversion = 0) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_plugin_savepoint(true, 2026052500, 'tiny', 'styles');
+        upgrade_plugin_savepoint(true, 2026052501, 'tiny', 'styles');
     }
 
     return true;

@@ -574,8 +574,35 @@ function tiny_styles_create_element_with_bridge($formdata, $categoryid) {
  * @throws dml_exception If database error occurs
  */
 function tiny_styles_update_element_full($formdata) {
-    $record = tiny_styles_prepare_element_for_save($formdata, 'edit');
-    tiny_styles_update_element($record);
+    global $DB;
+
+    $transaction = $DB->start_delegated_transaction();
+    try {
+        $record = tiny_styles_prepare_element_for_save($formdata, 'edit');
+        tiny_styles_update_element($record);
+
+        // Reassign the element to a different category when the category was changed in the form.
+        $newcategoryid = (int)($formdata->categoryid ?? 0);
+        if ($newcategoryid > 0) {
+            $bridge = tiny_styles_get_element_category_link($record->id);
+            if (!$bridge) {
+                // No existing link.
+                $nextsort = tiny_styles_get_max_bridge_sortorder($newcategoryid) + 1;
+                tiny_styles_create_bridge($newcategoryid, $record->id, $nextsort);
+            } else if ((int)$bridge->categoryid !== $newcategoryid) {
+                // Move and append to end of new category.
+                $bridge->categoryid = $newcategoryid;
+                $bridge->sortorder = tiny_styles_get_max_bridge_sortorder($newcategoryid) + 1;
+                $bridge->timemodified = time();
+                $DB->update_record('tiny_styles_cat_elements', $bridge);
+            }
+        }
+
+        $transaction->allow_commit();
+    } catch (\Throwable $e) {
+        $transaction->rollback($e);
+        throw $e;
+    }
 }
 
 /**
@@ -637,7 +664,7 @@ function tiny_styles_user_can_see(array $record, bool $isadmin, array $userrolei
     }
 
     // Role check is skipped when admins_only.
-    if ($adminrestriction !== 'admins_only') {
+    if ($adminrestriction !== 'admins_only' && !$isadmin) {
         $allowedroles = json_decode($record['visibility_roles'] ?? '', true) ?? [];
         if (!empty($allowedroles) && empty(array_intersect($userroleids, $allowedroles))) {
             return false;

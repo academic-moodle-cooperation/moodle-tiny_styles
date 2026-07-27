@@ -292,27 +292,34 @@ function buildPanel(categories, applyStyleFn, clearStylingFn, clearLabel, editor
     panel.className = 'tsm-panel';
     panel.setAttribute('role', 'menu');
 
+    // Build the category rows first and redundant dividers are normalized.
+    const rows = [];
     categories.forEach((cat) => {
         if (cat.menumode === 'divider') {
-            panel.appendChild(buildDivider());
+            rows.push(buildDivider());
             return;
         }
 
         // Inline mode: elements appear directly in the top-level panel.
         if (cat.menumode === 'inline' && Array.isArray(cat.elements)) {
             cat.elements.forEach((elem) => {
-                panel.appendChild(buildElementRow(elem, applyStyleFn, editor));
+                rows.push(buildElementRow(elem, applyStyleFn, editor));
             });
             return;
         }
 
         // Submenu mode: category row with flyout.
         if (Array.isArray(cat.elements) && cat.elements.length > 0) {
-            panel.appendChild(buildCategoryRow(cat, applyStyleFn, editor));
+            rows.push(buildCategoryRow(cat, applyStyleFn, editor));
         }
     });
 
-    panel.appendChild(buildDivider());
+    normalizeDividers(rows).forEach((row) => panel.appendChild(row));
+
+    // Separator before the clear row.
+    if (panel.childElementCount > 0) {
+        panel.appendChild(buildDivider());
+    }
     panel.appendChild(buildClearRow(clearStylingFn, clearLabel));
 
     // Highlight the first row when the panel opens.
@@ -570,6 +577,32 @@ function buildDivider() {
     div.className = 'tsm-divider';
     div.setAttribute('role', 'separator');
     return div;
+}
+
+/**
+ * Removes redundant dividers from a list of panel rows.
+ * Drops leading and trailing dividers and collapses consecutive dividers down to a single line.
+ *
+ * @param {HTMLElement[]} rows Ordered panel rows (category rows, element rows, dividers).
+ * @returns {HTMLElement[]} The filtered rows.
+ */
+function normalizeDividers(rows) {
+    const isDivider = (row) => row.classList.contains('tsm-divider');
+    const result = [];
+    rows.forEach((row) => {
+        if (isDivider(row)) {
+            // Skips a leading divider or that immediately follows another divider.
+            if (result.length === 0 || isDivider(result[result.length - 1])) {
+                return;
+            }
+        }
+        result.push(row);
+    });
+    // Drops a trailing divider left with no content after it.
+    while (result.length > 0 && isDivider(result[result.length - 1])) {
+        result.pop();
+    }
+    return result;
 }
 
 /**

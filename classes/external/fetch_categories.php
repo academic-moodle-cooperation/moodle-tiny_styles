@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Methods for fetching categories from the DB to the editor.
+ * Methods for fetching data from the DB to the editor.
  *
  * @package tiny_styles
  * @author Karri Pajarinen
@@ -48,7 +48,14 @@ class fetch_categories extends external_api {
      * @return external_function_parameters
      */
     public static function execute_parameters() {
-        return new external_function_parameters([]);
+        return new external_function_parameters([
+            'contextid' => new external_value(
+                PARAM_INT,
+                'Editor page context id',
+                VALUE_DEFAULT,
+                0
+            ),
+        ]);
     }
 
     /**
@@ -56,10 +63,20 @@ class fetch_categories extends external_api {
      *
      * @return array Nested array of categories with associated elements
      */
-    public static function execute() {
+    public static function execute($contextid = 0) {
         global $DB, $USER;
 
-        $context = context_system::instance();
+        ['contextid' => $contextid] = self::validate_parameters(
+            self::execute_parameters(),
+            ['contextid' => $contextid]
+        );
+
+        // Resolve the page context.
+        try {
+            $context = $contextid ? \context::instance_by_id($contextid) : context_system::instance();
+        } catch (\Throwable $e) {
+            $context = context_system::instance();
+        }
         self::validate_context($context);
 
         $sql = "SELECT c.id, c.name, c.symbol, c.menumode, c.description, c.showdesc,
@@ -105,12 +122,13 @@ class fetch_categories extends external_api {
         }
         $recordset->close();
 
-        // Determine current user's admin status and all role assignments across all contexts.
+        // Visibility scoped to user admin status and the roles they hold in the context.
         $isadmin = is_siteadmin($USER);
-        $userroleids = $DB->get_fieldset_sql(
-            'SELECT DISTINCT roleid FROM {role_assignments} WHERE userid = :userid',
-            ['userid' => $USER->id]
-        );
+        $userroles = get_user_roles($context, $USER->id, true);
+        $userroleids = array_values(array_unique(array_map(
+            static fn($role) => (int)$role->roleid,
+            $userroles
+        )));
 
         // Filter categories and their elements based on visibility settings.
         foreach ($categories as $catid => $cat) {
