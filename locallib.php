@@ -424,6 +424,30 @@ function tiny_styles_get_element_category_link($elementid) {
 }
 
 /**
+ * The admin restriction of the category element belongs to.
+ *
+ * @param int $elementid Element ID
+ * @return string One of all/admins_only/non_admins; 'all' when the element has no category
+ */
+function tiny_styles_get_element_category_restriction($elementid): string {
+    global $DB;
+
+    $link = tiny_styles_get_element_category_link($elementid);
+    if (!$link) {
+        return 'all';
+    }
+
+    $categoryadmin = $DB->get_field(
+        'tiny_styles_categories',
+        'visibility_admin',
+        ['id' => $link->categoryid],
+        IGNORE_MISSING
+    );
+
+    return !empty($categoryadmin) ? $categoryadmin : 'all';
+}
+
+/**
  * Insert a new element record.
  *
  * @param stdClass $record Element record to insert
@@ -530,13 +554,23 @@ function tiny_styles_prepare_element_for_save($formdata, $action = 'create') {
         $record->visibility_admin = $old->visibility_admin ?? 'all';
         $record->visibility_roles = $old->visibility_roles ?? '';
     } else {
-        $adminrestriction = $formdata->visibility_admin ?? 'all';
-        $record->visibility_admin = in_array($adminrestriction, ['all', 'admins_only', 'non_admins'], true)
-            ? $adminrestriction
-            : 'all';
+        $parentrestriction = $old !== null ? tiny_styles_get_element_category_restriction($old->id) : 'all';
 
-        // When admins_only is set, the role picker is disabled in the form and not submitted.
-        if ($record->visibility_admin === 'admins_only' && $old !== null) {
+        // A restricted category freezes this field, keep what element stores.
+        if ($parentrestriction !== 'all') {
+            $record->visibility_admin = $old->visibility_admin ?? 'all';
+        } else {
+            $adminrestriction = $formdata->visibility_admin ?? 'all';
+            $record->visibility_admin = in_array($adminrestriction, ['all', 'admins_only', 'non_admins'], true)
+                ? $adminrestriction
+                : 'all';
+        }
+
+        // The picker is hidden on restriction the form showed.
+        $shownrestriction = $parentrestriction !== 'all' ? $parentrestriction : $record->visibility_admin;
+
+        // When admins_only is shown, the role picker is disabled in form and not submitted.
+        if ($shownrestriction === 'admins_only' && $old !== null) {
             $record->visibility_roles = $old->visibility_roles ?? '';
         } else {
             $rawroles = is_array($formdata->visibility_roles ?? null) ? $formdata->visibility_roles : [];
@@ -660,6 +694,40 @@ function tiny_styles_load_element_for_form($elementid) {
     }
 
     return $formdata;
+}
+
+/**
+ * Resolves the visibility an element is given by its parent category.
+ * Category restrictions are applied on top of the element's own settings, but
+ * the element's own stored values are never modified.
+ *
+ * @param array $category Array with visibility_admin and visibility_roles keys
+ * @param array $element Array with visibility_admin and visibility_roles keys
+ * @return array Effective visibility_admin and visibility_roles, in the same shape as the inputs
+ */
+function tiny_styles_effective_visibility(array $category, array $element): array {
+    $categoryadmin = $category['visibility_admin'] ?? 'all';
+    $categoryroles = json_decode($category['visibility_roles'] ?? '', true) ?? [];
+    $elementroles = json_decode($element['visibility_roles'] ?? '', true) ?? [];
+
+    // A restricted category binds its elements to the same restriction.
+    $admin = $categoryadmin !== 'all' ? $categoryadmin : ($element['visibility_admin'] ?? 'all');
+
+    if (!empty($categoryroles)) {
+        // The element may only narrow within the category's role pool.
+        $roles = array_values(array_intersect($elementroles, $categoryroles));
+        if (empty($roles)) {
+            $roles = $categoryroles;
+        }
+    } else {
+        $roles = $elementroles;
+    }
+
+    // Roles keep their stored JSON shape, so the shared visibility functions take them as-is.
+    return [
+        'visibility_admin' => $admin,
+        'visibility_roles' => !empty($roles) ? json_encode($roles) : '',
+    ];
 }
 
 /**

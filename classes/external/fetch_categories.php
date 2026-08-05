@@ -138,7 +138,9 @@ class fetch_categories extends external_api {
                 continue;
             }
             foreach ($cat['elements'] as $elemkey => $elem) {
-                if (!tiny_styles_user_can_see($elem, $isadmin, $userroleids)) {
+                // Parent category can tighten the restriction the elements are filtered on.
+                $effective = tiny_styles_effective_visibility($cat, $elem);
+                if (!tiny_styles_user_can_see($effective, $isadmin, $userroleids)) {
                     unset($categories[$catid]['elements'][$elemkey]);
                 }
             }
