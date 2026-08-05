@@ -99,9 +99,9 @@ class fetch_categories extends external_api {
             if (!isset($categories[$catid])) {
                 $categories[$catid] = [
                     'id'               => $catid,
-                    'name'             => format_string($r->name, true, ['context' => $context]),
+                    'name'             => tiny_styles_format_name($r->name, $context),
                     'symbol'           => $r->symbol,
-                    'description'      => format_string($r->description, true, ['context' => $context]),
+                    'description'      => tiny_styles_format_name($r->description, $context),
                     'showdesc'         => $r->showdesc,
                     'menumode'         => $r->menumode,
                     'visibility_admin' => $r->visibility_admin ?? 'all',
@@ -112,7 +112,7 @@ class fetch_categories extends external_api {
             if (!empty($r->elemid)) {
                 $categories[$catid]['elements'][] = [
                     'id'               => $r->elemid,
-                    'name'             => format_string($r->elemname, true, ['context' => $context]),
+                    'name'             => tiny_styles_format_name($r->elemname, $context),
                     'type'             => $r->type,
                     'cssclasses'       => $r->cssclasses,
                     'custom'           => $r->custom,

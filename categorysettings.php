@@ -129,8 +129,8 @@ foreach ($records as $category) {
         $categorydata[] = [
             'id' => $category->id,
             'enabled' => $category->enabled,
-            'name' => format_string($category->name, true, ['context' => context_system::instance()]),
-            'description' => format_string($category->description, true, ['context' => context_system::instance()]),
+            'name' => tiny_styles_format_name($category->name),
+            'description' => tiny_styles_format_name($category->description),
             'menumode' => $category->menumode,
             'elementsurl' => '#',
             'isdivider' => true,
@@ -145,8 +145,8 @@ foreach ($records as $category) {
         $categorydata[] = [
             'id' => $category->id,
             'enabled' => $category->enabled,
-            'name' => format_string($category->name, true, ['context' => context_system::instance()]),
-            'description' => format_string($category->description, true, ['context' => context_system::instance()]),
+            'name' => tiny_styles_format_name($category->name),
+            'description' => tiny_styles_format_name($category->description),
             'menumode' => $category->menumode,
             'elementsurl' => (new moodle_url('/lib/editor/tiny/plugins/styles/elements.php', [
                 'catid' => $category->id,

@@ -200,7 +200,7 @@ class element_form extends moodleform {
         $mform->addElement(
             'select',
             'enabled',
-            get_string('visibility', 'tiny_styles'),
+            get_string('visibility_element', 'tiny_styles'),
             $visibilityoptions
         );
         $mform->setType('enabled', PARAM_INT);
@@ -244,7 +244,7 @@ class element_form extends moodleform {
         $mform->addElement(
             'select',
             'visibility_admin',
-            get_string('visibility_admin', 'tiny_styles'),
+            get_string('visibility_admin_element', 'tiny_styles'),
             $adminvisibilityoptions
         );
         $mform->setType('visibility_admin', PARAM_ALPHANUMEXT);
@@ -288,7 +288,7 @@ class element_form extends moodleform {
             $mform->addElement(
                 'autocomplete',
                 'visibility_roles',
-                get_string('visibility_roles', 'tiny_styles'),
+                get_string('visibility_roles_element', 'tiny_styles'),
                 $this->_customdata['roleoptions'],
                 ['multiple' => true]
             );

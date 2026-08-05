@@ -344,10 +344,27 @@ function tiny_styles_get_categories_for_dropdown($excludedividers = true) {
     // Apply format_string to category names.
     $formatted = [];
     foreach ($records as $record) {
-        $formatted[$record->id] = format_string($record->name, true, ['context' => context_system::instance()]);
+        $formatted[$record->id] = tiny_styles_format_name($record->name);
     }
 
     return $formatted;
+}
+
+/**
+ * Filters a category or element name and description for display.
+ *
+ * @param string|null $text Raw name or description as stored in the database
+ * @param \core\context|null $context Context the filters run in
+ * @return string Filtered plain text
+ */
+function tiny_styles_format_name(?string $text, $context = null): string {
+    $context = $context ?? context_system::instance();
+
+    return html_entity_decode(
+        format_string($text ?? '', true, ['context' => $context]),
+        ENT_QUOTES,
+        'UTF-8'
+    );
 }
 
 /**
