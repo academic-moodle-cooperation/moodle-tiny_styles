@@ -1,6 +1,33 @@
 CHANGELOG
 =========
 
+5.2.0 (2026-08-06)
+-----------------
+* Moodle 5.2 compatible version
+* [FIXED] #120 Fix icons are not always colored to match the Moodle detail color [github #27]
+* [FIXED] #121 Fix default colors do not match during editing and viewing [github #26]
+* [FIXED] #124 Remove expired function print_error
+* [FIXED] #157 Fix categories visibility by role not functioning correctly
+* [FIXED] #158 Fix moving elements from one category to another not being possible
+* [FIXED] #160 Fix special characters not displayed correctly in category and element names
+* [FEATURE] #27 Menu/toolbar: show description on category entry
+* [FEATURE] #31 Menu/toolbar: preview of the element entry [github #12]
+* [FEATURE] #62 Characters can be formatted as label style without highlighting [github #2]
+* [FEATURE] #106 Enable selection of further Font Awesome symbols for categories
+* [FEATURE] #132 Change layout of category settings
+* [FEATURE] #133 Add restriction settings to category settings
+* [FEATURE] #134 Restrict category visibility based on status or role
+* [FEATURE] #135 Change layout of element settings
+* [FEATURE] #136 Add restriction settings to element settings
+* [FEATURE] #137 Restrict element visibility based on status or role
+* [FEATURE] #138 Restrict element visibility based on category settings
+* [FEATURE] #139 Add general availability setting to category settings
+* [FEATURE] #140 Add general availability setting to element settings
+* [FEATURE] #143 Update import instructions in plugin settings
+* [FEATURE] #144 Update example JSON file
+* [FEATURE] #145 Update available settings in export files
+* [FEATURE] #151 Add apply style via preview window
+
 5.1.1 (2026-02-06)
 -----------------
 * [FEATURE] #117 Removed German langstrings from the repository (now located in AMOS).
