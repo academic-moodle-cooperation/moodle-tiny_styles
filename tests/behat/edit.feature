@@ -1,4 +1,4 @@
-@editor @editor_tiny @tiny_styles
+@editor @editor_tiny @tiny_styles @tiny
 Feature: Admin can edit categories and elements
   In order to customize the plugin
   As an admin

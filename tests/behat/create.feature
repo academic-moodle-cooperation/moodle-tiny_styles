@@ -1,4 +1,4 @@
-@editor @editor_tiny @tiny_styles
+@editor @editor_tiny @tiny_styles @tiny
 Feature: Admin can create new categories and elements
   In order to customize the plugin
   As an admin
@@ -11,7 +11,7 @@ Feature: Admin can create new categories and elements
     And I set the field "Name" to "Category 1"
     And I set the field "Description" to "A description for category."
     And I press "Save changes"
-  
+
   @javascript
   Scenario: Admin fills the new category with predefined elements
     Given I should see "Categories"

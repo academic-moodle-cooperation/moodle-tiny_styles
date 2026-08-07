@@ -1,4 +1,4 @@
-@editor @editor_tiny @tiny_styles
+@editor @editor_tiny @tiny_styles @tiny
 Feature: Elements are visible in the TinyMCE editor
   In order to apply styles to content
   As an admin

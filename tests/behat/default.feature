@@ -1,4 +1,4 @@
-@editor @editor_tiny @tiny_styles
+@editor @editor_tiny @tiny_styles @tiny
 Feature: The plugin is active and visible in the administration pages
   In order to use the plugin
   As an admin
