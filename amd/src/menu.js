@@ -209,8 +209,8 @@ export function isVisible() {
  *
  * @param {Object} editor TinyMCE editor instance.
  * @param {Array} categories Fetched categories array.
- * @param {Function} applyStyleFn Callback — applyStyleFn(styleDef).
- * @param {Function} clearStylingFn Callback — clearStylingFn().
+ * @param {Function} applyStyleFn Callback  applyStyleFn(styleDef).
+ * @param {Function} clearStylingFn Callback  clearStylingFn().
  * @param {string} clearLabel Localised string for the clear-style row.
  */
 export function show(editor, categories, applyStyleFn, clearStylingFn, clearLabel) {
@@ -228,6 +228,10 @@ export function show(editor, categories, applyStyleFn, clearStylingFn, clearLabe
             if (!activePanel || activePanel.contains(e.target)) {
                 return;
             }
+            // Clicks inside preview/description modal keep the menu open.
+            if (e.target.closest('.tsm-styles-modal')) {
+                return;
+            }
             // Toolbar button's own onAction toggle handler closes the panel.
             const anchor = findAnchorEl(editor);
             if (anchor && anchor.contains(e.target)) {
@@ -236,8 +240,7 @@ export function show(editor, categories, applyStyleFn, clearStylingFn, clearLabe
             hide();
         };
         const keydown = (e) => handleKeydown(e, editor);
-        // Intercept TinyMCE toolbar/menu button clicks before TinyMCE stops propagation, closing the panel reliably.
-        // Clicks inside the TinyMCE iframe do not cross document boundaries so a separate click handler is needed for the iframe.
+        // Intercepts TinyMCE toolbar/menu button clicks before TinyMCE stops propagation.
         const iframeDoc = editor.getDoc();
         document.addEventListener('mousedown', outsideClick, true);
         document.addEventListener('keydown', keydown);
@@ -289,27 +292,34 @@ function buildPanel(categories, applyStyleFn, clearStylingFn, clearLabel, editor
     panel.className = 'tsm-panel';
     panel.setAttribute('role', 'menu');
 
+    // Build the category rows first and redundant dividers are normalized.
+    const rows = [];
     categories.forEach((cat) => {
         if (cat.menumode === 'divider') {
-            panel.appendChild(buildDivider());
+            rows.push(buildDivider());
             return;
         }
 
         // Inline mode: elements appear directly in the top-level panel.
         if (cat.menumode === 'inline' && Array.isArray(cat.elements)) {
             cat.elements.forEach((elem) => {
-                panel.appendChild(buildElementRow(elem, applyStyleFn, editor));
+                rows.push(buildElementRow(elem, applyStyleFn, editor));
             });
             return;
         }
 
         // Submenu mode: category row with flyout.
         if (Array.isArray(cat.elements) && cat.elements.length > 0) {
-            panel.appendChild(buildCategoryRow(cat, applyStyleFn, editor));
+            rows.push(buildCategoryRow(cat, applyStyleFn, editor));
         }
     });
 
-    panel.appendChild(buildDivider());
+    normalizeDividers(rows).forEach((row) => panel.appendChild(row));
+
+    // Separator before the clear row.
+    if (panel.childElementCount > 0) {
+        panel.appendChild(buildDivider());
+    }
     panel.appendChild(buildClearRow(clearStylingFn, clearLabel));
 
     // Highlight the first row when the panel opens.
@@ -418,8 +428,15 @@ function buildCategoryRow(cat, applyStyleFn, editor) {
     };
 
     const closeSubmenu = () => {
+        // Keep the submenu open while a preview/description modal is showing.
+        if (document.body.classList.contains('modal-open')) {
+            return;
+        }
         clearTimeout(openTimer);
         closeTimer = setTimeout(() => {
+            if (document.body.classList.contains('modal-open')) {
+                return;
+            }
             submenu.classList.remove('tsm-submenu--open');
             row.setAttribute('aria-expanded', 'false');
         }, 150);
@@ -514,7 +531,22 @@ function buildElementRow(elem, applyStyleFn, editor) {
     previewBtn.appendChild(previewIcon);
     previewBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        previewElement.showPreview(elem.name, elem.cssclasses, elem.type);
+        previewElement.showPreview(
+            elem.name,
+            elem.cssclasses,
+            elem.type,
+            () => {
+                applyStyleFn({
+                    className: elem.cssclasses,
+                    block: elem.type === 'block',
+                    custom: elem.custom === 1,
+                    id: elem.id,
+                });
+                hide();
+            },
+             // Apply button is greyed out for disabled rows
+            disabled
+        );
     });
     row.appendChild(previewBtn);
 
@@ -545,6 +577,32 @@ function buildDivider() {
     div.className = 'tsm-divider';
     div.setAttribute('role', 'separator');
     return div;
+}
+
+/**
+ * Removes redundant dividers from a list of panel rows.
+ * Drops leading and trailing dividers and collapses consecutive dividers down to a single line.
+ *
+ * @param {HTMLElement[]} rows Ordered panel rows (category rows, element rows, dividers).
+ * @returns {HTMLElement[]} The filtered rows.
+ */
+function normalizeDividers(rows) {
+    const isDivider = (row) => row.classList.contains('tsm-divider');
+    const result = [];
+    rows.forEach((row) => {
+        if (isDivider(row)) {
+            // Skips a leading divider or that immediately follows another divider.
+            if (result.length === 0 || isDivider(result[result.length - 1])) {
+                return;
+            }
+        }
+        result.push(row);
+    });
+    // Drops a trailing divider left with no content after it.
+    while (result.length > 0 && isDivider(result[result.length - 1])) {
+        result.pop();
+    }
+    return result;
 }
 
 /**

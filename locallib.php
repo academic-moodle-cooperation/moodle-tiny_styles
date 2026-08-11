@@ -344,10 +344,27 @@ function tiny_styles_get_categories_for_dropdown($excludedividers = true) {
     // Apply format_string to category names.
     $formatted = [];
     foreach ($records as $record) {
-        $formatted[$record->id] = format_string($record->name, true, ['context' => context_system::instance()]);
+        $formatted[$record->id] = tiny_styles_format_name($record->name);
     }
 
     return $formatted;
+}
+
+/**
+ * Filters a category or element name and description for display.
+ *
+ * @param string|null $text Raw name or description as stored in the database
+ * @param \core\context|null $context Context the filters run in
+ * @return string Filtered plain text
+ */
+function tiny_styles_format_name(?string $text, $context = null): string {
+    $context = $context ?? context_system::instance();
+
+    return html_entity_decode(
+        format_string($text ?? '', true, ['context' => $context]),
+        ENT_QUOTES,
+        'UTF-8'
+    );
 }
 
 /**
@@ -404,6 +421,30 @@ function tiny_styles_get_element_category_link($elementid) {
         '*',
         IGNORE_MULTIPLE
     );
+}
+
+/**
+ * The admin restriction of the category element belongs to.
+ *
+ * @param int $elementid Element ID
+ * @return string One of all/admins_only/non_admins; 'all' when the element has no category
+ */
+function tiny_styles_get_element_category_restriction($elementid): string {
+    global $DB;
+
+    $link = tiny_styles_get_element_category_link($elementid);
+    if (!$link) {
+        return 'all';
+    }
+
+    $categoryadmin = $DB->get_field(
+        'tiny_styles_categories',
+        'visibility_admin',
+        ['id' => $link->categoryid],
+        IGNORE_MISSING
+    );
+
+    return !empty($categoryadmin) ? $categoryadmin : 'all';
 }
 
 /**
@@ -513,13 +554,23 @@ function tiny_styles_prepare_element_for_save($formdata, $action = 'create') {
         $record->visibility_admin = $old->visibility_admin ?? 'all';
         $record->visibility_roles = $old->visibility_roles ?? '';
     } else {
-        $adminrestriction = $formdata->visibility_admin ?? 'all';
-        $record->visibility_admin = in_array($adminrestriction, ['all', 'admins_only', 'non_admins'], true)
-            ? $adminrestriction
-            : 'all';
+        $parentrestriction = $old !== null ? tiny_styles_get_element_category_restriction($old->id) : 'all';
 
-        // When admins_only is set, the role picker is disabled in the form and not submitted.
-        if ($record->visibility_admin === 'admins_only' && $old !== null) {
+        // A restricted category freezes this field, keep what element stores.
+        if ($parentrestriction !== 'all') {
+            $record->visibility_admin = $old->visibility_admin ?? 'all';
+        } else {
+            $adminrestriction = $formdata->visibility_admin ?? 'all';
+            $record->visibility_admin = in_array($adminrestriction, ['all', 'admins_only', 'non_admins'], true)
+                ? $adminrestriction
+                : 'all';
+        }
+
+        // The picker is hidden on restriction the form showed.
+        $shownrestriction = $parentrestriction !== 'all' ? $parentrestriction : $record->visibility_admin;
+
+        // When admins_only is shown, the role picker is disabled in form and not submitted.
+        if ($shownrestriction === 'admins_only' && $old !== null) {
             $record->visibility_roles = $old->visibility_roles ?? '';
         } else {
             $rawroles = is_array($formdata->visibility_roles ?? null) ? $formdata->visibility_roles : [];
@@ -574,8 +625,35 @@ function tiny_styles_create_element_with_bridge($formdata, $categoryid) {
  * @throws dml_exception If database error occurs
  */
 function tiny_styles_update_element_full($formdata) {
-    $record = tiny_styles_prepare_element_for_save($formdata, 'edit');
-    tiny_styles_update_element($record);
+    global $DB;
+
+    $transaction = $DB->start_delegated_transaction();
+    try {
+        $record = tiny_styles_prepare_element_for_save($formdata, 'edit');
+        tiny_styles_update_element($record);
+
+        // Reassign the element to a different category when the category was changed in the form.
+        $newcategoryid = (int)($formdata->categoryid ?? 0);
+        if ($newcategoryid > 0) {
+            $bridge = tiny_styles_get_element_category_link($record->id);
+            if (!$bridge) {
+                // No existing link.
+                $nextsort = tiny_styles_get_max_bridge_sortorder($newcategoryid) + 1;
+                tiny_styles_create_bridge($newcategoryid, $record->id, $nextsort);
+            } else if ((int)$bridge->categoryid !== $newcategoryid) {
+                // Move and append to end of new category.
+                $bridge->categoryid = $newcategoryid;
+                $bridge->sortorder = tiny_styles_get_max_bridge_sortorder($newcategoryid) + 1;
+                $bridge->timemodified = time();
+                $DB->update_record('tiny_styles_cat_elements', $bridge);
+            }
+        }
+
+        $transaction->allow_commit();
+    } catch (\Throwable $e) {
+        $transaction->rollback($e);
+        throw $e;
+    }
 }
 
 /**
@@ -619,6 +697,40 @@ function tiny_styles_load_element_for_form($elementid) {
 }
 
 /**
+ * Resolves the visibility an element is given by its parent category.
+ * Category restrictions are applied on top of the element's own settings, but
+ * the element's own stored values are never modified.
+ *
+ * @param array $category Array with visibility_admin and visibility_roles keys
+ * @param array $element Array with visibility_admin and visibility_roles keys
+ * @return array Effective visibility_admin and visibility_roles, in the same shape as the inputs
+ */
+function tiny_styles_effective_visibility(array $category, array $element): array {
+    $categoryadmin = $category['visibility_admin'] ?? 'all';
+    $categoryroles = json_decode($category['visibility_roles'] ?? '', true) ?? [];
+    $elementroles = json_decode($element['visibility_roles'] ?? '', true) ?? [];
+
+    // A restricted category binds its elements to the same restriction.
+    $admin = $categoryadmin !== 'all' ? $categoryadmin : ($element['visibility_admin'] ?? 'all');
+
+    if (!empty($categoryroles)) {
+        // The element may only narrow within the category's role pool.
+        $roles = array_values(array_intersect($elementroles, $categoryroles));
+        if (empty($roles)) {
+            $roles = $categoryroles;
+        }
+    } else {
+        $roles = $elementroles;
+    }
+
+    // Roles keep their stored JSON shape, so the shared visibility functions take them as-is.
+    return [
+        'visibility_admin' => $admin,
+        'visibility_roles' => !empty($roles) ? json_encode($roles) : '',
+    ];
+}
+
+/**
  * Checks whether the current user can see a category or element based on visibility settings.
  *
  * @param array $record Array with visibility_admin and visibility_roles keys
@@ -637,7 +749,7 @@ function tiny_styles_user_can_see(array $record, bool $isadmin, array $userrolei
     }
 
     // Role check is skipped when admins_only.
-    if ($adminrestriction !== 'admins_only') {
+    if ($adminrestriction !== 'admins_only' && !$isadmin) {
         $allowedroles = json_decode($record['visibility_roles'] ?? '', true) ?? [];
         if (!empty($allowedroles) && empty(array_intersect($userroleids, $allowedroles))) {
             return false;

@@ -57,7 +57,7 @@ global $OUTPUT;
 
 // Get elements and category name from database.
 $records = tiny_styles_get_elements_by_category($catid);
-$catname = format_string(tiny_styles_get_category_name($catid), true, ['context' => context_system::instance()]);
+$catname = tiny_styles_format_name(tiny_styles_get_category_name($catid));
 
 // Array of elements for mustache template.
 $elements = [];
@@ -106,7 +106,7 @@ foreach ($records as $r) {
         $OUTPUT->pix_icon('i/preview', get_string('preview', 'tiny_styles')),
         [
             'class'         => 'element-preview-link text-primary text-decoration-none',
-            'data-name'     => format_string($r->name, true, ['context' => context_system::instance()]),
+            'data-name'     => tiny_styles_format_name($r->name),
             'data-cssclass' => $r->cssclasses,
             'data-type'     => $r->type,
             'title'         => get_string('preview', 'tiny_styles'),
@@ -116,7 +116,7 @@ foreach ($records as $r) {
 
     $elements[] = [
         'id'             => $r->id,
-        'name'           => format_string($r->name, true, ['context' => context_system::instance()]),
+        'name'           => tiny_styles_format_name($r->name),
         'type'           => $r->type,
         'bootstrapclass' => $r->cssclasses,
         'enabled' => (bool)$r->enabled,

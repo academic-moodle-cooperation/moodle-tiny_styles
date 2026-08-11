@@ -36,8 +36,8 @@
           "type": "block",
           "cssclasses": "alert alert-danger",
           "availability": 1,
-          "visibility_admin": "admins_only",
-          "visibility_roles": []
+          "visibility_admin": "non_admins",
+          "visibility_roles": [1, 3, 4]
         },
         {
           "name": "Green Text",
@@ -45,8 +45,8 @@
           "type": "inline",
           "cssclasses": "color: green; font-weight:bold;",
           "availability": 0,
-          "visibility_admin": "non_admins",
-          "visibility_roles": [3, 4, 5]
+          "visibility_admin": "admins_only",
+          "visibility_roles": []
         }
       ]
     }

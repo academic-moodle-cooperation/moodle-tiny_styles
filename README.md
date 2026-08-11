@@ -50,7 +50,8 @@ To restore or import a style configuration:
 **Please note:**
 * Importing does not delete or overwrite existing styles; it adds the imported styles alongside them.
 * If a category is imported with an already existing category name in the category overview, it will be added unchanged, i.e. there will be two categories with the same name.
-* There is a **template JSON file** available for download in the import area (`example.json`) containing the required structure, as well as a list of all available category symbols (e.g. "book.svg", "box.svg", etc.).
+* There is a **template JSON file** available for download in the import area (`example.json`) which is in the required structure for importing styles.
+* The `symbol` field uses a Font Awesome 6 icon name (for example `book` or `star`). All fontawesome icons can be used, and should be entered with no prefix and no `.svg` ending, as in earlier releases. Icon names can be browsed at [fontawesome.com](https://fontawesome.com/search?ic=free-collection).
 
 
 ### JSON Format
@@ -63,16 +64,21 @@ The import/export file uses this structure:
     {
       "name": "My Category",
       "description": "Optional description",
-      "symbol": "book.svg",
+      "symbol": "book",
+      "showdesc": "never",
       "menumode": "submenu",
-      "enabled": 1,
+      "availability": 1,
+      "visibility_admin": "all",
+      "visibility_roles": [],
       "elements": [
         {
           "name": "Red Box",
           "custom": 0,
           "type": "block",
           "cssclasses": "alert alert-danger",
-          "enabled": 1
+          "availability": 1,
+          "visibility_admin": "all",
+          "visibility_roles": []
         }
       ]
     }
@@ -80,6 +86,12 @@ The import/export file uses this structure:
 }
 ```
 
+**What the fields mean:**
+* `symbol`: a Font Awesome 6 icon name for the category. Leave empty for no icon.
+* `showdesc`: how the category description is shown in the editor: `never`, `helptext` (a **?** button), or `tooltip` (shown on hover).
+* `availability`: `1` shows the category or element in the TinyMCE editor, `0` hides it. Default: `1`.
+* `visibility_admin`: who can see the category or element, based on admin status: `all`, `admins_only`, or `non_admins`. Default: `all`.
+* `visibility_roles`: a list of Moodle role IDs that can see the category or element, e.g. `[3, 5]`. An empty list means all roles can see it.
 
 ## Multilanguage Support (Multilang Filter v2)
 

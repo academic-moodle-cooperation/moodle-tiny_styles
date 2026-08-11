@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tiny_styles';
 $plugin->release = 'v5.2.0';
-$plugin->version = 2026052500;
-$plugin->requires = 2025100600;
+$plugin->version = 2026080600;
+$plugin->requires = 2026042000;
 $plugin->maturity = MATURITY_STABLE;

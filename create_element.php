@@ -200,7 +200,7 @@ class element_form extends moodleform {
         $mform->addElement(
             'select',
             'enabled',
-            get_string('visibility', 'tiny_styles'),
+            get_string('visibility_element', 'tiny_styles'),
             $visibilityoptions
         );
         $mform->setType('enabled', PARAM_INT);
@@ -219,7 +219,7 @@ class element_form extends moodleform {
             'visibilityadminsection',
             get_string('visibility_admin_section', 'tiny_styles')
         );
-        $mform->setExpanded('visibilityadminsection', false);
+        $mform->setExpanded('visibilityadminsection', true);
 
         // Info alert when category locks this setting.
         if ($catvisiblityadmin !== 'all') {
@@ -244,16 +244,15 @@ class element_form extends moodleform {
         $mform->addElement(
             'select',
             'visibility_admin',
-            get_string('visibility_admin', 'tiny_styles'),
+            get_string('visibility_admin_element', 'tiny_styles'),
             $adminvisibilityoptions
         );
         $mform->setType('visibility_admin', PARAM_ALPHANUMEXT);
         $mform->setDefault('visibility_admin', 'all');
         $mform->addHelpButton('visibility_admin', 'visibility_admin_element', 'tiny_styles');
 
-        // Lock to parent category value when restricted.
+        // Lock to the parent category value when restricted.
         if ($catvisiblityadmin !== 'all') {
-            $mform->setConstant('visibility_admin', $catvisiblityadmin);
             $mform->freeze('visibility_admin');
         }
 
@@ -268,7 +267,7 @@ class element_form extends moodleform {
                 'visibilityrolessection',
                 get_string('visibility_roles_section', 'tiny_styles')
             );
-            $mform->setExpanded('visibilityrolessection', false);
+            $mform->setExpanded('visibilityrolessection', true);
 
             // Info alert when category restricts the role pool.
             if (!empty($catvisiblityroles)) {
@@ -288,7 +287,7 @@ class element_form extends moodleform {
             $mform->addElement(
                 'autocomplete',
                 'visibility_roles',
-                get_string('visibility_roles', 'tiny_styles'),
+                get_string('visibility_roles_element', 'tiny_styles'),
                 $this->_customdata['roleoptions'],
                 ['multiple' => true]
             );
@@ -431,6 +430,21 @@ if ($data = $mform->get_data()) {
 // Loading data for editing an existing element.
 if ($tinystylesaction === 'edit' && $id > 0) {
     $formdata = tiny_styles_load_element_for_form($id);
+
+    // Show the restriction the element is actually subject to.
+    // Roles keep their stored JSON shape, so the shared visibility functions take them as-is.
+    $effective = tiny_styles_effective_visibility(
+        [
+            'visibility_admin' => $catvisiblityadmin,
+            'visibility_roles' => $parentcategory->visibility_roles ?? '',
+        ],
+        [
+            'visibility_admin' => $formdata->visibility_admin,
+            'visibility_roles' => json_encode($formdata->visibility_roles),
+        ]
+    );
+    $formdata->visibility_admin = $effective['visibility_admin'];
+
     $mform->set_data($formdata);
 } else {
     // Create new style element.
